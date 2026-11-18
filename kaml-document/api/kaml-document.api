@@ -1,0 +1,45 @@
+public final class com/davils/kaml/document/YamlDocumentLimitException : java/lang/IllegalStateException {
+	public final fun getLimit ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/YamlDocumentViolationCodes {
+	public static final field INSTANCE Lcom/davils/kaml/document/YamlDocumentViolationCodes;
+	public final fun getINVALID_KEY-J_S2PC0 ()Ljava/lang/String;
+	public final fun getINVALID_PATH-J_S2PC0 ()Ljava/lang/String;
+	public final fun getINVALID_POINTER-J_S2PC0 ()Ljava/lang/String;
+	public final fun getINVALID_REPLACEMENT-J_S2PC0 ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/pointer/JsonPointer {
+	public static final field Companion Lcom/davils/kaml/document/pointer/JsonPointer$Companion;
+	public final fun child (I)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun child (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLast ()Ljava/lang/String;
+	public final fun getParent ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getTokens ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isRoot ()Z
+	public final fun startsWith (Lcom/davils/kaml/document/pointer/JsonPointer;)Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/pointer/JsonPointer$Companion {
+	public final fun getROOT ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun of (Ljava/util/List;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun of ([Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun parse (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun parseOrNull (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+}
+
+public final class com/davils/kaml/document/pointer/JsonPointerResolutionKt {
+	public static final fun at (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/document/pointer/JsonPointer;)Lcom/davils/kaml/core/node/YamlNode;
+	public static final fun at (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;I)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
+	public static synthetic fun at$default (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;IILjava/lang/Object;)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
+	public static final fun nearest (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;I)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
+	public static synthetic fun nearest$default (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;IILjava/lang/Object;)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
+	public static final fun toJsonPointer (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static final fun toJsonPointerOrNull (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+}
+

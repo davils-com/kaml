@@ -98,7 +98,7 @@ kreate {
 
         aggregate {
             enabled = isRoot
-            members = setOf(":", ":kaml-core", ":kaml-serialization")
+            members = setOf(":", ":kaml-core", ":kaml-document", ":kaml-serialization")
         }
 
         reports {

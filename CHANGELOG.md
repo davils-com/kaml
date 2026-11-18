@@ -41,6 +41,8 @@ way.
   echoes input or the message of a serializer.
 - **Conversion between `YamlNode` and `JsonElement`** of kotlinx.serialization.json, within `YamlLimits`, refusing
   keys that are not strings or are given twice.
+- **JSON Pointer** (RFC 6901) on the node graph and on the syntax tree, where a duplicate key resolves to
+  its first occurrence.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
