@@ -72,7 +72,7 @@ internal class GraphOperations(limits: YamlLimits) {
         val isIntoItself = path.startsWith(from) && path != from
         if (isIntoItself) return GraphStep.Refused(JsonPatchRefusal.MoveIntoItself)
         return valueAt(root, from).then { value ->
-            count.checkDepth(path.tokens.size)
+            count.checkDepth(path.tokens.size + value.depth)
             removed(root, from).then { without -> placed(without, path, value) }
         }
     }

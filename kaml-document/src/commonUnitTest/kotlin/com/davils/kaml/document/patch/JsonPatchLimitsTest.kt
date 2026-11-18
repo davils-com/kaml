@@ -59,6 +59,7 @@ private const val TWO_MEMBERS: String = "{a: 1, b: 2}"
 private const val SMALL_TREE: String = "a: 1"
 private const val EMPTY: String = "{}"
 private const val ALIASED: String = "a: &x {k: 1}"
+private const val DEEP_MOVE: String = "{a: [[1]], b: []}"
 private const val TWINS: String = "{true: 1, 'true': 2}"
 
 private val operationNames = listOf("add", "remove", "replace", "move", "copy", "test", "drop", "")
@@ -160,6 +161,18 @@ class JsonPatchLimitsTest : FunSpec({
             add(nested(THREE)) on EMPTY shouldBe JsonPatchResult.Failed(0, JsonPatchRefusal.LimitExceeded)
             JsonPatch(listOf(move), shallow) on "{a: 1, b: [[[[1]]]]}" shouldBe
                 JsonPatchResult.Failed(0, JsonPatchRefusal.LimitExceeded)
+        }
+
+        test("a move counts the depth of its value, not only of its path") {
+            val shallow = limits { maximumDepth = THREE }
+            val move = JsonPatch(
+                listOf(JsonPatchOperation.Move(from = "/a".toJsonPointer(), path = "/b/0".toJsonPointer())),
+                shallow,
+            )
+
+            (move on "{a: [1], b: []}").shouldBeInstanceOf<JsonPatchResult.Applied>()
+            move on DEEP_MOVE shouldBe JsonPatchResult.Failed(0, JsonPatchRefusal.LimitExceeded)
+            move onTree DEEP_MOVE shouldBe JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
         }
     }
 
