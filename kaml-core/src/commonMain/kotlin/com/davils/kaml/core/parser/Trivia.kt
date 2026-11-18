@@ -53,7 +53,17 @@ internal class Trivia(private val state: ParseState) {
     }
 
     fun comment() {
-        state.emitTo(YamlSyntaxKind.COMMENT, cursor.lineEndOf(state.position))
+        val end = cursor.lineEndOf(state.position)
+        reportMarks(state.position, end)
+        state.emitTo(YamlSyntaxKind.COMMENT, end)
+    }
+
+    fun reportMarks(start: Int, end: Int) {
+        var index = start
+        while (index < end && state.charAt(index) != BYTE_ORDER_MARK) {
+            index++
+        }
+        if (index < end) reportMark(index)
     }
 
     fun finishLine() {
@@ -83,14 +93,17 @@ internal class Trivia(private val state: ParseState) {
         return null
     }
 
-    fun consumeTo(target: Int) {
+    fun consumeTo(target: Int, isStreamPrefix: Boolean = false) {
         while (state.position < target) {
-            consumeOne(target)
+            consumeOne(target, isStreamPrefix)
         }
     }
 
-    private fun consumeOne(target: Int) {
-        val isConsumed = breakConsumed() || whitespaceConsumed(target) || commentConsumed(target) || markConsumed()
+    private fun consumeOne(target: Int, isStreamPrefix: Boolean) {
+        val isConsumed = breakConsumed() ||
+            whitespaceConsumed(target) ||
+            commentConsumed(target) ||
+            markConsumed(isStreamPrefix)
         if (!isConsumed) state.unexpected(target, "Expected only blank lines and comments")
     }
 
@@ -108,14 +121,23 @@ internal class Trivia(private val state: ParseState) {
 
     private fun commentConsumed(target: Int): Boolean {
         if (state.peek() != '#') return false
-        state.emitTo(YamlSyntaxKind.COMMENT, minOf(a = cursor.lineEndOf(state.position), b = target))
+        val end = minOf(a = cursor.lineEndOf(state.position), b = target)
+        reportMarks(state.position, end)
+        state.emitTo(YamlSyntaxKind.COMMENT, end)
         return true
     }
 
-    private fun markConsumed(): Boolean {
+    private fun markConsumed(isStreamPrefix: Boolean): Boolean {
         if (state.peek() != BYTE_ORDER_MARK) return false
+        val isAllowed = isStreamPrefix || cursor.isDocumentMarkerAt(state.position + 1)
+        if (!isAllowed) reportMark(state.position)
         state.emit(YamlSyntaxKind.BYTE_ORDER_MARK, 1)
         return true
+    }
+
+    private fun reportMark(index: Int) {
+        val range = state.span(start = index, end = index + 1)
+        state.report(YamlDiagnosticCode.UnexpectedContent, range, "A byte order mark can only start a document")
     }
 
     private fun scanStart(): Int {

@@ -58,7 +58,8 @@ internal class PlainScalars(private val state: ParseState, private val trivia: T
         val isValueIndicator = character == ':' && !state.charAt(index + 1).isPlainSafe(context.isInsideFlow)
         val isComment = character == '#' && index > start && state.charAt(index - 1).isWhite()
         val isFlowEnd = context.isInsideFlow && character.isFlowIndicator()
-        val isStop = character.isBreak() || character == END || isValueIndicator || isComment || isFlowEnd
+        val isMark = character == BYTE_ORDER_MARK
+        val isStop = character.isBreak() || character == END || isValueIndicator || isComment || isFlowEnd || isMark
         return !isStop
     }
 

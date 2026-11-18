@@ -68,6 +68,7 @@ internal class BlockScalars(private val state: ParseState, private val trivia: T
         val indent = (maxOf(a = parentIndent, b = 0) + indentation).takeIf { indentation > 0 }
             ?: detectedIndent(start, parentIndent)
         val end = contentEnd(start, indent)
+        trivia.reportMarks(start, end)
         state.emitTo(YamlSyntaxKind.BLOCK_SCALAR_CONTENT, end)
         checkTrailingLines(end)
     }

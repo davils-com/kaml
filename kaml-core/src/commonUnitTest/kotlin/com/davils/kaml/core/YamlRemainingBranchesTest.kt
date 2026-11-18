@@ -123,8 +123,9 @@ class YamlRemainingBranchesTest : FunSpec({
             yaml.root("a\u0085b\uE000c").string() shouldBe "a\u0085b\uE000c"
         }
 
-        test("reads a byte order mark inside a line") {
-            yaml.parse("a: b\uFEFFc").diagnostics.size shouldBe 0
+        test("refuses a byte order mark inside a line") {
+            val codes = yaml.parse("a: b\uFEFFc").diagnostics.map { it.code }
+            codes shouldBe listOf(YamlDiagnosticCode.UnexpectedContent)
         }
 
         test("refuses a directive that is not at the start of its line") {

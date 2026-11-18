@@ -34,12 +34,12 @@ internal class Documents(private val state: ParseState, private val trivia: Triv
             isDirectiveAllowed = streamStep(line, isDirectiveAllowed)
             line = streamPrefix()
         }
-        trivia.consumeTo(state.text.length)
+        trivia.consumeTo(state.text.length, isStreamPrefix = true)
         builder.finishNode()
     }
 
     private fun streamStep(line: ContentLine, isDirectiveAllowed: Boolean): Boolean {
-        trivia.consumeTo(line.contentStart)
+        trivia.consumeTo(line.contentStart, isStreamPrefix = true)
         if (!isEndMarkerAt(state.position)) return document(isDirectiveAllowed)
         state.emit(YamlSyntaxKind.DOCUMENT_END, Cursor.MARKER_LENGTH)
         trivia.finishLine()

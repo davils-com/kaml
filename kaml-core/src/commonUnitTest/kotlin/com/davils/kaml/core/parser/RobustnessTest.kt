@@ -44,7 +44,7 @@ private val documents: Arb<String> =
     Arb.list(Arb.element(pieces), 0..MOST_PIECES).map { chosen -> chosen.joinToString("") }
 
 private val unusual: Map<String, YamlDiagnosticCode?> = mapOf(
-    "a: 1\n\uFEFFb: 2" to null,
+    "a: 1\n\uFEFFb: 2" to YamlDiagnosticCode.UnexpectedContent,
     "{a:\n--- b}" to YamlDiagnosticCode.UnterminatedFlowCollection,
     "[!t \"x\"]" to null,
     "[&a *b]" to YamlDiagnosticCode.AliasWithProperties,
