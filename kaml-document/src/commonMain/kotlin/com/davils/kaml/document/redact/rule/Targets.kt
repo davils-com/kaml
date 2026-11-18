@@ -1,0 +1,87 @@
+/*
+ * Copyright 2026 Davils
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.davils.kaml.document.redact.rule
+
+import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.internal.Members
+import com.davils.kaml.document.internal.NodeKey
+import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kaml.document.pointer.PointerTokens
+
+internal class Targets(private val rules: RedactionRules, private val budget: WorkBudget) {
+    fun of(root: YamlNode): Set<NodeKey> {
+        val targets = HashSet<NodeKey>()
+        rules.paths.forEach { path ->
+            path.query(root).forEach { match -> allAt(root, match.location).forEach { targets.add(NodeKey(it)) } }
+        }
+        if (rules.hasKeys) keyed(root, targets)
+        return targets
+    }
+
+    fun subtree(node: YamlNode, seen: MutableSet<NodeKey> = HashSet(), visit: (YamlNode) -> Unit) {
+        val pending = ArrayDeque<YamlNode>()
+        pending.addLast(node)
+        while (pending.isNotEmpty()) {
+            val current = pending.removeLast()
+            if (seen.add(NodeKey(current))) {
+                budget.charge()
+                visit(current)
+                childrenOf(current).forEach(pending::addLast)
+            }
+        }
+    }
+
+    private fun keyed(root: YamlNode, targets: MutableSet<NodeKey>) {
+        subtree(root) { node ->
+            val entries = (node as? YamlNode.Mapping)?.entries.orEmpty()
+            entries.forEach { entry ->
+                if (rules.isSecretKey(Members.tokenOf(entry.key))) targets.add(NodeKey(entry.value))
+            }
+        }
+    }
+
+    private fun allAt(root: YamlNode, pointer: JsonPointer): List<YamlNode> {
+        var current = listOf(root)
+        pointer.tokens.forEach { token ->
+            current = current.flatMap { node -> childrenNamed(node, token) }
+            budget.charge(current.size.toLong() + 1L)
+        }
+        return current
+    }
+
+    private fun childrenNamed(node: YamlNode, token: String): List<YamlNode> = when (node) {
+        is YamlNode.Scalar -> {
+            emptyList()
+        }
+
+        is YamlNode.Sequence -> {
+            listOfNotNull(PointerTokens.indexOf(token)?.let(node.items::getOrNull))
+        }
+
+        is YamlNode.Mapping -> {
+            budget.charge(node.entries.size.toLong())
+            node.entries.filter { entry -> Members.tokenOf(entry.key) == token }.map { entry -> entry.value }
+        }
+    }
+
+    private fun childrenOf(node: YamlNode): List<YamlNode> = when (node) {
+        is YamlNode.Scalar -> emptyList()
+        is YamlNode.Sequence -> node.items
+        is YamlNode.Mapping -> node.entries.flatMap { entry -> listOf(entry.key, entry.value) }
+    }
+}

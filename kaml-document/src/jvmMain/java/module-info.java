@@ -23,4 +23,5 @@ module com.davils.kaml.document {
     exports com.davils.kaml.document.patch;
     exports com.davils.kaml.document.path;
     exports com.davils.kaml.document.pointer;
+    exports com.davils.kaml.document.redact;
 }

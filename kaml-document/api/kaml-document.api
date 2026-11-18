@@ -328,3 +328,59 @@ public final class com/davils/kaml/document/pointer/JsonPointerResolutionKt {
 	public static final fun toJsonPointerOrNull (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
 }
 
+public final class com/davils/kaml/document/redact/YamlRedaction : com/davils/kore/core/validation/Validatable {
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getPaths ()Ljava/util/List;
+	public final fun getReplacement ()Ljava/lang/String;
+	public final fun isTrailingCommentRedacted ()Z
+	public final fun redact (Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/core/node/YamlNode;
+	public final fun redact (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;)Lcom/davils/kaml/document/redact/YamlRedactionResult;
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/document/redact/YamlRedactionBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun comment (Lkotlin/text/Regex;)V
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getReplacement ()Ljava/lang/String;
+	public final fun isTrailingCommentRedacted ()Z
+	public final fun key (Lkotlin/jvm/functions/Function1;)V
+	public final fun path (Ljava/lang/String;)V
+	public final fun setLimits (Lcom/davils/kaml/core/limit/YamlLimits;)V
+	public final fun setReplacement (Ljava/lang/String;)V
+	public final fun setTrailingCommentRedacted (Z)V
+	public final fun value (Lkotlin/text/Regex;)V
+}
+
+public final class com/davils/kaml/document/redact/YamlRedactionDslKt {
+	public static final fun yamlRedaction (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/document/redact/YamlRedaction;
+}
+
+public final class com/davils/kaml/document/redact/YamlRedactionRefusal : java/lang/Enum {
+	public static final field InvalidDocument Lcom/davils/kaml/document/redact/YamlRedactionRefusal;
+	public static final field LimitExceeded Lcom/davils/kaml/document/redact/YamlRedactionRefusal;
+	public static final field Undecidable Lcom/davils/kaml/document/redact/YamlRedactionRefusal;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/document/redact/YamlRedactionRefusal;
+	public static fun values ()[Lcom/davils/kaml/document/redact/YamlRedactionRefusal;
+}
+
+public abstract interface class com/davils/kaml/document/redact/YamlRedactionResult {
+}
+
+public final class com/davils/kaml/document/redact/YamlRedactionResult$Redacted : com/davils/kaml/document/redact/YamlRedactionResult {
+	public fun <init> (Ljava/util/List;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;)V
+	public final fun getEdits ()Ljava/util/List;
+	public final fun getTree ()Lcom/davils/kaml/core/syntax/YamlSyntaxTree;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/redact/YamlRedactionResult$Refused : com/davils/kaml/document/redact/YamlRedactionResult {
+	public fun <init> (Lcom/davils/kaml/document/redact/YamlRedactionRefusal;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Lcom/davils/kaml/document/redact/YamlRedactionRefusal;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
