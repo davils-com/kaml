@@ -16,6 +16,7 @@
 
 package com.davils.kaml.core.node
 
+import com.davils.kaml.core.node.internal.ScalarValue
 import kotlin.reflect.KClass
 
 internal class NodeOrder private constructor() {

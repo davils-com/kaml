@@ -20,6 +20,7 @@ import com.davils.kaml.core.YamlViolationCodes
 import com.davils.kore.core.Limits
 import com.davils.kore.core.validation.Validatable
 import com.davils.kore.core.validation.ValidationScope
+import com.davils.kore.core.validation.validateOrThrow
 import kotlin.reflect.KProperty0
 
 /**
@@ -35,7 +36,8 @@ import kotlin.reflect.KProperty0
  * configuration exceeds. [Untrusted] is the default and fits documents from unknown sources; [Relaxed] raises every
  * limit for trusted, large documents and is still finite. Other limits are built with [yamlLimits] or the `limits`
  * block of [com.davils.kaml.core.yaml], which validate them and throw a
- * [com.davils.kore.core.validation.report.ValidationException] for a value below 1 or above its ceiling.
+ * [com.davils.kore.core.validation.report.ValidationException] for a value below 1 or above its ceiling. The limits
+ * validate themselves when they are created, however they are created, so no limits beyond a ceiling exist.
  *
  * The limits are an immutable value and safe to share between threads; two limits are equal when every limit is
  * equal.
@@ -246,6 +248,10 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
      * @since 1.0.0
      */
     public val maximumPatternInputLength: Int = builder.maximumPatternInputLength
+
+    init {
+        validateOrThrow(SUBJECT)
+    }
 
     private val bounds: List<Bound>
         get() = listOf(
@@ -505,6 +511,7 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
          */
         public const val HARD_PATTERN_INPUT_LENGTH: Int = 16 * 1024 * 1024
 
+        private const val SUBJECT: String = "yaml limits"
         private const val RELAXED_NODES: Long = 50_000_000L
         private const val RELAXED_ALIAS_EXPANSION: Long = 10_000_000L
         private const val RELAXED_ANCHORS: Int = 1_000_000

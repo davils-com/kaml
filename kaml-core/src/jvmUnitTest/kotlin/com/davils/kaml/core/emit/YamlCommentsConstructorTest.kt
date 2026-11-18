@@ -17,10 +17,10 @@
 package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.Yaml
-import com.davils.kaml.core.node.NodeIdentity
 import com.davils.kaml.core.node.YamlDocument
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.internal.NodeIdentity
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import io.kotest.assertions.throwables.shouldThrow

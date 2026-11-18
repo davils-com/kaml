@@ -17,8 +17,8 @@
 package com.davils.kaml.core.syntax.edit
 
 import com.davils.kaml.core.emit.CommentLines
-import com.davils.kaml.core.node.NodeIdentity
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.internal.NodeIdentity
 
 internal object EditInput {
     private const val HEX_RADIX: Int = 16

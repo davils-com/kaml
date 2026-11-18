@@ -21,12 +21,17 @@ import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.schema.YamlSchema
 import com.davils.kore.core.validation.Validatable
 import com.davils.kore.core.validation.ValidationScope
+import com.davils.kore.core.validation.validateOrThrow
 import com.davils.kore.core.validation.validate as report
+
+private const val SUBJECT: String = "yaml"
 
 /**
  * The validated settings of a [Yaml], built with [yaml].
  *
- * A configuration is immutable and safe to share between threads.
+ * A configuration validates its schema, its limits and the options of its emitter when it is created, however it is
+ * created, and throws a [com.davils.kore.core.validation.report.ValidationException] if they have an error, so no
+ * [Yaml] runs with settings beyond their bounds. A configuration is immutable and safe to share between threads.
  *
  * @since 1.0.0
  */
@@ -72,6 +77,10 @@ public class YamlConfiguration internal constructor(builder: YamlBuilder) : Vali
      * @since 1.0.0
      */
     public val emitter: YamlEmitOptions = builder.emitter
+
+    init {
+        validateOrThrow(SUBJECT)
+    }
 
     /**
      * Checks the schema, the limits and the options of the emitter.

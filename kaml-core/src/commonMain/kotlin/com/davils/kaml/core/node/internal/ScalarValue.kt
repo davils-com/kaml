@@ -14,20 +14,40 @@
  * limitations under the License.
  */
 
-package com.davils.kaml.core.node
+package com.davils.kaml.core.node.internal
+
+import com.davils.kaml.core.model.YamlTag
 
 internal sealed interface ScalarValue {
-    data class Text(val text: String) : ScalarValue
+    val owner: YamlTag?
 
-    data class Integer(val decimal: String) : ScalarValue
+    fun isCanonicalOf(tag: YamlTag, text: String): Boolean {
+        val isOwnTag = owner == null || owner == tag
+        val isOwnText = tag != YamlTag.STRING || this == Text(text)
+        return isOwnTag && isOwnText
+    }
+
+    data class Text(val text: String) : ScalarValue {
+        override val owner: YamlTag? get() = null
+    }
+
+    data class Integer(val decimal: String) : ScalarValue {
+        override val owner: YamlTag get() = YamlTag.INTEGER
+    }
 
     data class Real(val value: Double) : ScalarValue {
+        override val owner: YamlTag get() = YamlTag.FLOAT
+
         override fun equals(other: Any?): Boolean = other is Real && value.compareTo(other.value) == 0
 
         override fun hashCode(): Int = value.hashCode()
     }
 
-    data class Truth(val isTrue: Boolean) : ScalarValue
+    data class Truth(val isTrue: Boolean) : ScalarValue {
+        override val owner: YamlTag get() = YamlTag.BOOLEAN
+    }
 
-    data object Null : ScalarValue
+    data object Null : ScalarValue {
+        override val owner: YamlTag get() = YamlTag.NULL
+    }
 }

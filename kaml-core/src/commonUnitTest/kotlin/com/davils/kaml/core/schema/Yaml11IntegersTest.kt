@@ -22,7 +22,7 @@ import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.fixture.problems
 import com.davils.kaml.core.fixture.text
 import com.davils.kaml.core.model.YamlTag
-import com.davils.kaml.core.node.ScalarValue
+import com.davils.kaml.core.node.internal.ScalarValue
 import com.davils.kaml.core.yaml
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain

@@ -16,6 +16,8 @@
 package com.davils.kaml.core.node
 
 import com.davils.kaml.core.limit.YamlLimits
+import com.davils.kaml.core.node.internal.NodeFactory
+import com.davils.kaml.core.node.internal.NodeIdentity
 
 internal class Detacher(private val limits: YamlLimits) {
     private val copies = HashMap<NodeIdentity, YamlNode>()

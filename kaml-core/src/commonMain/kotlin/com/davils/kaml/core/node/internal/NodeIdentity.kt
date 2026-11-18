@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.davils.kaml.core.node
+package com.davils.kaml.core.node.internal
+
+import com.davils.kaml.core.node.YamlNode
 
 internal class NodeIdentity(node: YamlNode) {
     val node: YamlNode = node

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.davils.kaml.core.node
+package com.davils.kaml.core.node.internal
 
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.YamlNode
 import com.davils.kore.core.text.TextRange
 
 internal object NodeFactory {

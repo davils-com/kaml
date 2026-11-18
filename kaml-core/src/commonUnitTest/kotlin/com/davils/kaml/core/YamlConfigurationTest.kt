@@ -21,9 +21,12 @@ import com.davils.kaml.core.emit.YamlEmitOptions
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.limit.yamlLimits
 import com.davils.kaml.core.model.YamlAnchor
+import com.davils.kaml.core.model.YamlNodeKind
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.model.YamlVersion
+import com.davils.kaml.core.schema.ScalarResolution
 import com.davils.kaml.core.schema.YamlSchema
+import com.davils.kaml.core.schema.YamlTagDefinition
 import com.davils.kaml.core.source.YamlSource
 import com.davils.kaml.core.syntax.YamlSyntaxKind
 import com.davils.kore.core.validation.report.ValidationException
@@ -108,6 +111,26 @@ class YamlConfigurationTest : FunSpec({
 
         test("describes the emitter") {
             YamlEmitOptions.Default.toString() shouldContain "indent=2"
+        }
+    }
+
+    context("a configuration created through its constructor") {
+        test("is refused with a schema that redefines a core tag") {
+            val forged = YamlTagDefinition(
+                tag = YamlTag.INTEGER,
+                kind = YamlNodeKind.Scalar,
+                implicit = null,
+                accepts = { true },
+            )
+            val schema = YamlSchema(
+                name = "forged",
+                resolution = ScalarResolution.CORE,
+                definitions = listOf(forged),
+                hasMergeKeys = false,
+            )
+            val builder = YamlBuilder()
+            builder.schema = schema
+            shouldThrow<ValidationException> { YamlConfiguration(builder) }
         }
     }
 

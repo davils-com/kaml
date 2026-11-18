@@ -16,6 +16,7 @@
 package com.davils.kaml.core.node
 
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.internal.NodeIdentity
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

@@ -21,9 +21,9 @@ import com.davils.kaml.core.event.YamlEvent
 import com.davils.kaml.core.model.YamlNodeKind
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
-import com.davils.kaml.core.node.NodeFactory
-import com.davils.kaml.core.node.ScalarValue
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.internal.NodeFactory
+import com.davils.kaml.core.node.internal.ScalarValue
 import com.davils.kaml.core.schema.YamlSchema
 import com.davils.kore.core.annotation.DavilsInternal
 import com.davils.kore.core.text.SafeText

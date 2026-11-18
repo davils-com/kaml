@@ -15,6 +15,8 @@
  */
 package com.davils.kaml.core.node
 
+import com.davils.kaml.core.node.internal.NodeIdentity
+
 private const val HASH_FACTOR: Int = 31
 
 internal class NodePair(first: YamlNode, second: YamlNode) {

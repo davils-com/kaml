@@ -18,7 +18,7 @@ package com.davils.kaml.core.schema
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.IntegerText
-import com.davils.kaml.core.node.ScalarValue
+import com.davils.kaml.core.node.internal.ScalarValue
 
 private const val OCTAL_RADIX: Int = 8
 private const val HEX_RADIX: Int = 16

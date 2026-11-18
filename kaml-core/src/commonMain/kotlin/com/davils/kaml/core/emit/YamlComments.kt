@@ -16,8 +16,8 @@
 
 package com.davils.kaml.core.emit
 
-import com.davils.kaml.core.node.NodeIdentity
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.internal.NodeIdentity
 
 /**
  * The comments that `Yaml.emit(document, comments)` writes into a document, line by line, keyed by node.

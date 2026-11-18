@@ -20,7 +20,7 @@ package com.davils.kaml.core.schema
 import com.davils.kaml.core.YamlViolationCodes
 import com.davils.kaml.core.model.YamlNodeKind
 import com.davils.kaml.core.model.YamlTag
-import com.davils.kaml.core.node.ScalarValue
+import com.davils.kaml.core.node.internal.ScalarValue
 import com.davils.kore.core.annotation.DavilsInternal
 import com.davils.kore.core.text.SafeText
 import com.davils.kore.core.validation.Validatable

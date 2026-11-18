@@ -20,10 +20,10 @@ import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.model.YamlVersion
-import com.davils.kaml.core.node.NodeIdentity
 import com.davils.kaml.core.node.YamlDocument
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.internal.NodeIdentity
 
 internal class Representer(
     private val configuration: YamlConfiguration,

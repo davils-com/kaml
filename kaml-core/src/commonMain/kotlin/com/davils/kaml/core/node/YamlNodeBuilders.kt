@@ -19,6 +19,8 @@ import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.internal.NodeFactory
+import com.davils.kaml.core.node.internal.ScalarValue
 
 private const val TRUE: String = "true"
 private const val FALSE: String = "false"

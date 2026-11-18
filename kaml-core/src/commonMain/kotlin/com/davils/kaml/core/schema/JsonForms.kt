@@ -18,7 +18,7 @@ package com.davils.kaml.core.schema
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.IntegerText
-import com.davils.kaml.core.node.ScalarValue
+import com.davils.kaml.core.node.internal.ScalarValue
 
 internal object JsonForms : ScalarForms {
     private val booleans: Map<String, Boolean> = mapOf("true" to true, "false" to false)

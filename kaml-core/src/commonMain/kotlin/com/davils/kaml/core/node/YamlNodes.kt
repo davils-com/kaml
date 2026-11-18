@@ -16,6 +16,7 @@
 package com.davils.kaml.core.node
 
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.internal.ScalarValue
 
 /**
  * Returns the value of the first entry of this mapping whose key is a scalar with the text [key], whatever the tag

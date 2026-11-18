@@ -17,8 +17,8 @@
 package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.node.FloatText
-import com.davils.kaml.core.node.ScalarValue
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.internal.ScalarValue
 
 internal object CanonicalText {
     private const val EXPONENT: String = "E"

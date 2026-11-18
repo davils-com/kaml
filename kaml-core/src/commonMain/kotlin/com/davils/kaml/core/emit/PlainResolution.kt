@@ -20,7 +20,7 @@ import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.model.YamlVersion
-import com.davils.kaml.core.node.ScalarValue
+import com.davils.kaml.core.node.internal.ScalarValue
 import com.davils.kaml.core.schema.YamlSchema
 
 internal class PlainResolution(private val compatibility: YamlVersion, private val schema: YamlSchema) {

@@ -24,10 +24,10 @@ import com.davils.kaml.core.fixture.text
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.model.YamlVersion
-import com.davils.kaml.core.node.ScalarValue
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.int
+import com.davils.kaml.core.node.internal.ScalarValue
 import com.davils.kaml.core.node.long
 import com.davils.kaml.core.node.string
 import com.davils.kaml.core.node.yamlMapping

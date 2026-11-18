@@ -17,7 +17,7 @@
 package com.davils.kaml.core.schema
 
 import com.davils.kaml.core.model.YamlTag
-import com.davils.kaml.core.node.ScalarValue
+import com.davils.kaml.core.node.internal.ScalarValue
 
 internal interface ScalarForms {
     fun resolve(text: String): YamlTag?

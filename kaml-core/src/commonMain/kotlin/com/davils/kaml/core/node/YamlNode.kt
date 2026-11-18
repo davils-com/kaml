@@ -23,6 +23,7 @@ import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlNodeKind
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.internal.ScalarValue
 import com.davils.kore.core.annotation.DavilsInternal
 import com.davils.kore.core.text.SafeText
 import com.davils.kore.core.text.TextRange
@@ -119,6 +120,10 @@ public sealed interface YamlNode {
         override val range: TextRange?,
         internal val canonical: ScalarValue,
     ) : YamlNode {
+        init {
+            require(canonical.isCanonicalOf(tag, value)) { "A scalar needs a value its tag can hold" }
+        }
+
         /**
          * [YamlNodeKind.Scalar].
          *
