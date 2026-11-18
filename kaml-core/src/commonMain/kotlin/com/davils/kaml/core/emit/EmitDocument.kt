@@ -25,5 +25,6 @@ internal data class EmitDocument(
     val tagDirectives: List<YamlTagDirective>,
     val isExplicitStart: Boolean,
     val isExplicitEnd: Boolean,
+    val resolution: PlainResolution,
     val comments: List<String> = emptyList(),
 )

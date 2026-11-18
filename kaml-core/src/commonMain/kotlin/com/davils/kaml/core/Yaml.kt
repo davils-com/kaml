@@ -88,6 +88,14 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
     /**
      * Emits every document of [stream] as one YAML text.
      *
+     * A scalar is written plain only where every reader the configuration names reads it back with its tag: the core
+     * schema, the YAML 1.1 schema when `YamlEmitOptions.compatibility` is 1.1 or the document declares `%YAML 1.1`,
+     * and the schema [parse] reads the document with, which is [YamlConfiguration.schema], or
+     * [com.davils.kaml.core.schema.YamlSchema.Yaml11] for a document that declares `%YAML 1.1` when
+     * [YamlConfiguration.isSchemaSelectedByVersion] is set. Every other scalar is quoted or tagged, so the text this
+     * configuration emits it also reads back as the same graph; the implicit matchers of a custom schema are called for
+     * the scalars the emitter considers writing plain.
+     *
      * Anchors are written only for shared nodes, such as one that came from an alias: such a node is written once
      * with an anchor and then as aliases, and an anchor name outside `[A-Za-z0-9._-]` is replaced by a generated one.
      * A global tag with characters a URI cannot hold is written percent-encoded and reads back in that form.
@@ -177,7 +185,7 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
      * @since 1.0.0
      */
     public fun emitEvents(events: List<YamlEvent>): String =
-        YamlWriter(configuration.emitter, configuration.limits).write(EventTree(configuration.limits).build(events))
+        YamlWriter(configuration.emitter, configuration.limits).write(EventTree(configuration).build(events))
 
     /**
      * Returns the configuration, in its bounded form.

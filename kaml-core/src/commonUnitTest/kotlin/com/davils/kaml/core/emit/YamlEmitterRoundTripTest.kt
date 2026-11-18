@@ -17,16 +17,20 @@
 package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.Yaml
+import com.davils.kaml.core.YamlParseResult
 import com.davils.kaml.core.fixture.root
+import com.davils.kaml.core.fixture.text
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlVersion
+import com.davils.kaml.core.node.YamlDocument
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.core.schema.YamlSchema
+import com.davils.kaml.core.schema.yamlSchema
 import com.davils.kaml.core.yaml
 import com.davils.kore.testing.HostileFragments
 import com.davils.kore.testing.unsafeCodePointsIn
@@ -35,6 +39,7 @@ import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
@@ -74,7 +79,69 @@ private val setups: List<EmitSetup> = YamlScalarStyle.entries.flatMap { style ->
 
 private val legacy: Yaml = yaml { schema = YamlSchema.Yaml11 }
 
+private val words: YamlSchema = yamlSchema {
+    scalar("!word") { implicit { text -> text.isNotEmpty() && text.all { it in 'a'..'z' } } }
+}
+
+private val schemas: List<YamlSchema> =
+    listOf(YamlSchema.Failsafe, YamlSchema.Json, YamlSchema.Core, YamlSchema.Yaml11, words)
+
+private val readers: List<Yaml> = schemas.flatMap { schema ->
+    listOf(YamlVersion.V1_1, YamlVersion.V1_2).map { version ->
+        yaml {
+            this.schema = schema
+            emitter { compatibility = version }
+        }
+    }
+}
+
+private val legacyTexts: List<String> = listOf(
+    "yes", "No", "on", "OFF", "y", "n", "Y", "0777", "1_000", "1:20", "0b11", "<<", "=", "2001-12-14",
+    "2001-12-14t21:59:43.10-05:00", ".Inf", "0x_1F", "+12", "~", "Null", "190:20:30.15", "1.", ".5", "1e3",
+    "12e03", "-0", "0o17", "+.inf", "1__0", "0.", "-1:30", "0b", "0x", "1,000", "NULL", "TRUE", "+0.5e+3",
+)
+
 class YamlEmitterRoundTripTest : FunSpec({
+    context("the schema that reads the text") {
+        test("reads back the same graph for every fragment, whatever schema the configuration has") {
+            readers.forEach { reader ->
+                fragments.filterNot(UnsafeCharacters::hasLoneSurrogate).forEach { fragment ->
+                    readBack(reader, YamlDocument(graphOf(key = fragment, value = fragment, YamlScalarStyle.Plain)))
+                }
+            }
+        }
+
+        test("reads back the same graph in a document that declares YAML 1.1") {
+            fragments.filterNot(UnsafeCharacters::hasLoneSurrogate).forEach { fragment ->
+                val node = graphOf(key = fragment, value = "a${fragment}b", YamlScalarStyle.Plain)
+                readBack(Yaml.Default, YamlDocument(node, version = YamlVersion.V1_1))
+            }
+        }
+
+        test("reads back every type of YAML 1.1 as the string it is") {
+            legacyTexts.forEach { text ->
+                val node = yamlMapping {
+                    text to text
+                    "list" to yamlSequence(listOf(yamlScalar(text)), style = YamlCollectionStyle.Flow)
+                }
+                readBack(legacy, YamlDocument(node))
+                readBack(yaml { emitter { compatibility = YamlVersion.V1_1 } }, YamlDocument(node))
+            }
+        }
+
+        test("quotes a merge key and the booleans of YAML 1.1 for a reader with the YAML 1.1 schema") {
+            val node = yamlMapping {
+                "<<" to yamlMapping { "admin" to "true" }
+                "name" to "x"
+                "flag" to "yes"
+            }
+            val text = legacy.emit(node)
+
+            text shouldBe text(""""<<":""", """  admin: "true"""", "name: x", """flag: "yes"""", "")
+            legacy.root(text) shouldBe node
+        }
+    }
+
     context("hostile scalars and keys") {
         test("read back as the same graph for every fragment in every setup") {
             setups.forEach { setup ->
@@ -110,6 +177,15 @@ private fun roundTrip(setup: EmitSetup, key: String, value: String) {
         Yaml.Default.root(root) shouldBe yamlScalar(value)
         if (setup.compatibility == YamlVersion.V1_1) legacy.root(written) shouldBe node
         (written + root).lines().forEach { line -> unsafeCodePointsIn(line, allowTabs = true).shouldBeEmpty() }
+    }
+}
+
+private fun readBack(reader: Yaml, document: YamlDocument) {
+    val written = reader.emit(document)
+    withClue("${reader.configuration.schema} wrote:\n$written") {
+        val parsed = reader.parse(written).shouldBeInstanceOf<YamlParseResult.Parsed>()
+        val documents = parsed.stream.documents
+        documents.single().root shouldBe document.root
     }
 }
 

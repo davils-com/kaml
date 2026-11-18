@@ -16,6 +16,7 @@
 
 package com.davils.kaml.core.syntax.ast
 
+import com.davils.kaml.core.model.YamlVersion
 import com.davils.kaml.core.syntax.YamlSyntaxKind
 import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
@@ -64,7 +65,21 @@ public class YamlDocumentSyntax internal constructor(
      */
     public val root: YamlValueSyntax by lazy { SyntaxValues.wrapped(node, ROOT_INDENT, index) }
 
+    internal val version: YamlVersion? get() = directives.mapNotNull(::versionOf).lastOrNull()
+
+    private fun versionOf(directive: YamlSyntaxNode): YamlVersion? {
+        val isYaml = directive.token(YamlSyntaxKind.DIRECTIVE_NAME)?.text == YAML_DIRECTIVE
+        val parameter = directive.tokens.singleOrNull { token -> token.kind == YamlSyntaxKind.DIRECTIVE_PARAMETER }
+        val parts = parameter?.run { text.split('.') }.orEmpty()
+        val numbers = parts.mapNotNull { part -> part.takeIf(::isNumber)?.toIntOrNull() }
+        if (!isYaml || parts.size != 2 || numbers.size != 2) return null
+        return YamlVersion(major = numbers[0], minor = numbers[1])
+    }
+
+    private fun isNumber(text: String): Boolean = text.isNotEmpty() && text.all { it in '0'..'9' }
+
     private companion object {
         const val ROOT_INDENT: Int = -1
+        const val YAML_DIRECTIVE: String = "%YAML"
     }
 }

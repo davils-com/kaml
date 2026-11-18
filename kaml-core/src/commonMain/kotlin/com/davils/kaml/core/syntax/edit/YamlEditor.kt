@@ -30,7 +30,9 @@ import com.davils.kaml.core.syntax.edit.YamlPath.Segment
  * an editor is immutable and safe to share between threads; to make several edits, create an editor for each result.
  *
  * Values are written by the emitter of the configuration of the tree, in the indentation and the line breaks of the
- * document, and keys as single-line implicit keys. Neither can inject YAML: a key or a scalar that could be read as
+ * document, and keys as single-line implicit keys. They are written for the YAML version the edited document declares
+ * and for the schema the configuration reads it with, so in a document that declares `%YAML 1.1` a string such as
+ * `yes` or a key `<<` is quoted and keeps its meaning. Neither can inject YAML: a key or a scalar that could be read as
  * anything else, such as an indicator, a comment, a document marker or a line break, is quoted and escaped, so the
  * edited document parses back to exactly the string that was set. A comment is split into lines, each written behind
  * a `#`, and refused if it contains a control, separator, bidirectional or invisible character. Text that YAML cannot
@@ -47,7 +49,7 @@ import com.davils.kaml.core.syntax.edit.YamlPath.Segment
  * @since 1.0.0
  */
 public class YamlEditor(private val tree: YamlSyntaxTree, private val document: Int = 0) {
-    private val writer = EditWriter(tree)
+    private val writer = EditWriter(tree, document)
     private val setting = ValueSetting(writer)
     private val removing = ValueRemoving(tree, writer.layout)
     private val annotating = EntryAnnotating(tree, writer)

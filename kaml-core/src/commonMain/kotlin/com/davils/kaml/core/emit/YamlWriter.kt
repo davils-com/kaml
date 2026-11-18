@@ -29,8 +29,7 @@ internal class YamlWriter(private val options: YamlEmitOptions, private val limi
             val isMarkerNeeded =
                 options.isDocumentStartExplicit || document.isExplicitStart || hasDirectives(document) || index > 0
             if (isMarkerNeeded) out.append(DOCUMENT_START)
-            val compatibility = PlainResolution.compatibilityOf(options, document.version)
-            val writer = BlockWriter(options = options, out = out, tags = tags, compatibility = compatibility)
+            val writer = BlockWriter(options = options, out = out, tags = tags, resolution = document.resolution)
             body(document = document, writer = writer, isAfterMarker = isMarkerNeeded, out = out)
             val next = documents.getOrNull(index + 1)
             val isNextDirected = next != null && hasDirectives(next)

@@ -17,9 +17,8 @@
 package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.model.YamlScalarStyle
-import com.davils.kaml.core.model.YamlVersion
 
-internal class ScalarStyler(private val options: YamlEmitOptions, private val compatibility: YamlVersion) {
+internal class ScalarStyler(private val options: YamlEmitOptions, private val resolution: PlainResolution) {
     fun isBlock(scalar: EmitNode.Scalar, context: ScalarContext): Boolean {
         val requested = requestedStyle(scalar)
         val isBlockRequested = requested == YamlScalarStyle.Literal || requested == YamlScalarStyle.Folded
@@ -74,7 +73,7 @@ internal class ScalarStyler(private val options: YamlEmitOptions, private val co
 
     private fun isPlainAllowed(scalar: EmitNode.Scalar): Boolean {
         val tag = scalar.plainTag ?: return true
-        return PlainResolution.resolves(scalar.value, tag, compatibility)
+        return resolution.resolves(scalar.value, tag)
     }
 
     private fun requestedStyle(scalar: EmitNode.Scalar): YamlScalarStyle =

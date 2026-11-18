@@ -17,12 +17,14 @@
 package com.davils.kaml.core.syntax.edit
 
 import com.davils.kaml.core.Yaml
+import com.davils.kaml.core.emit.emitValue
 import com.davils.kaml.core.model.YamlCollectionStyle
+import com.davils.kaml.core.model.YamlVersion
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
 
-internal class ValueText(private val yaml: Yaml, private val lineBreak: String) {
+internal class ValueText(private val yaml: Yaml, private val lineBreak: String, private val version: YamlVersion?) {
     private val options = yaml.configuration.emitter
     private val indent = options.indent
 
@@ -63,7 +65,7 @@ internal class ValueText(private val yaml: Yaml, private val lineBreak: String) 
     }
 
     private fun lines(value: YamlNode): List<String> {
-        val emitted = yaml.emit(value)
+        val emitted = yaml.emitValue(value, version)
         val document = emitted.takeIf { !options.isDocumentStartExplicit } ?: withoutMarker(emitted)
         val body = document.removeSuffix("\n").removeSuffix("\r")
         return body.lines()

@@ -19,13 +19,14 @@ package com.davils.kaml.core.emit
 import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.model.YamlVersion
 import com.davils.kaml.core.node.NodeIdentity
 import com.davils.kaml.core.node.YamlDocument
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 
 internal class Representer(
-    configuration: YamlConfiguration,
+    private val configuration: YamlConfiguration,
     private val comments: YamlComments = YamlComments.None,
 ) {
     private val options = configuration.emitter
@@ -33,13 +34,13 @@ internal class Representer(
     private val references = HashMap<NodeIdentity, Int>()
     private val names = HashMap<NodeIdentity, String>()
     private val anchors = AnchorNames()
-    private var compatibility = options.compatibility
+    private var resolution = PlainResolution.of(configuration, version = null)
 
-    fun document(document: YamlDocument): EmitDocument {
+    fun document(document: YamlDocument, version: YamlVersion? = document.version): EmitDocument {
         references.clear()
         names.clear()
         anchors.clear()
-        compatibility = PlainResolution.compatibilityOf(options, document.version)
+        resolution = PlainResolution.of(configuration, version)
         count(document.root)
         return EmitDocument(
             root = node(document.root, depth = 0),
@@ -47,6 +48,7 @@ internal class Representer(
             tagDirectives = document.tagDirectives,
             isExplicitStart = document.isExplicitStart,
             isExplicitEnd = document.isExplicitEnd,
+            resolution = resolution,
             comments = comments.of(document.root),
         )
     }
@@ -135,7 +137,7 @@ internal class Representer(
     }
 
     private fun keeps(text: String, node: YamlNode.Scalar): Boolean =
-        PlainResolution.keeps(text = text, tag = node.tag, value = node.canonical, compatibility = compatibility)
+        resolution.keeps(text = text, tag = node.tag, value = node.canonical)
 
     companion object {
         private val implicitTags: Set<YamlTag> = setOf(

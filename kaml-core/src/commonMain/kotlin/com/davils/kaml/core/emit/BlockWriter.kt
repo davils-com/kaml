@@ -17,15 +17,14 @@
 package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.model.YamlCollectionStyle
-import com.davils.kaml.core.model.YamlVersion
 
 internal class BlockWriter(
     private val options: YamlEmitOptions,
     private val out: OutputBuffer,
     tags: TagNotation,
-    compatibility: YamlVersion,
+    resolution: PlainResolution,
 ) {
-    private val styler = ScalarStyler(options, compatibility)
+    private val styler = ScalarStyler(options, resolution)
     private val flow = FlowWriter(styler, tags)
     private val lineBreak = options.lineBreak.text
 

@@ -21,6 +21,7 @@ import com.davils.kaml.core.fixture.lines
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
+import com.davils.kaml.core.schema.YamlSchema
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.edit.fixture.composed
 import com.davils.kaml.core.syntax.edit.fixture.edited
@@ -59,6 +60,12 @@ private const val ENTRY_LINE: String = "a: 1\n"
 private const val TWO_LINES: String = "x\ny"
 private const val BLOCK_TWO_LINES: String = "a: |-"
 private const val FLOW_ENTRY: String = "{a: 1}"
+private const val LEGACY: String = "%YAML 1.1"
+private const val YES: String = "yes"
+private const val ADMIN: String = "admin"
+private const val MARKER: String = "---"
+private const val LEGACY_SLOT: String = "slot: {admin: true}"
+private const val LEGACY_ADMIN: String = "admin: false"
 private const val LONG_PATH: Int = 2_000
 private const val LONG_KEY: Int = 40
 private const val SHOWN_PATH: Int = 600
@@ -396,6 +403,42 @@ class YamlEditorTest : FunSpec({
 
             editor.set(root.key("m").key("a"), items).shouldBeInstanceOf<YamlEditResult.Refused>()
             editor.set(root.key("x"), yamlScalar(2)).shouldBeInstanceOf<YamlEditResult.Edited>()
+        }
+
+        test("write for the YAML 1.1 a document declares, so a key or a string keeps its meaning") {
+            val legacyDocument = lines(LEGACY, MARKER, LEGACY_SLOT, LEGACY_ADMIN, "")
+
+            edited(legacyDocument) { rename(root.key("slot"), "<<") } shouldBe
+                lines(LEGACY, MARKER, """"<<": {admin: true}""", LEGACY_ADMIN, "")
+            edited(legacyDocument) { set(root.key(ADMIN), yamlScalar(YES)) } shouldBe
+                lines(LEGACY, MARKER, LEGACY_SLOT, """admin: "yes"""", "")
+            edited(legacyDocument) { set(root.key("slot").key("on"), yamlScalar("y")) } shouldBe
+                lines(LEGACY, MARKER, """slot: {admin: true, "on": "y"}""", LEGACY_ADMIN, "")
+            composed(legacyDocument) { rename(root.key("slot"), "<<") } shouldBe yamlMapping {
+                "<<" to yamlMapping { ADMIN to true }
+                ADMIN to false
+            }
+        }
+
+        test("write for the YAML version of the document they edit in a stream") {
+            val stream = lines("a: 1", "...", LEGACY, MARKER, "b: 2", "")
+            val modern = YamlEditor(YamlSyntaxTree.parse(stream), document = 0)
+            val legacy = YamlEditor(YamlSyntaxTree.parse(stream), document = 1)
+            val modernEdit = modern.set(root.key("a"), yamlScalar(YES))
+            val legacyEdit = legacy.set(root.key("b"), yamlScalar(YES))
+
+            modernEdit.shouldBeInstanceOf<YamlEditResult.Edited>().tree.text shouldBe
+                stream.replace(oldValue = "a: 1", newValue = "a: yes")
+            legacyEdit.shouldBeInstanceOf<YamlEditResult.Edited>().tree.text shouldBe
+                stream.replace(oldValue = "b: 2", newValue = """b: "yes"""")
+        }
+
+        test("write for the schema of the configuration of the tree") {
+            val legacySchema = yaml { schema = YamlSchema.Yaml11 }
+            val tree = YamlSyntaxTree.parse(ENTRY_LINE, legacySchema)
+
+            edited(ENTRY_LINE, tree) { set(root.key("a"), yamlScalar("off")) } shouldBe lines("""a: "off"""", "")
+            edited(ENTRY_LINE, tree) { rename(root.key("a"), "<<") } shouldBe lines(""""<<": 1""", "")
         }
 
         test("refuse items of flow sequences when the emitter does not preserve collection styles") {

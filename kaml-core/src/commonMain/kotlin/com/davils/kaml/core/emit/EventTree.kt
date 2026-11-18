@@ -16,14 +16,15 @@
 
 package com.davils.kaml.core.emit
 
+import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.event.YamlEvent
-import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
 
-internal class EventTree(private val limits: YamlLimits) {
+internal class EventTree(private val configuration: YamlConfiguration) {
+    private val limits = configuration.limits
     private val documents = ArrayList<EmitDocument>()
     private val stack = ArrayDeque<Open>()
     private val defined = HashMap<String, String>()
@@ -97,6 +98,7 @@ internal class EventTree(private val limits: YamlLimits) {
             tagDirectives = open.tagDirectives,
             isExplicitStart = open.isExplicit,
             isExplicitEnd = event.isExplicit,
+            resolution = PlainResolution.of(configuration, open.version),
         )
         start = null
     }
