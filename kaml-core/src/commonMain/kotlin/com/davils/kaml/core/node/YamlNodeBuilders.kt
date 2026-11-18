@@ -99,13 +99,19 @@ public fun yamlScalar(value: Boolean): YamlNode.Scalar {
 /**
  * Returns a scalar with an explicit [tag], such as a local tag `!ipv4`, holding [value] as its text.
  *
- * The scalar is compared by its tag and its text. kaml never constructs an object from a tag; the tag only names the
- * type a reader may choose.
+ * A scalar with one of the tags of the core schema, [YamlTag.STRING], [YamlTag.INTEGER], [YamlTag.FLOAT],
+ * [YamlTag.BOOLEAN] or [YamlTag.NULL], gets the value the core schema reads from [value], so
+ * `yamlTagged("0x10", YamlTag.INTEGER)` equals `yamlScalar(16)`, as it would after it was emitted and read again.
+ * A number longer than [com.davils.kaml.core.limit.YamlLimits.HARD_NUMBER_LENGTH] characters is never converted,
+ * as the composer never converts it, and any other scalar is compared by its tag and its text. kaml never constructs
+ * an object from a tag; the tag only names the type a reader may choose.
  *
  * @param value the text, which may hold any character.
  * @param tag the tag of the scalar.
  * @param style the style the emitter prefers; [YamlScalarStyle.Plain] by default.
  * @return the scalar.
+ * @throws IllegalArgumentException if [tag] is a tag of the core schema and [value] is no value of it there, such as
+ * `yamlTagged("x", YamlTag.INTEGER)`; the message names the tag and never shows [value].
  * @since 1.0.0
  */
 public fun yamlTagged(value: String, tag: YamlTag, style: YamlScalarStyle = YamlScalarStyle.Plain): YamlNode.Scalar =
@@ -113,7 +119,7 @@ public fun yamlTagged(value: String, tag: YamlTag, style: YamlScalarStyle = Yaml
         value = value,
         tag = tag,
         style = style,
-        canonical = ScalarValue.Text(value),
+        canonical = TaggedValues.canonicalOf(value, tag),
     )
 
 /**
