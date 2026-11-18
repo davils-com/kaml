@@ -16,6 +16,7 @@
 
 package com.davils.kaml.serialization
 
+import com.davils.kaml.core.Yaml
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.string
@@ -36,11 +37,13 @@ import com.davils.kore.core.validation.report.ValidationException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.modules.EmptySerializersModule
 
 private const val PORT: Int = 8080
 private const val OTHER_PORT: Int = 53
@@ -261,6 +264,26 @@ class YamlFormatTest : FunSpec({
 
         test("describes itself") {
             format.toString() shouldContain "polymorphism=Property"
+        }
+
+        test("refuse every change once the format is built") {
+            var kept: YamlFormatBuilder? = null
+            yamlFormat { kept = this }
+            val builder = kept.shouldNotBeNull()
+            val changes = listOf<YamlFormatBuilder.() -> Unit>(
+                { yaml = Yaml.Default },
+                { yaml { limits { maximumDepth = 1 } } },
+                { isUnknownKeyIgnored = true },
+                { isDefaultEncoded = false },
+                { hasExplicitNulls = false },
+                { isInputCoerced = true },
+                { namingStrategy = YamlNamingStrategy.SnakeCase },
+                { polymorphism = YamlPolymorphism.Tag },
+                { classDiscriminator = "kind" },
+                { serializersModule = EmptySerializersModule() },
+            )
+
+            changes.forEach { change -> shouldThrow<IllegalStateException> { builder.change() } }
         }
     }
 
