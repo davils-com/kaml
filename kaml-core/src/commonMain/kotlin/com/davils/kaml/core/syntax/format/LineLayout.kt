@@ -27,6 +27,8 @@ internal class LineLayout(private val tree: YamlSyntaxTree, private val options:
     private val text = tree.text
     private val lines = tree.lines
     private val lineBreak = "\r\n".takeIf { it in text } ?: "\n"
+    private val maximumLength = tree.yaml.configuration.limits.maximumOutputLength
+    private var inserted = 0L
     private val shifts = ArrayList<ShiftIndex.Shift>()
     private val gaps = ArrayList<TextEdit>()
     private val blockContent: RangeIndex
@@ -40,14 +42,23 @@ internal class LineLayout(private val tree: YamlSyntaxTree, private val options:
         flowScalars = RangeIndex(rangesOf(tokens) { it in flowScalarKinds })
     }
 
-    fun edits(): List<TextEdit> {
+    fun edits(): List<TextEdit>? {
         val edits = ArrayList<TextEdit>(gaps)
         var blanks = 0
-        for (line in 0 until lines.lineCount) {
+        var line = 0
+        while (line < lines.lineCount && !isTooLong()) {
             blanks = lineEdits(line, blanks, edits)
+            line++
         }
         finalBreak()?.let(edits::add)
-        return edits.sortedBy { it.range.start }
+        return edits.sortedBy { it.range.start }.takeIf { !isTooLong() }
+    }
+
+    private fun isTooLong(): Boolean = inserted > maximumLength
+
+    private fun charged(edit: TextEdit): TextEdit {
+        inserted += edit.replacement.length
+        return edit
     }
 
     private fun rangesOf(tokens: List<YamlSyntaxToken>, isWanted: (YamlSyntaxKind) -> Boolean): List<TextRange> {
@@ -115,7 +126,8 @@ internal class LineLayout(private val tree: YamlSyntaxTree, private val options:
         val spaces = maxOf(a = 1, b = gap + placement.wanted - placement.inherited)
         val shift = placement.inherited + spaces - gap
         shifts.add(ShiftIndex.Shift(node.range, shift))
-        if (spaces != gap) gaps.add(TextEdit(TextRange(start = end, end = node.range.start), " ".repeat(spaces)))
+        val isWritten = spaces != gap && !isTooLong()
+        if (isWritten) gaps.add(charged(TextEdit(TextRange(start = end, end = node.range.start), " ".repeat(spaces))))
         return shift
     }
 
@@ -150,7 +162,7 @@ internal class LineLayout(private val tree: YamlSyntaxTree, private val options:
         val isVerbatim = isVerbatimAt(range.start)
         val isBlank = !isVerbatim && content.isBlank()
         if (isBlank) return blank(line = line, range = range, blanks = blanks, edits = edits)
-        indentation(line, content, isVerbatim)?.let(edits::add)
+        indentation(line, content, isVerbatim)?.let { edit -> edits.add(charged(edit)) }
         val isTrimmed = !isVerbatim && !isInFlowScalar(range.end)
         if (isTrimmed) trailing(range, content)?.let(edits::add)
         return 0
@@ -214,7 +226,8 @@ internal class LineLayout(private val tree: YamlSyntaxTree, private val options:
     private fun finalBreak(): TextEdit? {
         val hasBreak = text.endsWith("\n") || text.endsWith("\r")
         val isMissing = options.hasFinalLineBreak && text.isNotEmpty() && !hasBreak
-        return TextEdit(TextRange.at(text.length), lineBreak).takeIf { isMissing }
+        if (!isMissing) return null
+        return charged(TextEdit(TextRange.at(text.length), lineBreak))
     }
 
     private data class Visit(val node: YamlSyntaxNode, val desired: Int, val inherited: Int)

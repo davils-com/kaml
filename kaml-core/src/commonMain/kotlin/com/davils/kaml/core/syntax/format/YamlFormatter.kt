@@ -20,6 +20,7 @@ import com.davils.kaml.core.YamlParseResult
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
+import com.davils.kore.core.text.TextEdit
 import com.davils.kore.core.text.TextRange
 import com.davils.kore.core.validation.violation.Severity
 
@@ -34,7 +35,9 @@ import com.davils.kore.core.validation.violation.Severity
  *
  * A formatter is immutable and safe to share between threads. Its work grows linearly with the length of the text,
  * which the limits of the configuration of the tree bound; composing applies every limit and budget of that
- * configuration.
+ * configuration. Formatting can make a text longer, such as by widening its indentation: the formatter counts the
+ * text it would insert while it plans its edits and refuses with [YamlFormatRefusal.OutputTooLong] as soon as the
+ * result would pass `YamlLimits.maximumOutputLength`, before it builds the formatted text.
  *
  * @property options how the formatter lays out documents.
  * @since 1.0.0
@@ -47,7 +50,8 @@ public class YamlFormatter(public val options: YamlFormatOptions = YamlFormatOpt
      * @param range the range of the text whose lines to format, or `null` to format the whole text.
      * @return the formatted tree with the edits that produced it, or the reason the formatter refused:
      * [YamlFormatRefusal.SyntaxErrors] if [tree] has errors, [YamlFormatRefusal.MeaningChanged] if the formatted text
-     * would mean something else.
+     * would mean something else, [YamlFormatRefusal.OutputTooLong] if the formatted text would be longer than
+     * `YamlLimits.maximumOutputLength` of the configuration of [tree].
      * @throws IllegalArgumentException if [range] reaches beyond the text of [tree].
      * @since 1.0.0
      */
@@ -59,14 +63,21 @@ public class YamlFormatter(public val options: YamlFormatOptions = YamlFormatOpt
         if (hasErrors) return YamlFormatResult.Refused(YamlFormatRefusal.SyntaxErrors)
         val lines = range?.let { linesOf(tree, it) }
         val layout = LineLayout(tree, options)
-        val edits = layout.edits().filter { edit -> lines == null || touches(edit = edit.range, range = lines) }
+        val edits = layout.edits()?.filter { edit -> lines == null || touches(edit = edit.range, range = lines) }
+        return edits?.let { formatted(tree, it) } ?: YamlFormatResult.Refused(YamlFormatRefusal.OutputTooLong)
+    }
+
+    override fun toString(): String = "YamlFormatter($options)"
+
+    private fun formatted(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlFormatResult {
+        val length = tree.text.length.toLong() + edits.sumOf { edit -> edit.delta.toLong() }
+        val limits = tree.yaml.configuration.limits
+        if (length > limits.maximumOutputLength) return YamlFormatResult.Refused(YamlFormatRefusal.OutputTooLong)
         val formatted = tree.edit(edits)
         val isSame = hasSameMeaning(before = tree, after = formatted)
         val result = YamlFormatResult.Formatted(edits, formatted)
         return result.takeIf { isSame } ?: YamlFormatResult.Refused(YamlFormatRefusal.MeaningChanged)
     }
-
-    override fun toString(): String = "YamlFormatter($options)"
 
     private fun linesOf(tree: YamlSyntaxTree, range: TextRange): TextRange {
         val map = tree.lines

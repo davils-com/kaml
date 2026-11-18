@@ -1078,6 +1078,7 @@ public final class com/davils/kaml/core/syntax/format/YamlFormatOptionsDslKt {
 
 public final class com/davils/kaml/core/syntax/format/YamlFormatRefusal : java/lang/Enum {
 	public static final field MeaningChanged Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
+	public static final field OutputTooLong Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
 	public static final field SyntaxErrors Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;

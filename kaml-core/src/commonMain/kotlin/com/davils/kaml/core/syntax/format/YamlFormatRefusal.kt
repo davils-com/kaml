@@ -35,4 +35,12 @@ public enum class YamlFormatRefusal {
      * @since 1.0.0
      */
     MeaningChanged,
+
+    /**
+     * The formatted text would be longer than `YamlLimits.maximumOutputLength` of the configuration of the tree; the
+     * formatter stops before it builds that text.
+     *
+     * @since 1.0.0
+     */
+    OutputTooLong,
 }

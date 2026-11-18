@@ -28,6 +28,7 @@ import com.davils.kore.core.validation.report.ValidationException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
@@ -42,6 +43,10 @@ private const val TRAILING_B: String = "b: 2  "
 private const val TRIPLE: Int = 3
 private const val DEFAULT_INDENT: String = "indent=2"
 private const val SMALL_INPUT: Int = 8
+private const val WIDEST: Int = 9
+private val NARROW_DEEP: String = lines("a:", " b:", "  c: 1", "")
+private val WIDE_DEEP: String = lines("a:", "    b:", "        c: 1", "")
+private const val DEEP_KEYS: Int = 100
 
 class YamlFormatterTest : FunSpec({
     context("indentation") {
@@ -180,6 +185,40 @@ class YamlFormatterTest : FunSpec({
             YamlFormatter().format(tree) shouldBe YamlFormatResult.Refused(YamlFormatRefusal.SyntaxErrors)
         }
 
+        test("formats a text whose formatted form is as long as the output limit") {
+            val text = NARROW_DEEP
+            val expected = WIDE_DEEP
+            val atLimit = yaml { limits { maximumOutputLength = expected.length } }
+            val result = YamlFormatter(yamlFormatOptions { indent = WIDE }).format(YamlSyntaxTree.parse(text, atLimit))
+
+            result.shouldBeInstanceOf<YamlFormatResult.Formatted>().tree.text shouldBe expected
+        }
+
+        test("refuses a text whose formatted form would be one character longer than the output limit") {
+            val text = NARROW_DEEP
+            val expected = WIDE_DEEP
+            val belowLimit = yaml { limits { maximumOutputLength = expected.length - 1 } }
+            val wide = YamlFormatter(yamlFormatOptions { indent = WIDE })
+            val result = wide.format(YamlSyntaxTree.parse(text, belowLimit))
+
+            result shouldBe YamlFormatResult.Refused(YamlFormatRefusal.OutputTooLong)
+        }
+
+        test("refuses to widen a deep document past the output limit before it builds the text") {
+            val text = buildString {
+                repeat(DEEP_KEYS) { level -> append(" ".repeat(level)).append("k:\n") }
+                repeat(DEEP_KEYS) { index -> append(" ".repeat(DEEP_KEYS) + "v$index: 1\n") }
+            }
+            val bounded = yaml { limits { maximumOutputLength = text.length * TRIPLE } }
+            val options = yamlFormatOptions { indent = WIDEST }
+            val widest = YamlFormatter(options)
+            val tree = YamlSyntaxTree.parse(text, bounded)
+
+            widest.format(tree) shouldBe YamlFormatResult.Refused(YamlFormatRefusal.OutputTooLong)
+            LineLayout(tree, options).edits() shouldBe null
+            widest.format(YamlSyntaxTree.parse(text)).shouldBeInstanceOf<YamlFormatResult.Formatted>()
+        }
+
         test("leaves a formatted text alone") {
             val tree = YamlSyntaxTree.parse(lines("a:", NARROW_B, ""))
             val result = YamlFormatter().format(tree)
@@ -232,7 +271,8 @@ class YamlFormatterTest : FunSpec({
         test("are laid out without exhausting the stack") {
             val levels = YamlLimits.HARD_DEPTH
             val tree = deepMappings(levels, indent = TRIPLE)
-            val edits = LineLayout(tree, YamlFormatOptions.Default).edits()
+            val layout = LineLayout(tree, YamlFormatOptions.Default)
+            val edits = layout.edits().shouldNotBeNull()
             val laidOut = deepMappings(levels, indent = 2)
 
             edits.size shouldBe levels

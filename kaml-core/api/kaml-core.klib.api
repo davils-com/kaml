@@ -164,6 +164,7 @@ final enum class com.davils.kaml.core.syntax.edit/YamlEditRefusal : kotlin/Enum<
 
 final enum class com.davils.kaml.core.syntax.format/YamlFormatRefusal : kotlin/Enum<com.davils.kaml.core.syntax.format/YamlFormatRefusal> { // com.davils.kaml.core.syntax.format/YamlFormatRefusal|null[0]
     enum entry MeaningChanged // com.davils.kaml.core.syntax.format/YamlFormatRefusal.MeaningChanged|null[0]
+    enum entry OutputTooLong // com.davils.kaml.core.syntax.format/YamlFormatRefusal.OutputTooLong|null[0]
     enum entry SyntaxErrors // com.davils.kaml.core.syntax.format/YamlFormatRefusal.SyntaxErrors|null[0]
 
     final val entries // com.davils.kaml.core.syntax.format/YamlFormatRefusal.entries|#static{}entries[0]
