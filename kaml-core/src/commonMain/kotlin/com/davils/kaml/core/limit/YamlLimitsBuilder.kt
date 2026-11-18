@@ -168,6 +168,82 @@ public class YamlLimitsBuilder internal constructor() : ValidatingBuilder<YamlLi
             field = value
         }
 
+    /**
+     * The most characters of a JSONPath expression that kaml-document parses.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_QUERY_LENGTH]; [DEFAULT_QUERY_LENGTH] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumQueryLength: Int = DEFAULT_QUERY_LENGTH
+
+    /**
+     * The deepest nesting of a JSONPath expression and of an I-Regexp pattern: parentheses, filters inside filters,
+     * function arguments and the groups of a pattern.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_QUERY_NESTING]; [DEFAULT_QUERY_NESTING] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumQueryNesting: Int = DEFAULT_QUERY_NESTING
+
+    /**
+     * The most steps the evaluation of one JSONPath query may take, shared by its selectors, its filters, its
+     * comparisons and the I-Regexp engine of `match` and `search`.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_QUERY_STEPS]; [DEFAULT_QUERY_STEPS] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumQuerySteps: Long = DEFAULT_QUERY_STEPS
+
+    /**
+     * The most nodes a JSONPath query may select, counted for every segment of the query.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_QUERY_RESULTS]; [DEFAULT_QUERY_RESULTS] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumQueryResults: Int = DEFAULT_QUERY_RESULTS
+
+    /**
+     * The most characters of an I-Regexp pattern that the JSONPath functions `match` and `search` compile.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_REGEXP_LENGTH]; [DEFAULT_REGEXP_LENGTH] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumRegexpLength: Int = DEFAULT_REGEXP_LENGTH
+
+    /**
+     * The most instructions the compiled program of an I-Regexp pattern may hold; repeats such as `a{1000}` count once
+     * per copy.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_REGEXP_SIZE]; [DEFAULT_REGEXP_SIZE] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumRegexpSize: Int = DEFAULT_REGEXP_SIZE
+
+    /**
+     * The most operations of a JSON Patch, and the most changes a JSON Merge Patch may make to a syntax tree.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_PATCH_OPERATIONS]; [DEFAULT_PATCH_OPERATIONS] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumPatchOperations: Int = DEFAULT_PATCH_OPERATIONS
+
+    /**
+     * The most characters a pattern supplied by the caller, such as a value or comment pattern of a redaction, is
+     * applied to at once.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_PATTERN_INPUT_LENGTH]; [DEFAULT_PATTERN_INPUT_LENGTH] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumPatternInputLength: Int = DEFAULT_PATTERN_INPUT_LENGTH
+
     internal fun from(limits: YamlLimits) {
         maximumInputLength = limits.maximumInputLength
         maximumDepth = limits.maximumDepth
@@ -180,6 +256,14 @@ public class YamlLimitsBuilder internal constructor() : ValidatingBuilder<YamlLi
         maximumNumberLength = limits.maximumNumberLength
         maximumDiagnostics = limits.maximumDiagnostics
         maximumOutputLength = limits.maximumOutputLength
+        maximumQueryLength = limits.maximumQueryLength
+        maximumQueryNesting = limits.maximumQueryNesting
+        maximumQuerySteps = limits.maximumQuerySteps
+        maximumQueryResults = limits.maximumQueryResults
+        maximumRegexpLength = limits.maximumRegexpLength
+        maximumRegexpSize = limits.maximumRegexpSize
+        maximumPatchOperations = limits.maximumPatchOperations
+        maximumPatternInputLength = limits.maximumPatternInputLength
     }
 
     override fun assemble(): YamlLimits = YamlLimits(this)
@@ -266,5 +350,61 @@ public class YamlLimitsBuilder internal constructor() : ValidatingBuilder<YamlLi
          * @since 1.0.0
          */
         public const val DEFAULT_OUTPUT_LENGTH: Int = 64 * 1024 * 1024
+
+        /**
+         * The default of [maximumQueryLength].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_QUERY_LENGTH: Int = 64 * 1024
+
+        /**
+         * The default of [maximumQueryNesting].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_QUERY_NESTING: Int = 64
+
+        /**
+         * The default of [maximumQuerySteps].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_QUERY_STEPS: Long = 10_000_000L
+
+        /**
+         * The default of [maximumQueryResults].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_QUERY_RESULTS: Int = 1_000_000
+
+        /**
+         * The default of [maximumRegexpLength].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_REGEXP_LENGTH: Int = 4_096
+
+        /**
+         * The default of [maximumRegexpSize].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_REGEXP_SIZE: Int = 10_000
+
+        /**
+         * The default of [maximumPatchOperations].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_PATCH_OPERATIONS: Int = 10_000
+
+        /**
+         * The default of [maximumPatternInputLength].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_PATTERN_INPUT_LENGTH: Int = 64 * 1024
     }
 }

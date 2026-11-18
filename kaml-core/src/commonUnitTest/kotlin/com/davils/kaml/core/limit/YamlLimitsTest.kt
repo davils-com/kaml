@@ -104,7 +104,8 @@ class YamlLimitsTest : FunSpec({
             YamlLimits.Untrusted.toString() shouldBe
                 "YamlLimits(input=67108864, depth=256, nodes=5000000, aliasExpansion=100000, anchors=10000, " +
                 "scalar=16777216, collection=1000000, documents=10000, number=1000, diagnostics=1000, " +
-                "output=67108864)"
+                "output=67108864, queryLength=65536, queryNesting=64, querySteps=10000000, queryResults=1000000, " +
+                "regexpLength=4096, regexpSize=10000, patchOperations=10000, patternInput=65536)"
         }
     }
 

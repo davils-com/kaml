@@ -371,6 +371,14 @@ public final class com/davils/kaml/core/limit/YamlLimits : com/davils/kore/core/
 	public static final field HARD_INPUT_LENGTH I
 	public static final field HARD_NODES J
 	public static final field HARD_NUMBER_LENGTH I
+	public static final field HARD_PATCH_OPERATIONS I
+	public static final field HARD_PATTERN_INPUT_LENGTH I
+	public static final field HARD_QUERY_LENGTH I
+	public static final field HARD_QUERY_NESTING I
+	public static final field HARD_QUERY_RESULTS I
+	public static final field HARD_QUERY_STEPS J
+	public static final field HARD_REGEXP_LENGTH I
+	public static final field HARD_REGEXP_SIZE I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMaximumAliasExpansion ()J
 	public final fun getMaximumAnchors ()I
@@ -382,6 +390,14 @@ public final class com/davils/kaml/core/limit/YamlLimits : com/davils/kore/core/
 	public final fun getMaximumNodes ()J
 	public final fun getMaximumNumberLength ()I
 	public final fun getMaximumOutputLength ()I
+	public final fun getMaximumPatchOperations ()I
+	public final fun getMaximumPatternInputLength ()I
+	public final fun getMaximumQueryLength ()I
+	public final fun getMaximumQueryNesting ()I
+	public final fun getMaximumQueryResults ()I
+	public final fun getMaximumQuerySteps ()J
+	public final fun getMaximumRegexpLength ()I
+	public final fun getMaximumRegexpSize ()I
 	public final fun getMaximumScalarLength ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -405,6 +421,14 @@ public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kor
 	public static final field DEFAULT_NODES J
 	public static final field DEFAULT_NUMBER_LENGTH I
 	public static final field DEFAULT_OUTPUT_LENGTH I
+	public static final field DEFAULT_PATCH_OPERATIONS I
+	public static final field DEFAULT_PATTERN_INPUT_LENGTH I
+	public static final field DEFAULT_QUERY_LENGTH I
+	public static final field DEFAULT_QUERY_NESTING I
+	public static final field DEFAULT_QUERY_RESULTS I
+	public static final field DEFAULT_QUERY_STEPS J
+	public static final field DEFAULT_REGEXP_LENGTH I
+	public static final field DEFAULT_REGEXP_SIZE I
 	public static final field DEFAULT_SCALAR_LENGTH I
 	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
 	public final fun getMaximumAliasExpansion ()J
@@ -417,6 +441,14 @@ public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kor
 	public final fun getMaximumNodes ()J
 	public final fun getMaximumNumberLength ()I
 	public final fun getMaximumOutputLength ()I
+	public final fun getMaximumPatchOperations ()I
+	public final fun getMaximumPatternInputLength ()I
+	public final fun getMaximumQueryLength ()I
+	public final fun getMaximumQueryNesting ()I
+	public final fun getMaximumQueryResults ()I
+	public final fun getMaximumQuerySteps ()J
+	public final fun getMaximumRegexpLength ()I
+	public final fun getMaximumRegexpSize ()I
 	public final fun getMaximumScalarLength ()I
 	public final fun setMaximumAliasExpansion (J)V
 	public final fun setMaximumAnchors (I)V
@@ -428,6 +460,14 @@ public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kor
 	public final fun setMaximumNodes (J)V
 	public final fun setMaximumNumberLength (I)V
 	public final fun setMaximumOutputLength (I)V
+	public final fun setMaximumPatchOperations (I)V
+	public final fun setMaximumPatternInputLength (I)V
+	public final fun setMaximumQueryLength (I)V
+	public final fun setMaximumQueryNesting (I)V
+	public final fun setMaximumQueryResults (I)V
+	public final fun setMaximumQuerySteps (J)V
+	public final fun setMaximumRegexpLength (I)V
+	public final fun setMaximumRegexpSize (I)V
 	public final fun setMaximumScalarLength (I)V
 }
 
