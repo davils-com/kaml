@@ -22,7 +22,7 @@ import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.patch.graph.GraphOperations
 import com.davils.kaml.document.patch.graph.GraphStep
 import com.davils.kaml.document.pointer.JsonPointer
-import com.davils.kaml.document.pointer.at
+import com.davils.kaml.document.pointer.PointerSteps
 
 internal class SyntaxOperations(
     private val state: SyntaxState,
@@ -40,7 +40,7 @@ internal class SyntaxOperations(
     }
 
     private fun edited(operation: JsonPatchOperation, result: YamlNode): SyntaxStep {
-        val edits = SyntaxEdits(state.tree, document, state.root)
+        val edits = SyntaxEdits(tree = state.tree, document = document, root = state.root, budget = graph.work)
         return when (operation) {
             is JsonPatchOperation.Add -> edits.added(operation.path, operation.value)
             is JsonPatchOperation.Remove -> edits.removed(operation.path)
@@ -54,14 +54,16 @@ internal class SyntaxOperations(
     private fun moved(edits: SyntaxEdits, operation: JsonPatchOperation.Move, result: YamlNode): SyntaxStep {
         val value = valueAt(operation.from)
         return edits.removed(operation.from).then { tree ->
-            SyntaxEdits(tree, document, result).added(operation.path, value)
+            val placing = SyntaxEdits(tree = tree, document = document, root = result, budget = graph.work)
+            placing.added(operation.path, value)
         }
     }
 
     private fun copied(edits: SyntaxEdits, operation: JsonPatchOperation.Copy): SyntaxStep =
         edits.added(operation.path, valueAt(operation.from))
 
-    private fun valueAt(pointer: JsonPointer): YamlNode = checkNotNull(state.root.at(pointer))
+    private fun valueAt(pointer: JsonPointer): YamlNode =
+        checkNotNull(PointerSteps.resolved(state.root, pointer, graph.work))
 
     sealed interface Outcome {
         class Done(val state: SyntaxState) : Outcome

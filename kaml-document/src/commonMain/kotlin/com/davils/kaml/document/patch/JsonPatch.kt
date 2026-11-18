@@ -31,8 +31,9 @@ import com.davils.kaml.document.patch.syntax.SyntaxPatching
  *
  * A patch is atomic: it is applied completely or not at all. A pointer resolves a duplicate key to its first
  * occurrence, and a replacement or removal acts on that occurrence only. Every application runs under the [limits]
- * of the patch: the values it adds, copies included, count against [YamlLimits.maximumNodes], the result must not be
- * deeper than [YamlLimits.maximumDepth], and every walk is iterative or bounded by that depth.
+ * of the patch: the values it adds, copies included, and the width of every mapping and sequence an operation looks
+ * into or rebuilds count against [YamlLimits.maximumNodes], the result must not be deeper than
+ * [YamlLimits.maximumDepth], and every walk is iterative or bounded by that depth.
  *
  * A patch is immutable and safe to share between threads.
  *

@@ -43,6 +43,7 @@ internal class MergePatchEditing(
     private val expectation = MergePatching(limits)
     private val values = MergePatching(limits)
     private val changes = WorkBudget(limits.maximumPatchOperations.toLong(), "maximumPatchOperations")
+    private val work = WorkBudget(limits.maximumNodes, "maximumNodes")
     private val depth = NodeCount(changes, limits.maximumDepth)
 
     fun apply(patch: YamlNode): JsonPatchEdit = when (val root = SyntaxRoots.of(tree, document)) {
@@ -92,13 +93,13 @@ internal class MergePatchEditing(
         private fun removed(current: YamlSyntaxTree, pointer: JsonPointer): SyntaxStep {
             if (root.at(pointer) == null) return SyntaxStep.Done(current)
             changes.charge()
-            return SyntaxEdits(current, document, root).removed(pointer)
+            return SyntaxEdits(tree = current, document = document, root = root, budget = work).removed(pointer)
         }
 
         private fun replaced(current: YamlSyntaxTree, pointer: JsonPointer, patch: YamlNode): SyntaxStep {
             changes.charge()
             val value = values.merged(root.at(pointer), patch)
-            return SyntaxEdits(current, document, root).added(pointer, value)
+            return SyntaxEdits(tree = current, document = document, root = root, budget = work).added(pointer, value)
         }
     }
 }

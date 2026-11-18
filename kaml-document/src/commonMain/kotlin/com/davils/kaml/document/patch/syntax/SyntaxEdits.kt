@@ -21,16 +21,18 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.edit.YamlEditResult
 import com.davils.kaml.core.syntax.edit.YamlEditor
 import com.davils.kaml.core.syntax.edit.YamlPath
+import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kaml.document.pointer.PointerSteps
 import com.davils.kaml.document.pointer.PointerTokens
-import com.davils.kaml.document.pointer.at
 import com.davils.kore.core.text.TextEdit
 
 internal class SyntaxEdits(
     private val tree: YamlSyntaxTree,
     private val document: Int,
     private val root: YamlNode,
+    private val budget: WorkBudget,
 ) {
     private val editor = YamlEditor(tree, document)
 
@@ -58,7 +60,7 @@ internal class SyntaxEdits(
 
     private fun addedBelow(parent: JsonPointer, token: String, value: YamlNode): YamlEditResult {
         val location = pathOf(parent)
-        if (root.at(parent) is YamlNode.Sequence) return inserted(location, token, value)
+        if (PointerSteps.resolved(root, parent, budget) is YamlNode.Sequence) return inserted(location, token, value)
         return editor.set(location.key(token), value)
     }
 
@@ -67,12 +69,16 @@ internal class SyntaxEdits(
         return editor.insert(location.index(index), value)
     }
 
-    private fun pathOf(pointer: JsonPointer): YamlPath =
-        pointer.tokens.foldIndexed(YamlPath.ROOT) { position, path, token ->
-            val parent = root.at(JsonPointer.of(pointer.tokens.take(position)))
+    private fun pathOf(pointer: JsonPointer): YamlPath {
+        var path = YamlPath.ROOT
+        var parent: YamlNode? = root
+        pointer.tokens.forEach { token ->
             val index = PointerTokens.indexOf(token)?.takeIf { parent is YamlNode.Sequence }
-            index?.let(path::index) ?: path.key(token)
+            path = index?.let(path::index) ?: path.key(token)
+            parent = parent?.let { node -> PointerSteps.child(node, token, budget) }
         }
+        return path
+    }
 
     private fun rootReplaced(value: YamlNode): SyntaxStep {
         val syntax = tree.documents.getOrNull(document) ?: return SyntaxStep.Refused(JsonPatchRefusal.MissingDocument)

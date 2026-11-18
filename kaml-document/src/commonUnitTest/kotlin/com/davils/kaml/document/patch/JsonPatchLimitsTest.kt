@@ -50,7 +50,7 @@ import io.kotest.property.checkAll
 private const val TWO: Int = 2
 private const val THREE: Int = 3
 private const val COPIES: Int = 3
-private const val ENOUGH_NODES: Long = 25L
+private const val ENOUGH_NODES: Long = 34L
 private const val MANY_COPIES: Int = 64
 private const val MOST_OPERATIONS: Int = 8
 private const val MOST_PIECES: Int = 6
@@ -59,6 +59,10 @@ private const val TWO_MEMBERS: String = "{a: 1, b: 2}"
 private const val SMALL_TREE: String = "a: 1"
 private const val EMPTY: String = "{}"
 private const val ALIASED: String = "a: &x {k: 1}"
+private const val WIDE: Int = 1_000
+private const val WIDE_BUDGET: Long = 10_000L
+private const val FEW_REPLACES: Int = 5
+private const val MANY_REPLACES: Int = 20
 private const val DEEP_MOVE: String = "{a: [[1]], b: []}"
 private const val TWINS: String = "{true: 1, 'true': 2}"
 private const val SHORT_OUTPUT: Int = 100
@@ -147,6 +151,28 @@ class JsonPatchLimitsTest : FunSpec({
             short on ONE_MEMBER shouldBe JsonPatchResult.Failed(COPIES - 1, JsonPatchRefusal.LimitExceeded)
             many.shouldBeInstanceOf<JsonPatchResult.Failed>().reason shouldBe JsonPatchRefusal.LimitExceeded
             short onTree SMALL_TREE shouldBe JsonPatchEdit.Failed(COPIES - 1, JsonPatchRefusal.LimitExceeded)
+        }
+
+        test("charges the width of every container an operation looks into or rebuilds") {
+            val wide = yamlMapping(List(WIDE) { index -> member("k$index", yamlScalar("v")) })
+            val replaces = { count: Int ->
+                JsonPatch(
+                    List(count) { JsonPatchOperation.Replace(JsonPointer.of("k0"), yamlScalar("w")) },
+                    limits { maximumNodes = WIDE_BUDGET },
+                )
+            }
+            val tests = JsonPatch(
+                List(MANY_REPLACES) { JsonPatchOperation.Test(JsonPointer.of("k${WIDE - 1}"), yamlScalar("v")) },
+                limits { maximumNodes = WIDE_BUDGET },
+            )
+
+            val few = replaces(FEW_REPLACES).apply(wide)
+            val many = replaces(MANY_REPLACES).apply(wide)
+
+            few.shouldBeInstanceOf<JsonPatchResult.Applied>()
+            many.shouldBeInstanceOf<JsonPatchResult.Failed>().reason shouldBe JsonPatchRefusal.LimitExceeded
+            tests.apply(wide).shouldBeInstanceOf<JsonPatchResult.Failed>().reason shouldBe
+                JsonPatchRefusal.LimitExceeded
         }
 
         test("a result deeper than the depth limit is refused") {

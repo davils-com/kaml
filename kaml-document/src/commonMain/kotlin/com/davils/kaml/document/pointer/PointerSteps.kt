@@ -18,11 +18,28 @@ package com.davils.kaml.document.pointer
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
+import com.davils.kaml.document.internal.WorkBudget
 
 internal object PointerSteps {
     fun child(node: YamlNode, token: String): YamlNode? = when (node) {
         is YamlNode.Scalar -> null
         is YamlNode.Sequence -> PointerTokens.indexOf(token)?.let(node.items::getOrNull)
         is YamlNode.Mapping -> Members.first(node, token)?.value
+    }
+
+    fun child(node: YamlNode, token: String, budget: WorkBudget): YamlNode? {
+        budget.charge(lookupCost(node))
+        return child(node, token)
+    }
+
+    fun resolved(root: YamlNode, pointer: JsonPointer, budget: WorkBudget): YamlNode? {
+        var current: YamlNode? = root
+        pointer.tokens.forEach { token -> current = current?.let { node -> child(node, token, budget) } }
+        return current
+    }
+
+    private fun lookupCost(node: YamlNode): Long {
+        val mapping = node as? YamlNode.Mapping ?: return 1L
+        return mapping.entries.size + 1L
     }
 }

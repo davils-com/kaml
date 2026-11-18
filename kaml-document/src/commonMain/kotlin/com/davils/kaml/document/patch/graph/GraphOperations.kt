@@ -25,12 +25,15 @@ import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchOperation
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.pointer.JsonPointer
-import com.davils.kaml.document.pointer.at
+import com.davils.kaml.document.pointer.PointerSteps
 
 internal class GraphOperations(limits: YamlLimits) {
     private val budget = WorkBudget(limits.maximumNodes, "maximumNodes")
     private val count = NodeCount(budget, limits.maximumDepth)
     private val equality = JsonEquality(budget, limits.maximumDepth)
+    private val updates = GraphUpdates(budget)
+
+    val work: WorkBudget get() = budget
 
     fun applied(operation: JsonPatchOperation, root: YamlNode): GraphStep = try {
         unchecked(operation, root)
@@ -45,7 +48,7 @@ internal class GraphOperations(limits: YamlLimits) {
 
     fun removed(root: YamlNode, path: JsonPointer): GraphStep {
         val parent = path.parent ?: return GraphStep.Refused(JsonPatchRefusal.RootRemoval)
-        return GraphUpdates.at(root, parent) { node -> ParentChanges.removed(node, path.tokens.last()) }
+        return updates.at(root, parent) { node -> ParentChanges.removed(node, path.tokens.last()) }
     }
 
     private fun unchecked(operation: JsonPatchOperation, root: YamlNode): GraphStep = when (operation) {
@@ -59,13 +62,13 @@ internal class GraphOperations(limits: YamlLimits) {
 
     private fun placed(root: YamlNode, path: JsonPointer, value: YamlNode): GraphStep {
         val parent = path.parent ?: return GraphStep.Done(value)
-        return GraphUpdates.at(root, parent) { node -> ParentChanges.added(node, path.tokens.last(), value) }
+        return updates.at(root, parent) { node -> ParentChanges.added(node, path.tokens.last(), value) }
     }
 
     private fun replaced(root: YamlNode, path: JsonPointer, value: YamlNode): GraphStep {
         count.charge(value, path.tokens.size)
         val parent = path.parent ?: return GraphStep.Done(value)
-        return GraphUpdates.at(root, parent) { node -> ParentChanges.replaced(node, path.tokens.last(), value) }
+        return updates.at(root, parent) { node -> ParentChanges.replaced(node, path.tokens.last(), value) }
     }
 
     private fun moved(root: YamlNode, from: JsonPointer, path: JsonPointer): GraphStep {
@@ -87,7 +90,8 @@ internal class GraphOperations(limits: YamlLimits) {
         }
 
     private fun valueAt(root: YamlNode, path: JsonPointer): GraphStep {
-        val value = root.at(path) ?: return GraphStep.Refused(JsonPatchRefusal.MissingTarget)
+        val value = PointerSteps.resolved(root, path, budget)
+            ?: return GraphStep.Refused(JsonPatchRefusal.MissingTarget)
         return GraphStep.Done(value)
     }
 }

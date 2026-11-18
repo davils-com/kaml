@@ -17,21 +17,24 @@
 package com.davils.kaml.document.patch.graph
 
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerSteps
 
-internal object GraphUpdates {
+internal class GraphUpdates(private val budget: WorkBudget) {
     fun at(root: YamlNode, pointer: JsonPointer, update: (YamlNode) -> GraphStep): GraphStep {
         val ancestors = ArrayList<YamlNode>()
         var current: YamlNode? = root
         var index = 0
         while (current != null && index < pointer.tokens.size) {
             ancestors.add(current)
+            budget.charge(GraphNodes.widthOf(current))
             current = PointerSteps.child(current, pointer.tokens[index])
             index++
         }
         val target = current ?: return GraphStep.Refused(JsonPatchRefusal.MissingParent)
+        budget.charge(GraphNodes.widthOf(target))
         return update(target).map { changed -> rebuilt(ancestors, pointer.tokens, changed) }
     }
 

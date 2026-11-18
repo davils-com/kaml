@@ -31,6 +31,12 @@ internal object GraphNodes {
     fun withItems(sequence: YamlNode.Sequence, items: List<YamlNode>, anchor: YamlAnchor?): YamlNode.Sequence =
         yamlSequence(items = items, style = sequence.style, anchor = anchor, tag = sequence.tag)
 
+    fun widthOf(node: YamlNode): Long = when (node) {
+        is YamlNode.Scalar -> 1L
+        is YamlNode.Sequence -> node.items.size + 1L
+        is YamlNode.Mapping -> node.entries.size + 1L
+    }
+
     fun withChild(node: YamlNode, token: String, child: YamlNode): YamlNode = when (node) {
         is YamlNode.Scalar -> node
         is YamlNode.Sequence -> withItems(node, replacedItem(node.items, token, child), anchor = null)
