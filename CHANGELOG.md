@@ -16,3 +16,7 @@ way.
 
 - **The build** of kaml with Kreate 5.2.0: one convention plugin per concern, strict dependency locking and
   verification, Detekt with every rule, Kover at 97 %, the API and semver check, Trivy and the assurance gate.
+
+- **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
+  scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
+  carries a code, a range, a severity and an escaped message.

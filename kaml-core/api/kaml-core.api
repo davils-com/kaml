@@ -1,0 +1,164 @@
+public final class com/davils/kaml/core/YamlViolationCodes {
+	public static final field INSTANCE Lcom/davils/kaml/core/YamlViolationCodes;
+	public final fun getABOVE_HARD_LIMIT-J_S2PC0 ()Ljava/lang/String;
+	public final fun getBLANK_TAG-J_S2PC0 ()Ljava/lang/String;
+	public final fun getCORE_TAG-J_S2PC0 ()Ljava/lang/String;
+	public final fun getDUPLICATE_TAG-J_S2PC0 ()Ljava/lang/String;
+	public final fun getINVALID_INDENT-J_S2PC0 ()Ljava/lang/String;
+	public final fun getINVALID_LINE_BREAK-J_S2PC0 ()Ljava/lang/String;
+	public final fun getNOT_POSITIVE-J_S2PC0 ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/diagnostic/YamlDiagnostic {
+	public fun <init> (Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;Lcom/davils/kore/core/text/TextRange;Ljava/lang/String;Lcom/davils/kore/core/validation/violation/Severity;)V
+	public synthetic fun <init> (Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;Lcom/davils/kore/core/text/TextRange;Ljava/lang/String;Lcom/davils/kore/core/validation/violation/Severity;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getSeverity ()Lcom/davils/kore/core/validation/violation/Severity;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/diagnostic/YamlDiagnosticCode : java/lang/Enum {
+	public static final field AliasWithProperties Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field BadIndentation Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field CollectionTooLarge Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field DirectiveWithoutDocument Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field DocumentMarkerInScalar Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field DuplicateDirective Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field DuplicateKey Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field DuplicateProperty Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field ExpectedSingleDocument Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field ImplicitKeyTooLong Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InputTooLong Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidAnchor Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidBlockScalarHeader Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidBlockScalarIndentation Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidCharacter Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidDirective Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidEncoding Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidEscape Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidFlowIndentation Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidMerge Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidTag Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field InvalidTaggedValue Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field MissingFlowSeparator Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field MissingPolymorphicType Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field MissingProperty Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field MissingSeparation Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field MultilineImplicitKey Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field NewerMinorVersion Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field NotJson Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field NumberOutOfRange Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field NumberTooLong Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field RecursiveAlias Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field ReservedDirective Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field ScalarTooLong Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TabIndentation Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TagKindMismatch Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TooDeep Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TooManyAliasExpansions Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TooManyAnchors Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TooManyDiagnostics Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TooManyDocuments Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TooManyNodes Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field TypeMismatch Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UndefinedAlias Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnexpectedContent Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnknownEnumValue Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnknownPolymorphicType Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnknownProperty Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnknownTag Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnknownTagHandle Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnsupportedVersion Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnterminatedFlowCollection Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static final field UnterminatedScalar Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getSeverity ()Lcom/davils/kore/core/validation/violation/Severity;
+	public final fun getValue ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+	public static fun values ()[Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
+}
+
+public final class com/davils/kaml/core/limit/YamlLimits : com/davils/kore/core/validation/Validatable {
+	public static final field Companion Lcom/davils/kaml/core/limit/YamlLimits$Companion;
+	public static final field HARD_ALIAS_EXPANSION J
+	public static final field HARD_ANCHORS I
+	public static final field HARD_COLLECTION_SIZE I
+	public static final field HARD_DEPTH I
+	public static final field HARD_DIAGNOSTICS I
+	public static final field HARD_DOCUMENTS I
+	public static final field HARD_INPUT_LENGTH I
+	public static final field HARD_NODES J
+	public static final field HARD_NUMBER_LENGTH I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaximumAliasExpansion ()J
+	public final fun getMaximumAnchors ()I
+	public final fun getMaximumCollectionSize ()I
+	public final fun getMaximumDepth ()I
+	public final fun getMaximumDiagnostics ()I
+	public final fun getMaximumDocuments ()I
+	public final fun getMaximumInputLength ()I
+	public final fun getMaximumNodes ()J
+	public final fun getMaximumNumberLength ()I
+	public final fun getMaximumOutputLength ()I
+	public final fun getMaximumScalarLength ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/core/limit/YamlLimits$Companion {
+	public final fun getRelaxed ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getUntrusted ()Lcom/davils/kaml/core/limit/YamlLimits;
+}
+
+public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public static final field Companion Lcom/davils/kaml/core/limit/YamlLimitsBuilder$Companion;
+	public static final field DEFAULT_ALIAS_EXPANSION J
+	public static final field DEFAULT_ANCHORS I
+	public static final field DEFAULT_COLLECTION_SIZE I
+	public static final field DEFAULT_DEPTH I
+	public static final field DEFAULT_DIAGNOSTICS I
+	public static final field DEFAULT_DOCUMENTS I
+	public static final field DEFAULT_INPUT_LENGTH I
+	public static final field DEFAULT_NODES J
+	public static final field DEFAULT_NUMBER_LENGTH I
+	public static final field DEFAULT_OUTPUT_LENGTH I
+	public static final field DEFAULT_SCALAR_LENGTH I
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun getMaximumAliasExpansion ()J
+	public final fun getMaximumAnchors ()I
+	public final fun getMaximumCollectionSize ()I
+	public final fun getMaximumDepth ()I
+	public final fun getMaximumDiagnostics ()I
+	public final fun getMaximumDocuments ()I
+	public final fun getMaximumInputLength ()I
+	public final fun getMaximumNodes ()J
+	public final fun getMaximumNumberLength ()I
+	public final fun getMaximumOutputLength ()I
+	public final fun getMaximumScalarLength ()I
+	public final fun setMaximumAliasExpansion (J)V
+	public final fun setMaximumAnchors (I)V
+	public final fun setMaximumCollectionSize (I)V
+	public final fun setMaximumDepth (I)V
+	public final fun setMaximumDiagnostics (I)V
+	public final fun setMaximumDocuments (I)V
+	public final fun setMaximumInputLength (I)V
+	public final fun setMaximumNodes (J)V
+	public final fun setMaximumNumberLength (I)V
+	public final fun setMaximumOutputLength (I)V
+	public final fun setMaximumScalarLength (I)V
+}
+
+public final class com/davils/kaml/core/limit/YamlLimitsBuilder$Companion {
+}
+
+public final class com/davils/kaml/core/limit/YamlLimitsDslKt {
+	public static final fun yamlLimits (Lcom/davils/kaml/core/limit/YamlLimits;Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/limit/YamlLimits;
+	public static synthetic fun yamlLimits$default (Lcom/davils/kaml/core/limit/YamlLimits;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/davils/kaml/core/limit/YamlLimits;
+}
+
