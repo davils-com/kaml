@@ -23,4 +23,5 @@ module com.davils.kaml.core {
     exports com.davils.kaml.core.limit;
     exports com.davils.kaml.core.model;
     exports com.davils.kaml.core.node;
+    exports com.davils.kaml.core.schema;
 }

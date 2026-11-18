@@ -21,6 +21,8 @@ way.
 - **The node model.** Immutable scalars, sequences, mappings, documents and streams whose depth is bounded, mappings
   without duplicate keys, typed accessors that return `null` on overflow, builders and, on the JVM, `BigInteger`
   accessors.
+- **Tag resolution** with the failsafe, JSON, core and YAML 1.1 schemas and custom schemas, by hand-written linear
+  scanners instead of regular expressions.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

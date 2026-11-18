@@ -418,3 +418,51 @@ public final class com/davils/kaml/core/node/YamlStream {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/davils/kaml/core/schema/YamlScalarTagBuilder {
+	public final fun accepts (Lkotlin/jvm/functions/Function1;)V
+	public final fun implicit (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/davils/kaml/core/schema/YamlSchema : com/davils/kore/core/validation/Validatable {
+	public static final field Companion Lcom/davils/kaml/core/schema/YamlSchema$Companion;
+	public final fun definitionOf-LJPtzo4 (Ljava/lang/String;)Lcom/davils/kaml/core/schema/YamlTagDefinition;
+	public final fun getHasMergeKeys ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTags ()Ljava/util/List;
+	public final fun isJson ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/core/schema/YamlSchema$Companion {
+	public final fun getCore ()Lcom/davils/kaml/core/schema/YamlSchema;
+	public final fun getFailsafe ()Lcom/davils/kaml/core/schema/YamlSchema;
+	public final fun getJson ()Lcom/davils/kaml/core/schema/YamlSchema;
+	public final fun getYaml11 ()Lcom/davils/kaml/core/schema/YamlSchema;
+}
+
+public final class com/davils/kaml/core/schema/YamlSchemaBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun getHasMergeKeys ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun mapping (Ljava/lang/String;)V
+	public final fun scalar (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun scalar$default (Lcom/davils/kaml/core/schema/YamlSchemaBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun sequence (Ljava/lang/String;)V
+	public final fun setHasMergeKeys (Z)V
+	public final fun setName (Ljava/lang/String;)V
+}
+
+public final class com/davils/kaml/core/schema/YamlSchemasKt {
+	public static final fun yamlSchema (Lcom/davils/kaml/core/schema/YamlSchema;Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/schema/YamlSchema;
+	public static synthetic fun yamlSchema$default (Lcom/davils/kaml/core/schema/YamlSchema;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/davils/kaml/core/schema/YamlSchema;
+}
+
+public final class com/davils/kaml/core/schema/YamlTagDefinition {
+	public synthetic fun <init> (Ljava/lang/String;Lcom/davils/kaml/core/model/YamlNodeKind;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getKind ()Lcom/davils/kaml/core/model/YamlNodeKind;
+	public final fun getTag-AX47Ni0 ()Ljava/lang/String;
+	public final fun isImplicit ()Z
+	public fun toString ()Ljava/lang/String;
+}
+

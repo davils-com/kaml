@@ -428,6 +428,61 @@ final class com.davils.kaml.core.node/YamlStream { // com.davils.kaml.core.node/
     final fun toString(): kotlin/String // com.davils.kaml.core.node/YamlStream.toString|toString(){}[0]
 }
 
+final class com.davils.kaml.core.schema/YamlScalarTagBuilder { // com.davils.kaml.core.schema/YamlScalarTagBuilder|null[0]
+    final fun accepts(kotlin/Function1<kotlin/String, kotlin/Boolean>) // com.davils.kaml.core.schema/YamlScalarTagBuilder.accepts|accepts(kotlin.Function1<kotlin.String,kotlin.Boolean>){}[0]
+    final fun implicit(kotlin/Function1<kotlin/String, kotlin/Boolean>) // com.davils.kaml.core.schema/YamlScalarTagBuilder.implicit|implicit(kotlin.Function1<kotlin.String,kotlin.Boolean>){}[0]
+}
+
+final class com.davils.kaml.core.schema/YamlSchema : com.davils.kore.core.validation/Validatable { // com.davils.kaml.core.schema/YamlSchema|null[0]
+    final val hasMergeKeys // com.davils.kaml.core.schema/YamlSchema.hasMergeKeys|{}hasMergeKeys[0]
+        final fun <get-hasMergeKeys>(): kotlin/Boolean // com.davils.kaml.core.schema/YamlSchema.hasMergeKeys.<get-hasMergeKeys>|<get-hasMergeKeys>(){}[0]
+    final val isJson // com.davils.kaml.core.schema/YamlSchema.isJson|{}isJson[0]
+        final fun <get-isJson>(): kotlin/Boolean // com.davils.kaml.core.schema/YamlSchema.isJson.<get-isJson>|<get-isJson>(){}[0]
+    final val name // com.davils.kaml.core.schema/YamlSchema.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.davils.kaml.core.schema/YamlSchema.name.<get-name>|<get-name>(){}[0]
+    final val tags // com.davils.kaml.core.schema/YamlSchema.tags|{}tags[0]
+        final fun <get-tags>(): kotlin.collections/List<com.davils.kaml.core.schema/YamlTagDefinition> // com.davils.kaml.core.schema/YamlSchema.tags.<get-tags>|<get-tags>(){}[0]
+
+    final fun (com.davils.kore.core.validation/ValidationScope).validate() // com.davils.kaml.core.schema/YamlSchema.validate|validate@com.davils.kore.core.validation.ValidationScope(){}[0]
+    final fun definitionOf(com.davils.kaml.core.model/YamlTag): com.davils.kaml.core.schema/YamlTagDefinition? // com.davils.kaml.core.schema/YamlSchema.definitionOf|definitionOf(com.davils.kaml.core.model.YamlTag){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.schema/YamlSchema.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.schema/YamlSchema.Companion|null[0]
+        final val Core // com.davils.kaml.core.schema/YamlSchema.Companion.Core|{}Core[0]
+            final fun <get-Core>(): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/YamlSchema.Companion.Core.<get-Core>|<get-Core>(){}[0]
+        final val Failsafe // com.davils.kaml.core.schema/YamlSchema.Companion.Failsafe|{}Failsafe[0]
+            final fun <get-Failsafe>(): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/YamlSchema.Companion.Failsafe.<get-Failsafe>|<get-Failsafe>(){}[0]
+        final val Json // com.davils.kaml.core.schema/YamlSchema.Companion.Json|{}Json[0]
+            final fun <get-Json>(): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/YamlSchema.Companion.Json.<get-Json>|<get-Json>(){}[0]
+        final val Yaml11 // com.davils.kaml.core.schema/YamlSchema.Companion.Yaml11|{}Yaml11[0]
+            final fun <get-Yaml11>(): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/YamlSchema.Companion.Yaml11.<get-Yaml11>|<get-Yaml11>(){}[0]
+    }
+}
+
+final class com.davils.kaml.core.schema/YamlSchemaBuilder : com.davils.kore.core.dsl/ValidatingBuilder<com.davils.kaml.core.schema/YamlSchema> { // com.davils.kaml.core.schema/YamlSchemaBuilder|null[0]
+    final var hasMergeKeys // com.davils.kaml.core.schema/YamlSchemaBuilder.hasMergeKeys|{}hasMergeKeys[0]
+        final fun <get-hasMergeKeys>(): kotlin/Boolean // com.davils.kaml.core.schema/YamlSchemaBuilder.hasMergeKeys.<get-hasMergeKeys>|<get-hasMergeKeys>(){}[0]
+        final fun <set-hasMergeKeys>(kotlin/Boolean) // com.davils.kaml.core.schema/YamlSchemaBuilder.hasMergeKeys.<set-hasMergeKeys>|<set-hasMergeKeys>(kotlin.Boolean){}[0]
+    final var name // com.davils.kaml.core.schema/YamlSchemaBuilder.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.davils.kaml.core.schema/YamlSchemaBuilder.name.<get-name>|<get-name>(){}[0]
+        final fun <set-name>(kotlin/String) // com.davils.kaml.core.schema/YamlSchemaBuilder.name.<set-name>|<set-name>(kotlin.String){}[0]
+
+    final fun mapping(kotlin/String) // com.davils.kaml.core.schema/YamlSchemaBuilder.mapping|mapping(kotlin.String){}[0]
+    final fun scalar(kotlin/String, kotlin/Function1<com.davils.kaml.core.schema/YamlScalarTagBuilder, kotlin/Unit> = ...) // com.davils.kaml.core.schema/YamlSchemaBuilder.scalar|scalar(kotlin.String;kotlin.Function1<com.davils.kaml.core.schema.YamlScalarTagBuilder,kotlin.Unit>){}[0]
+    final fun sequence(kotlin/String) // com.davils.kaml.core.schema/YamlSchemaBuilder.sequence|sequence(kotlin.String){}[0]
+}
+
+final class com.davils.kaml.core.schema/YamlTagDefinition { // com.davils.kaml.core.schema/YamlTagDefinition|null[0]
+    final val isImplicit // com.davils.kaml.core.schema/YamlTagDefinition.isImplicit|{}isImplicit[0]
+        final fun <get-isImplicit>(): kotlin/Boolean // com.davils.kaml.core.schema/YamlTagDefinition.isImplicit.<get-isImplicit>|<get-isImplicit>(){}[0]
+    final val kind // com.davils.kaml.core.schema/YamlTagDefinition.kind|{}kind[0]
+        final fun <get-kind>(): com.davils.kaml.core.model/YamlNodeKind // com.davils.kaml.core.schema/YamlTagDefinition.kind.<get-kind>|<get-kind>(){}[0]
+    final val tag // com.davils.kaml.core.schema/YamlTagDefinition.tag|{}tag[0]
+        final fun <get-tag>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.schema/YamlTagDefinition.tag.<get-tag>|<get-tag>(){}[0]
+
+    final fun toString(): kotlin/String // com.davils.kaml.core.schema/YamlTagDefinition.toString|toString(){}[0]
+}
+
 final value class com.davils.kaml.core.model/YamlAnchor { // com.davils.kaml.core.model/YamlAnchor|null[0]
     constructor <init>(kotlin/String) // com.davils.kaml.core.model/YamlAnchor.<init>|<init>(kotlin.String){}[0]
 
@@ -543,3 +598,4 @@ final fun com.davils.kaml.core.node/yamlScalar(kotlin/String, com.davils.kaml.co
 final fun com.davils.kaml.core.node/yamlSequence(kotlin.collections/List<com.davils.kaml.core.node/YamlNode>, com.davils.kaml.core.model/YamlCollectionStyle = ..., com.davils.kaml.core.model/YamlAnchor? = ..., com.davils.kaml.core.model/YamlTag = ...): com.davils.kaml.core.node/YamlNode.Sequence // com.davils.kaml.core.node/yamlSequence|yamlSequence(kotlin.collections.List<com.davils.kaml.core.node.YamlNode>;com.davils.kaml.core.model.YamlCollectionStyle;com.davils.kaml.core.model.YamlAnchor?;com.davils.kaml.core.model.YamlTag){}[0]
 final fun com.davils.kaml.core.node/yamlSequence(kotlin/Function1<com.davils.kaml.core.node/YamlSequenceBuilder, kotlin/Unit>): com.davils.kaml.core.node/YamlNode.Sequence // com.davils.kaml.core.node/yamlSequence|yamlSequence(kotlin.Function1<com.davils.kaml.core.node.YamlSequenceBuilder,kotlin.Unit>){}[0]
 final fun com.davils.kaml.core.node/yamlTagged(kotlin/String, com.davils.kaml.core.model/YamlTag, com.davils.kaml.core.model/YamlScalarStyle = ...): com.davils.kaml.core.node/YamlNode.Scalar // com.davils.kaml.core.node/yamlTagged|yamlTagged(kotlin.String;com.davils.kaml.core.model.YamlTag;com.davils.kaml.core.model.YamlScalarStyle){}[0]
+final fun com.davils.kaml.core.schema/yamlSchema(com.davils.kaml.core.schema/YamlSchema = ..., kotlin/Function1<com.davils.kaml.core.schema/YamlSchemaBuilder, kotlin/Unit>): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/yamlSchema|yamlSchema(com.davils.kaml.core.schema.YamlSchema;kotlin.Function1<com.davils.kaml.core.schema.YamlSchemaBuilder,kotlin.Unit>){}[0]
