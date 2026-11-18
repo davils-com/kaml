@@ -59,6 +59,7 @@ private const val TWO_MEMBERS: String = "{a: 1, b: 2}"
 private const val SMALL_TREE: String = "a: 1"
 private const val EMPTY: String = "{}"
 private const val ALIASED: String = "a: &x {k: 1}"
+private const val TWINS: String = "{true: 1, 'true': 2}"
 
 private val operationNames = listOf("add", "remove", "replace", "move", "copy", "test", "drop", "")
 private val pointerPieces = listOf("/", "a", "b", "0", "1", "-", "~0", "~1", "~", "~2", "", "01")
@@ -173,6 +174,18 @@ class JsonPatchLimitsTest : FunSpec({
             test("/a", "9007199254740993").shouldBeInstanceOf<JsonPatchResult.Applied>()
             test("/b", "1.0").shouldBeInstanceOf<JsonPatchResult.Applied>()
             test("/c", "1") shouldBe JsonPatchResult.Failed(0, JsonPatchRefusal.TestFailed)
+        }
+
+        test("compares every member of a mapping, also those whose keys have the same text") {
+            val twins = nodeOf(TWINS)
+            val test = { value: YamlNode -> JsonPatch(listOf(JsonPatchOperation.Test(JsonPointer.ROOT, value))) }
+            val single = yamlMapping(listOf(YamlEntry(key = yamlScalar("true"), value = yamlScalar(1))))
+            val same = test(nodeOf(TWINS))
+
+            same.apply(twins).shouldBeInstanceOf<JsonPatchResult.Applied>()
+            test(single).apply(twins) shouldBe JsonPatchResult.Failed(0, JsonPatchRefusal.TestFailed)
+            test(nodeOf("{true: 1, 'true': 3}")).apply(twins) shouldBe
+                JsonPatchResult.Failed(0, JsonPatchRefusal.TestFailed)
         }
     }
 

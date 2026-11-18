@@ -168,13 +168,15 @@ class JsonValuesTest : FunSpec({
             "[1]" isLessJson "[2]" shouldBe false
         }
 
-        test("resolves keys with the same text to their first occurrence") {
+        test("compares every member of keys with the same text, in their order") {
             val first = YamlEntry(key = yamlScalar(1), value = yamlScalar(1))
             val second = YamlEntry(key = yamlScalar(ONE), value = yamlScalar(2))
             val sameText = yamlMapping(listOf(first, second))
+            val other = yamlMapping(listOf(first, YamlEntry(key = yamlScalar(ONE), value = yamlScalar(1))))
 
-            equality().isEqual(left = sameText, right = nodeOf("{'1': 1}")) shouldBe true
-            equality().isEqual(left = sameText, right = nodeOf("{'1': 2}")) shouldBe false
+            equality().isEqual(left = sameText, right = yamlMapping(listOf(first, second))) shouldBe true
+            equality().isEqual(left = sameText, right = nodeOf("{'1': 1}")) shouldBe false
+            equality().isEqual(left = sameText, right = other) shouldBe false
             equality().isEqual(left = yamlNull(), right = yamlNull()) shouldBe true
         }
 

@@ -105,12 +105,17 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
         pending: ArrayDeque<Pending>,
     ): Boolean {
         budget.charge((left.entries.size + right.entries.size).toLong())
-        val leftMembers = Members.firstByToken(left)
-        val rightMembers = Members.firstByToken(right)
-        val isSameKeys = leftMembers.size == rightMembers.size && rightMembers.keys.containsAll(leftMembers.keys)
+        val isSameSize = left.entries.size == right.entries.size
+        val leftMembers = Members.allByToken(left)
+        val rightMembers = Members.allByToken(right)
+        val isSameCount = isSameSize && leftMembers.size == rightMembers.size
+        val isSameKeys = isSameCount && leftMembers.all { (token, values) -> rightMembers[token]?.size == values.size }
         if (!isSameKeys) return false
-        leftMembers.forEach { (token, value) ->
-            pending.addLast(Pending(left = value, right = rightMembers.getValue(token), depth = depth))
+        leftMembers.forEach { (token, values) ->
+            val counterparts = rightMembers.getValue(token)
+            values.forEachIndexed { index, value ->
+                pending.addLast(Pending(left = value, right = counterparts[index], depth = depth))
+            }
         }
         return true
     }

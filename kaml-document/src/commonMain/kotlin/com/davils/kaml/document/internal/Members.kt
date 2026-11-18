@@ -22,9 +22,9 @@ import com.davils.kaml.core.node.YamlNode
 internal object Members {
     fun tokenOf(key: YamlNode): String = (key as? YamlNode.Scalar)?.value ?: key.kind.name
 
-    fun firstByToken(mapping: YamlNode.Mapping): Map<String, YamlNode> {
-        val members = LinkedHashMap<String, YamlNode>()
-        mapping.entries.forEach { entry -> members.getOrPut(tokenOf(entry.key)) { entry.value } }
+    fun allByToken(mapping: YamlNode.Mapping): Map<String, List<YamlNode>> {
+        val members = LinkedHashMap<String, MutableList<YamlNode>>()
+        mapping.entries.forEach { entry -> members.getOrPut(tokenOf(entry.key)) { ArrayList() }.add(entry.value) }
         return members
     }
 
