@@ -967,6 +967,7 @@ public final class com/davils/kaml/core/syntax/ast/YamlValueSyntax$Sequence : co
 }
 
 public final class com/davils/kaml/core/syntax/edit/YamlEditRefusal : java/lang/Enum {
+	public static final field AnchorInUse Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
 	public static final field MissingDocument Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
 	public static final field MissingPath Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
 	public static final field NotAMapping Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;

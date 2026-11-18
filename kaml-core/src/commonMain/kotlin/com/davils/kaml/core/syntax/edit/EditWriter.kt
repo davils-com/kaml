@@ -19,14 +19,21 @@ package com.davils.kaml.core.syntax.edit
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
+import com.davils.kaml.core.syntax.ast.YamlDocumentSyntax
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kore.core.text.TextEdit
 import com.davils.kore.core.text.TextRange
 
-internal class EditWriter(tree: YamlSyntaxTree, document: Int) {
+internal class EditWriter(tree: YamlSyntaxTree, document: YamlDocumentSyntax?) {
     val lineBreak: String = "\r\n".takeIf { it in tree.text } ?: "\n"
-    val text: ValueText = ValueText(tree.yaml, lineBreak, tree.documents.getOrNull(document)?.version)
+    val anchors: AnchorGuard? = document?.let { AnchorGuard(it.node) }
+    val text: ValueText = ValueText(
+        yaml = tree.yaml,
+        lineBreak = lineBreak,
+        version = document?.version,
+        takenAnchors = anchors?.names.orEmpty(),
+    )
     val layout: NodeLayout = NodeLayout(tree.text, tree.lines)
 
     fun replaced(old: YamlValueSyntax?, value: YamlNode, slot: Slot): EditStep {

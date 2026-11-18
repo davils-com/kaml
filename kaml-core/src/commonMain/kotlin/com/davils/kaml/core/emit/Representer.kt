@@ -28,12 +28,13 @@ import com.davils.kaml.core.node.YamlNode
 internal class Representer(
     private val configuration: YamlConfiguration,
     private val comments: YamlComments = YamlComments.None,
+    takenAnchors: Set<String> = emptySet(),
 ) {
     private val options = configuration.emitter
     private val limits = configuration.limits
     private val references = HashMap<NodeIdentity, Int>()
     private val names = HashMap<NodeIdentity, String>()
-    private val anchors = AnchorNames()
+    private val anchors = AnchorNames(taken = takenAnchors)
     private var resolution = PlainResolution.of(configuration, version = null)
 
     fun document(document: YamlDocument, version: YamlVersion? = document.version): EmitDocument {

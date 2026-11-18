@@ -149,6 +149,7 @@ final enum class com.davils.kaml.core.source/YamlEncoding : kotlin/Enum<com.davi
 }
 
 final enum class com.davils.kaml.core.syntax.edit/YamlEditRefusal : kotlin/Enum<com.davils.kaml.core.syntax.edit/YamlEditRefusal> { // com.davils.kaml.core.syntax.edit/YamlEditRefusal|null[0]
+    enum entry AnchorInUse // com.davils.kaml.core.syntax.edit/YamlEditRefusal.AnchorInUse|null[0]
     enum entry MissingDocument // com.davils.kaml.core.syntax.edit/YamlEditRefusal.MissingDocument|null[0]
     enum entry MissingPath // com.davils.kaml.core.syntax.edit/YamlEditRefusal.MissingPath|null[0]
     enum entry NotAMapping // com.davils.kaml.core.syntax.edit/YamlEditRefusal.NotAMapping|null[0]

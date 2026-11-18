@@ -31,7 +31,7 @@ way.
   fails at its budget.
 - **The lossless syntax tree** with incremental reparsing and a typed view, which no limit can be bypassed through.
 - **The editor**, which changes values, keys and comments of a document as text edits that keep the rest of it and
-  cannot inject YAML.
+  what its aliases refer to, and cannot inject YAML.
 - **The formatter**, which refuses every change that would change the meaning of a document or make it longer than
   the output limit.
 - **`YamlFormat` for kotlinx.serialization** with its configuration and DSL, naming strategies, polymorphism by

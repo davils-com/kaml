@@ -16,12 +16,15 @@
 
 package com.davils.kaml.core.emit
 
-internal class AnchorNames(private val reserved: Set<String> = emptySet()) {
+internal class AnchorNames(
+    private val reserved: Set<String> = emptySet(),
+    private val taken: Set<String> = emptySet(),
+) {
     private val used = HashSet<String>()
     private var counter = 0
 
     fun preferred(name: String?): String {
-        val kept = name?.takeIf { isValid(it) && it !in used }
+        val kept = name?.takeIf { isValid(it) && it !in used && it !in taken }
         val chosen = kept ?: generated()
         used += chosen
         return chosen
@@ -36,7 +39,7 @@ internal class AnchorNames(private val reserved: Set<String> = emptySet()) {
         do {
             counter++
             name = GENERATED_PREFIX + counter.toString().padStart(length = 3, padChar = '0')
-        } while (name in used || name in reserved)
+        } while (name in used || name in reserved || name in taken)
         return name
     }
 

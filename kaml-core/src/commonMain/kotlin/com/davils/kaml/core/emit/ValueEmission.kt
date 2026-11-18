@@ -21,7 +21,8 @@ import com.davils.kaml.core.model.YamlVersion
 import com.davils.kaml.core.node.YamlDocument
 import com.davils.kaml.core.node.YamlNode
 
-internal fun Yaml.emitValue(node: YamlNode, version: YamlVersion?): String {
-    val document = Representer(configuration).document(YamlDocument(node), version)
+internal fun Yaml.emitValue(node: YamlNode, version: YamlVersion?, takenAnchors: Set<String>): String {
+    val representer = Representer(configuration, takenAnchors = takenAnchors)
+    val document = representer.document(YamlDocument(node), version)
     return YamlWriter(configuration.emitter, configuration.limits).write(listOf(document))
 }

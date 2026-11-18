@@ -20,6 +20,7 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.core.syntax.edit.YamlPath.Segment
+import com.davils.kore.core.text.TextEdit
 
 /**
  * Edits a document of a [YamlSyntaxTree] by its values, keeping every comment, blank line and the layout of all text
@@ -38,6 +39,11 @@ import com.davils.kaml.core.syntax.edit.YamlPath.Segment
  * a `#`, and refused if it contains a control, separator, bidirectional or invisible character. Text that YAML cannot
  * represent at all, a lone surrogate, U+FFFE or U+FFFF, is refused as well.
  *
+ * Aliases keep what they refer to. A value with shared nodes is written with anchors whose names the edited document
+ * does not use yet, whatever anchor names its nodes carry, so no new anchor can capture an alias of the document. An
+ * edit that would remove or replace a value or a key whose anchor an alias later in the document refers to is refused
+ * with [YamlEditRefusal.AnchorInUse].
+ *
  * The edited text is parsed again with the limits of the configuration of the tree; the result carries the
  * diagnostics of that parse, so an edit that makes the text longer than `YamlLimits.maximumInputLength` yields a tree
  * with an `InputTooLong` diagnostic. Exceptions the emitter throws for a value it refuses to write, such as one that
@@ -49,7 +55,8 @@ import com.davils.kaml.core.syntax.edit.YamlPath.Segment
  * @since 1.0.0
  */
 public class YamlEditor(private val tree: YamlSyntaxTree, private val document: Int = 0) {
-    private val writer = EditWriter(tree, document)
+    private val syntax = tree.documents.getOrNull(document)
+    private val writer = EditWriter(tree, syntax)
     private val setting = ValueSetting(writer)
     private val removing = ValueRemoving(tree, writer.layout)
     private val annotating = EntryAnnotating(tree, writer)
@@ -147,13 +154,19 @@ public class YamlEditor(private val tree: YamlSyntaxTree, private val document: 
 
     private fun edit(path: YamlPath, operation: (YamlValueSyntax, Segment) -> EditStep): YamlEditResult =
         when (val step = stepOf(path, operation)) {
-            is EditStep.Edits -> YamlEditResult.Edited(step.edits, tree.edit(step.edits))
+            is EditStep.Edits -> edited(step.edits, path)
             is EditStep.Refused -> YamlEditResult.Refused(step.reason, path)
         }
 
+    private fun edited(edits: List<TextEdit>, path: YamlPath): YamlEditResult {
+        val isAliasKept = writer.anchors?.keepsAliases(edits) != false
+        if (!isAliasKept) return YamlEditResult.Refused(YamlEditRefusal.AnchorInUse, path)
+        return YamlEditResult.Edited(edits, tree.edit(edits))
+    }
+
     private fun stepOf(path: YamlPath, operation: (YamlValueSyntax, Segment) -> EditStep): EditStep {
-        val syntax = tree.documents.getOrNull(document) ?: return EditStep.Refused(YamlEditRefusal.MissingDocument)
-        return stepIn(syntax.root, path, operation)
+        val root = syntax?.root ?: return EditStep.Refused(YamlEditRefusal.MissingDocument)
+        return stepIn(root, path, operation)
     }
 
     private fun stepIn(

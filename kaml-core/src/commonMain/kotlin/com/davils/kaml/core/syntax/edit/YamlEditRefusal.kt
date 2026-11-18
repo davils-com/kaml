@@ -60,4 +60,12 @@ public enum class YamlEditRefusal {
      * @since 1.0.0
      */
     Unsupported,
+
+    /**
+     * The edit would remove or replace a value or a key whose anchor an alias later in the document refers to, so the
+     * alias would refer to an earlier anchor of the same name or to none.
+     *
+     * @since 1.0.0
+     */
+    AnchorInUse,
 }

@@ -16,8 +16,11 @@
 
 package com.davils.kaml.core.syntax.edit
 
+import com.davils.kaml.core.Yaml
 import com.davils.kaml.core.emit.YamlLineBreak
 import com.davils.kaml.core.fixture.lines
+import com.davils.kaml.core.fixture.root
+import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
@@ -63,6 +66,15 @@ private const val FLOW_ENTRY: String = "{a: 1}"
 private const val LEGACY: String = "%YAML 1.1"
 private const val YES: String = "yes"
 private const val ADMIN: String = "admin"
+private const val SLOT: String = "slot"
+private const val SLOT_LINE: String = "slot: 0"
+private const val ROLE_LINE: String = "  role: user"
+private const val LATER_KEY: String = "later"
+private const val LATER_LINE: String = "later: *id001"
+private const val BASE_LINE: String = "base: &id001"
+private const val ALIAS_C: String = "c: *x"
+private const val ANCHORED_A: String = "a: &x 1"
+private const val FLOW_ALIAS: String = "[&x a, *x]"
 private const val MARKER: String = "---"
 private const val LEGACY_SLOT: String = "slot: {admin: true}"
 private const val LEGACY_ADMIN: String = "admin: false"
@@ -367,6 +379,55 @@ class YamlEditorTest : FunSpec({
             val value = yamlSequence(listOf(shared, shared))
 
             composed(ENTRY_LINE) { set(root.key("a"), value) } shouldBe yamlMapping { "a" to value }
+        }
+
+        test("get an anchor the document does not use, so a later alias keeps what it refers to") {
+            val text = lines(BASE_LINE, ROLE_LINE, SLOT_LINE, LATER_LINE, "")
+            val shared = yamlScalar(ADMIN)
+            val value = yamlSequence(listOf(shared, shared))
+            val written = edited(text) { set(root.key(SLOT), value) }
+            val result = composed(text) { set(root.key(SLOT), value) }
+
+            written shouldBe lines(BASE_LINE, ROLE_LINE, "slot:", "  - &id002 admin", "  - *id002", LATER_LINE, "")
+            result[LATER_KEY] shouldBe yamlMapping { "role" to "user" }
+        }
+
+        test("get a fresh anchor in place of a name of their own that the document uses") {
+            val text = lines("base: &base", ROLE_LINE, SLOT_LINE, "later: *base", "")
+            val attacker = Yaml.Default.root(lines("v: &base [admin]", "w: *base"))
+            val result = composed(text) { set(root.key(SLOT), attacker) }
+
+            result[LATER_KEY] shouldBe yamlMapping { "role" to "user" }
+            result[SLOT] shouldBe attacker
+        }
+    }
+
+    context("anchors that later aliases refer to") {
+        val inUse = YamlEditRefusal.AnchorInUse
+
+        test("refuse the removal or the replacement of their value") {
+            val shadowed = lines("a: &x safe", "b: &x danger", ALIAS_C, "")
+
+            refusal(shadowed) { remove(root.key("b")) } shouldBe inUse
+            refusal(shadowed) { set(root.key("b"), yamlScalar("other")) } shouldBe inUse
+            refusal(lines(ANCHORED_A, "b: *x")) { remove(root.key("a")) } shouldBe inUse
+            refusal(FLOW_ALIAS) { remove(root.index(0)) } shouldBe inUse
+            refusal(FLOW_ALIAS) { set(root.index(0), yamlScalar("b")) } shouldBe inUse
+        }
+
+        test("refuse renaming a key whose anchor a later alias refers to") {
+            refusal(lines("&k a: 1", "b: *k")) { rename(root.key("a"), "c") } shouldBe inUse
+        }
+
+        test("allow edits that no alias depends on") {
+            val replaced = yamlScalar(THIRD)
+
+            edited(lines(ANCHORED_A, "b: &x 2", ALIAS_C, "")) { remove(root.key("a")) } shouldBe
+                lines("b: &x 2", ALIAS_C, "")
+            edited(lines("a: *x", "b: &x 1", "")) { remove(root.key("b")) } shouldBe lines("a: *x", "")
+            edited(lines(ANCHORED_A, "b: 2", "")) { set(root.key("a"), replaced) } shouldBe lines("a: 3", "b: 2", "")
+            edited(lines(ANCHORED_A, "b: *x", "")) { set(root.key("b"), replaced) } shouldBe
+                lines(ANCHORED_A, "b: 3", "")
         }
     }
 
