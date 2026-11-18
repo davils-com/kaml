@@ -54,13 +54,16 @@ internal class JsonConverter(limits: YamlLimits) {
 
     private fun members(node: YamlNode.Mapping, depth: Int): Map<String, JsonElement> {
         enter(node, depth)
-        val members = LinkedHashMap<String, JsonElement>()
-        node.entries.forEach { entry ->
-            val key = keyOf(entry.key)
-            if (key in members) refuse(entry.key, "JSON keys must be unique")
-            members[key] = element(entry.value, depth)
+        val entries = node.entries
+        val repeat = JsonMembers.firstRepeat(entries.map { entry -> nameOf(entry.key) })
+        val names = ArrayList<String>(entries.size)
+        val elements = ArrayList<JsonElement>(entries.size)
+        entries.forEachIndexed { index, entry ->
+            names.add(keyOf(entry.key))
+            if (index == repeat) refuse(entry.key, "JSON keys must be unique")
+            elements.add(element(entry.value, depth))
         }
-        return members
+        return JsonMembers(names, elements)
     }
 
     private fun enter(node: YamlNode, depth: Int) {
@@ -88,9 +91,11 @@ internal class JsonConverter(limits: YamlLimits) {
         return JsonPrimitive(real ?: refuse(node, "JSON has no infinity, no NaN and no float outside a Double"))
     }
 
-    private fun keyOf(key: YamlNode): String {
+    private fun keyOf(key: YamlNode): String = nameOf(key) ?: refuse(key, "JSON keys must be strings")
+
+    private fun nameOf(key: YamlNode): String? {
         val scalar = (key as? YamlNode.Scalar)?.takeIf { scalar -> scalar.tag == YamlTag.STRING }
-        return scalar?.value ?: refuse(key, "JSON keys must be strings")
+        return scalar?.value
     }
 
     private fun refuse(node: YamlNode, reason: String): Nothing =

@@ -29,7 +29,7 @@ internal class MapDecoder(
     depth: Int,
 ) : StructureDecoder(context, location, depth) {
     private val mapping: YamlNode.Mapping = node as? YamlNode.Mapping ?: context.mismatch(location, "a mapping")
-    private val keys = HashSet<Any?>()
+    private val keys = DecodedKeys()
     private var next = 0
 
     override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
@@ -56,15 +56,17 @@ internal class MapDecoder(
             deserializer = deserializer,
             previousValue = previousValue,
         )
-        val isRepeatedKey = index % 2 == 0 && !keys.add(value)
-        if (isRepeatedKey) {
-            val key = nodeAt(index)
+        if (index % 2 == 0) keys.add(value, nodeAt(index))
+        return value
+    }
+
+    override fun endStructure(descriptor: SerialDescriptor) {
+        keys.repeated().forEach { key ->
             context.report(
                 YamlDiagnosticCode.DuplicateKey,
                 key,
                 "The key ${context.describeValue(key)} is given more than once",
             )
         }
-        return value
     }
 }
