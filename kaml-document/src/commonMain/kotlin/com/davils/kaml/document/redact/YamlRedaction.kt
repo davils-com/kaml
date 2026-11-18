@@ -29,6 +29,7 @@ import com.davils.kore.core.annotation.DavilsInternal
 import com.davils.kore.core.text.SafeText
 import com.davils.kore.core.validation.Validatable
 import com.davils.kore.core.validation.ValidationScope
+import com.davils.kore.core.validation.validateOrThrow
 
 /**
  * Removes secrets from YAML documents, from a node graph or in place from a lossless syntax tree, and fails closed.
@@ -77,9 +78,13 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
      */
     public val paths: List<String> = buildList { addAll(builder.paths) }
 
+    init {
+        validateOrThrow(SUBJECT)
+    }
+
     private val rules = RedactionRules(
         replacement = replacement,
-        paths = paths.mapNotNull { path -> JsonPath.parseOrNull(path, limits) },
+        paths = paths.map { path -> JsonPath.parse(path, limits) },
         keys = buildList { addAll(builder.keys) },
         values = buildList { addAll(builder.values) },
         comments = buildList { addAll(builder.comments) },
@@ -142,5 +147,9 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
             postfix = "]",
         ) { path -> SafeText.quoted(path) }
         return "YamlRedaction(replacement=${SafeText.quoted(replacement)}, paths=$shownPaths)"
+    }
+
+    private companion object {
+        const val SUBJECT: String = "yaml redaction"
     }
 }
