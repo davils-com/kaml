@@ -97,8 +97,10 @@ public enum class JsonPatchRefusal {
     /**
      * The patch needs more than one of the limits it runs under allows: more nodes than
      * [com.davils.kaml.core.limit.YamlLimits.maximumNodes], a deeper result than
-     * [com.davils.kaml.core.limit.YamlLimits.maximumDepth] or more changes than
-     * [com.davils.kaml.core.limit.YamlLimits.maximumPatchOperations]. Nothing is changed.
+     * [com.davils.kaml.core.limit.YamlLimits.maximumDepth], more changes than
+     * [com.davils.kaml.core.limit.YamlLimits.maximumPatchOperations] or, in a syntax tree, a value whose text is
+     * longer than the [com.davils.kaml.core.limit.YamlLimits.maximumOutputLength] of the tree allows. Nothing is
+     * changed.
      *
      * @since 1.0.0
      */

@@ -61,6 +61,8 @@ private const val EMPTY: String = "{}"
 private const val ALIASED: String = "a: &x {k: 1}"
 private const val DEEP_MOVE: String = "{a: [[1]], b: []}"
 private const val TWINS: String = "{true: 1, 'true': 2}"
+private const val SHORT_OUTPUT: Int = 100
+private const val LONG_VALUE: Int = 500
 
 private val operationNames = listOf("add", "remove", "replace", "move", "copy", "test", "drop", "")
 private val pointerPieces = listOf("/", "a", "b", "0", "1", "-", "~0", "~1", "~", "~2", "", "01")
@@ -216,6 +218,18 @@ class JsonPatchLimitsTest : FunSpec({
             val replace = JsonPatchOperation.Replace("/a".toJsonPointer(), yamlScalar(THREE))
 
             JsonPatch(listOf(replace)).apply(tree) shouldBe JsonPatchEdit.Failed(0, JsonPatchRefusal.Unsupported)
+        }
+
+        test("refuses a value longer than the output limit of the tree instead of throwing") {
+            val short = yaml { limits = yamlLimits { maximumOutputLength = SHORT_OUTPUT } }
+            val long = yamlScalar("x".repeat(LONG_VALUE))
+            val replace = JsonPatch(listOf(JsonPatchOperation.Replace(JsonPointer.ROOT, long)))
+            val add = JsonPatch(listOf(JsonPatchOperation.Add("/b".toJsonPointer(), long)))
+            val merge = JsonMergePatch(yamlMapping(listOf(YamlEntry(key = yamlScalar("b"), value = long))))
+
+            replace.apply(treeOf(SMALL_TREE, short)) shouldBe JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
+            add.apply(treeOf(SMALL_TREE, short)) shouldBe JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
+            merge.apply(treeOf(SMALL_TREE, short)) shouldBe JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
         }
 
         test("leaves a tree unchanged by an empty patch") {

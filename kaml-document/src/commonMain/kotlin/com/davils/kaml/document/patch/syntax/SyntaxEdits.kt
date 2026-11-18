@@ -34,16 +34,26 @@ internal class SyntaxEdits(
 ) {
     private val editor = YamlEditor(tree, document)
 
-    fun added(path: JsonPointer, value: YamlNode): SyntaxStep {
+    fun added(path: JsonPointer, value: YamlNode): SyntaxStep = bounded { addedAt(path, value) }
+
+    fun removed(path: JsonPointer): SyntaxStep = bounded { stepOf(editor.remove(pathOf(path))) }
+
+    fun replaced(path: JsonPointer, value: YamlNode): SyntaxStep = bounded { replacedAt(path, value) }
+
+    private fun addedAt(path: JsonPointer, value: YamlNode): SyntaxStep {
         val parent = path.parent ?: return rootReplaced(value)
         return stepOf(addedBelow(parent, path.tokens.last(), value))
     }
 
-    fun removed(path: JsonPointer): SyntaxStep = stepOf(editor.remove(pathOf(path)))
-
-    fun replaced(path: JsonPointer, value: YamlNode): SyntaxStep {
+    private fun replacedAt(path: JsonPointer, value: YamlNode): SyntaxStep {
         if (path.isRoot) return rootReplaced(value)
         return stepOf(editor.set(pathOf(path), value))
+    }
+
+    private fun bounded(edit: () -> SyntaxStep): SyntaxStep = try {
+        edit()
+    } catch (expected: IllegalStateException) {
+        SyntaxStep.Refused(JsonPatchRefusal.LimitExceeded)
     }
 
     private fun addedBelow(parent: JsonPointer, token: String, value: YamlNode): YamlEditResult {
