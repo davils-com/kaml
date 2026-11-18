@@ -18,6 +18,9 @@ way.
   verification, Detekt with every rule, Kover at 97 %, the API and semver check, Trivy and the assurance gate.
 - **The YAML model.** Tags, anchors that refuse names YAML does not allow, versions, tag directives and the styles
   of scalars and collections.
+- **The node model.** Immutable scalars, sequences, mappings, documents and streams whose depth is bounded, mappings
+  without duplicate keys, typed accessors that return `null` on overflow, builders and, on the JVM, `BigInteger`
+  accessors.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

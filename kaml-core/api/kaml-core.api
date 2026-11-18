@@ -274,3 +274,147 @@ public final class com/davils/kaml/core/model/YamlVersion$Companion {
 	public final fun getV1_2 ()Lcom/davils/kaml/core/model/YamlVersion;
 }
 
+public final class com/davils/kaml/core/node/YamlDetachingKt {
+	public static final fun detached (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/core/node/YamlNode;
+	public static synthetic fun detached$default (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode;
+}
+
+public final class com/davils/kaml/core/node/YamlDocument {
+	public fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/model/YamlVersion;Ljava/util/List;ZZLcom/davils/kore/core/text/TextRange;)V
+	public synthetic fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/model/YamlVersion;Ljava/util/List;ZZLcom/davils/kore/core/text/TextRange;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getRoot ()Lcom/davils/kaml/core/node/YamlNode;
+	public final fun getTagDirectives ()Ljava/util/List;
+	public final fun getVersion ()Lcom/davils/kaml/core/model/YamlVersion;
+	public fun hashCode ()I
+	public final fun isExplicitEnd ()Z
+	public final fun isExplicitStart ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlEntry {
+	public fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Lcom/davils/kaml/core/node/YamlNode;
+	public final fun getValue ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlMappingBuilder {
+	public final fun to (Lcom/davils/kaml/core/node/YamlNode;D)V
+	public final fun to (Lcom/davils/kaml/core/node/YamlNode;I)V
+	public final fun to (Lcom/davils/kaml/core/node/YamlNode;J)V
+	public final fun to (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/node/YamlNode;)V
+	public final fun to (Lcom/davils/kaml/core/node/YamlNode;Ljava/lang/String;)V
+	public final fun to (Lcom/davils/kaml/core/node/YamlNode;Z)V
+	public final fun to (Ljava/lang/String;D)V
+	public final fun to (Ljava/lang/String;I)V
+	public final fun to (Ljava/lang/String;J)V
+	public final fun to (Ljava/lang/String;Lcom/davils/kaml/core/node/YamlNode;)V
+	public final fun to (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun to (Ljava/lang/String;Z)V
+}
+
+public abstract interface class com/davils/kaml/core/node/YamlNode {
+	public abstract fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public abstract fun getDepth ()I
+	public abstract fun getKind ()Lcom/davils/kaml/core/model/YamlNodeKind;
+	public abstract fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public abstract fun getTag-AX47Ni0 ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlNode$Mapping : com/davils/kaml/core/node/YamlNode {
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/core/node/YamlNode;
+	public fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public fun getDepth ()I
+	public final fun getEntries ()Ljava/util/List;
+	public final fun getKeys ()Ljava/util/List;
+	public fun getKind ()Lcom/davils/kaml/core/model/YamlNodeKind;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getStyle ()Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public fun getTag-AX47Ni0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlNode$Scalar : com/davils/kaml/core/node/YamlNode {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public fun getDepth ()I
+	public fun getKind ()Lcom/davils/kaml/core/model/YamlNodeKind;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getStyle ()Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public fun getTag-AX47Ni0 ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlNode$Sequence : com/davils/kaml/core/node/YamlNode {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public fun getDepth ()I
+	public final fun getItems ()Ljava/util/List;
+	public fun getKind ()Lcom/davils/kaml/core/model/YamlNodeKind;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getStyle ()Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public fun getTag-AX47Ni0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlNodeBuildersKt {
+	public static final fun yamlMapping (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/node/YamlNode$Mapping;
+	public static final fun yamlMapping-BH6enAE (Ljava/util/List;Lcom/davils/kaml/core/model/YamlCollectionStyle;Ljava/lang/String;Ljava/lang/String;)Lcom/davils/kaml/core/node/YamlNode$Mapping;
+	public static synthetic fun yamlMapping-BH6enAE$default (Ljava/util/List;Lcom/davils/kaml/core/model/YamlCollectionStyle;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode$Mapping;
+	public static final fun yamlNull ()Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static final fun yamlScalar (D)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static final fun yamlScalar (I)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static final fun yamlScalar (J)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static final fun yamlScalar (Ljava/lang/String;Lcom/davils/kaml/core/model/YamlScalarStyle;)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static final fun yamlScalar (Z)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static synthetic fun yamlScalar$default (Ljava/lang/String;Lcom/davils/kaml/core/model/YamlScalarStyle;ILjava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static final fun yamlSequence (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/node/YamlNode$Sequence;
+	public static final fun yamlSequence-BH6enAE (Ljava/util/List;Lcom/davils/kaml/core/model/YamlCollectionStyle;Ljava/lang/String;Ljava/lang/String;)Lcom/davils/kaml/core/node/YamlNode$Sequence;
+	public static synthetic fun yamlSequence-BH6enAE$default (Ljava/util/List;Lcom/davils/kaml/core/model/YamlCollectionStyle;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode$Sequence;
+	public static final fun yamlTagged-6CbNZ8s (Ljava/lang/String;Ljava/lang/String;Lcom/davils/kaml/core/model/YamlScalarStyle;)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+	public static synthetic fun yamlTagged-6CbNZ8s$default (Ljava/lang/String;Ljava/lang/String;Lcom/davils/kaml/core/model/YamlScalarStyle;ILjava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode$Scalar;
+}
+
+public final class com/davils/kaml/core/node/YamlNodesKt {
+	public static final fun boolean (Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/Boolean;
+	public static final fun double (Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/Double;
+	public static final fun get (Lcom/davils/kaml/core/node/YamlNode;I)Lcom/davils/kaml/core/node/YamlNode;
+	public static final fun get (Lcom/davils/kaml/core/node/YamlNode;Ljava/lang/String;)Lcom/davils/kaml/core/node/YamlNode;
+	public static final fun int (Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/Integer;
+	public static final fun isNull (Lcom/davils/kaml/core/node/YamlNode;)Z
+	public static final fun long (Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/Long;
+	public static final fun string (Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/node/YamlReplacingKt {
+	public static final fun withEntries (Lcom/davils/kaml/core/node/YamlNode$Mapping;Ljava/util/List;)Lcom/davils/kaml/core/node/YamlNode$Mapping;
+	public static final fun withItems (Lcom/davils/kaml/core/node/YamlNode$Sequence;Ljava/util/List;)Lcom/davils/kaml/core/node/YamlNode$Sequence;
+}
+
+public final class com/davils/kaml/core/node/YamlSequenceBuilder {
+	public final fun add (D)V
+	public final fun add (I)V
+	public final fun add (J)V
+	public final fun add (Lcom/davils/kaml/core/node/YamlNode;)V
+	public final fun add (Ljava/lang/String;)V
+	public final fun add (Z)V
+}
+
+public final class com/davils/kaml/core/node/YamlStream {
+	public fun <init> (Ljava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDocuments ()Ljava/util/List;
+	public final fun getSingle ()Lcom/davils/kaml/core/node/YamlDocument;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
