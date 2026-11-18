@@ -1,0 +1,48 @@
+/*
+ * Copyright 2026 Davils
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.davils.kaml.document.diff
+
+import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.patch.JsonPatchOperation
+import com.davils.kaml.document.pointer.JsonPointer
+
+internal object MappingDiff {
+    fun between(diff: GraphDiff, source: YamlNode, target: YamlNode, pointer: JsonPointer): Boolean {
+        val before = membersOf(source)
+        val after = membersOf(target)
+        if (before == null || after == null) return false
+        val removed = before.keys.filter { key -> key !in after }
+        removed.forEach { key -> diff.add(JsonPatchOperation.Remove(pointer.child(key))) }
+        before.forEach { (key, value) ->
+            after[key]?.let { changed -> diff.between(source = value, target = changed, pointer = pointer.child(key)) }
+        }
+        val added = after.filter { (key, _) -> key !in before }
+        added.forEach { (key, value) -> diff.add(JsonPatchOperation.Add(pointer.child(key), value)) }
+        return true
+    }
+
+    private fun membersOf(node: YamlNode): Map<String, YamlNode>? {
+        val mapping = node as? YamlNode.Mapping ?: return null
+        val members = LinkedHashMap<String, YamlNode>()
+        mapping.entries.forEach { entry ->
+            val key = (entry.key as? YamlNode.Scalar)?.takeIf { it.tag == YamlTag.STRING }
+            key?.let { text -> members[text.value] = entry.value }
+        }
+        return members.takeIf { it.size == mapping.entries.size }
+    }
+}

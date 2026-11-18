@@ -47,6 +47,8 @@ way.
   programs and steps.
 - **JSONPath** (RFC 9535) with nesting, step and result budgets; a query beyond a budget fails instead of
   answering in part.
+- **JSON Patch** (RFC 6902), **JSON Merge Patch** (RFC 7386) and diffs on the node graph and in place on the
+  syntax tree, within an operation limit and the node budget.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

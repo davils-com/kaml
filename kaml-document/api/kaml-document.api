@@ -10,6 +10,176 @@ public final class com/davils/kaml/document/YamlDocumentViolationCodes {
 	public final fun getINVALID_REPLACEMENT-J_S2PC0 ()Ljava/lang/String;
 }
 
+public final class com/davils/kaml/document/patch/JsonMergePatch {
+	public fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;)V
+	public synthetic fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun apply (Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/core/node/YamlNode;
+	public final fun apply (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;I)Lcom/davils/kaml/document/patch/JsonPatchEdit;
+	public static synthetic fun apply$default (Lcom/davils/kaml/document/patch/JsonMergePatch;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;IILjava/lang/Object;)Lcom/davils/kaml/document/patch/JsonPatchEdit;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getPatch ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatch {
+	public static final field Companion Lcom/davils/kaml/document/patch/JsonPatch$Companion;
+	public fun <init> (Ljava/util/List;Lcom/davils/kaml/core/limit/YamlLimits;)V
+	public synthetic fun <init> (Ljava/util/List;Lcom/davils/kaml/core/limit/YamlLimits;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun apply (Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/document/patch/JsonPatchResult;
+	public final fun apply (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;I)Lcom/davils/kaml/document/patch/JsonPatchEdit;
+	public static synthetic fun apply$default (Lcom/davils/kaml/document/patch/JsonPatch;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;IILjava/lang/Object;)Lcom/davils/kaml/document/patch/JsonPatchEdit;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getOperations ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun toNode ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatch$Companion {
+	public final fun diff (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/patch/JsonPatch;
+	public static synthetic fun diff$default (Lcom/davils/kaml/document/patch/JsonPatch$Companion;Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/patch/JsonPatch;
+	public final fun read (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/patch/JsonPatchReading;
+	public static synthetic fun read$default (Lcom/davils/kaml/document/patch/JsonPatch$Companion;Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/patch/JsonPatchReading;
+}
+
+public abstract interface class com/davils/kaml/document/patch/JsonPatchEdit {
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchEdit$Edited : com/davils/kaml/document/patch/JsonPatchEdit {
+	public fun <init> (Ljava/util/List;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEdits ()Ljava/util/List;
+	public final fun getTree ()Lcom/davils/kaml/core/syntax/YamlSyntaxTree;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchEdit$Failed : com/davils/kaml/document/patch/JsonPatchEdit {
+	public fun <init> (ILcom/davils/kaml/document/patch/JsonPatchRefusal;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndex ()I
+	public final fun getReason ()Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/davils/kaml/document/patch/JsonPatchOperation {
+	public abstract fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchOperation$Add : com/davils/kaml/document/patch/JsonPatchOperation {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun getValue ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchOperation$Copy : com/davils/kaml/document/patch/JsonPatchOperation {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;Lcom/davils/kaml/document/pointer/JsonPointer;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrom ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchOperation$Move : com/davils/kaml/document/patch/JsonPatchOperation {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;Lcom/davils/kaml/document/pointer/JsonPointer;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrom ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchOperation$Remove : com/davils/kaml/document/patch/JsonPatchOperation {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchOperation$Replace : com/davils/kaml/document/patch/JsonPatchOperation {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun getValue ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchOperation$Test : com/davils/kaml/document/patch/JsonPatchOperation {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPath ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun getValue ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/davils/kaml/document/patch/JsonPatchReading {
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchReading$Invalid : com/davils/kaml/document/patch/JsonPatchReading {
+	public fun <init> (ILjava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndex ()I
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchReading$Read : com/davils/kaml/document/patch/JsonPatchReading {
+	public fun <init> (Lcom/davils/kaml/document/patch/JsonPatch;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPatch ()Lcom/davils/kaml/document/patch/JsonPatch;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchRefusal : java/lang/Enum {
+	public static final field InvalidDocument Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field InvalidIndex Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field LimitExceeded Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field MissingDocument Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field MissingParent Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field MissingTarget Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field MoveIntoItself Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field NotAContainer Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field RootRemoval Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field TestFailed Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static final field Unsupported Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public static fun values ()[Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+}
+
+public abstract interface class com/davils/kaml/document/patch/JsonPatchResult {
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchResult$Applied : com/davils/kaml/document/patch/JsonPatchResult {
+	public fun <init> (Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNode ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/patch/JsonPatchResult$Failed : com/davils/kaml/document/patch/JsonPatchResult {
+	public fun <init> (ILcom/davils/kaml/document/patch/JsonPatchRefusal;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndex ()I
+	public final fun getReason ()Lcom/davils/kaml/document/patch/JsonPatchRefusal;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/davils/kaml/document/path/JsonPath {
 	public static final field Companion Lcom/davils/kaml/document/path/JsonPath$Companion;
 	public fun equals (Ljava/lang/Object;)Z

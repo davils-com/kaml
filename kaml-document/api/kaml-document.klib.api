@@ -6,6 +6,223 @@
 // - Show declarations: true
 
 // Library unique name: <com.davils:kaml-document>
+final enum class com.davils.kaml.document.patch/JsonPatchRefusal : kotlin/Enum<com.davils.kaml.document.patch/JsonPatchRefusal> { // com.davils.kaml.document.patch/JsonPatchRefusal|null[0]
+    enum entry InvalidDocument // com.davils.kaml.document.patch/JsonPatchRefusal.InvalidDocument|null[0]
+    enum entry InvalidIndex // com.davils.kaml.document.patch/JsonPatchRefusal.InvalidIndex|null[0]
+    enum entry LimitExceeded // com.davils.kaml.document.patch/JsonPatchRefusal.LimitExceeded|null[0]
+    enum entry MissingDocument // com.davils.kaml.document.patch/JsonPatchRefusal.MissingDocument|null[0]
+    enum entry MissingParent // com.davils.kaml.document.patch/JsonPatchRefusal.MissingParent|null[0]
+    enum entry MissingTarget // com.davils.kaml.document.patch/JsonPatchRefusal.MissingTarget|null[0]
+    enum entry MoveIntoItself // com.davils.kaml.document.patch/JsonPatchRefusal.MoveIntoItself|null[0]
+    enum entry NotAContainer // com.davils.kaml.document.patch/JsonPatchRefusal.NotAContainer|null[0]
+    enum entry RootRemoval // com.davils.kaml.document.patch/JsonPatchRefusal.RootRemoval|null[0]
+    enum entry TestFailed // com.davils.kaml.document.patch/JsonPatchRefusal.TestFailed|null[0]
+    enum entry Unsupported // com.davils.kaml.document.patch/JsonPatchRefusal.Unsupported|null[0]
+
+    final val entries // com.davils.kaml.document.patch/JsonPatchRefusal.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.document.patch/JsonPatchRefusal> // com.davils.kaml.document.patch/JsonPatchRefusal.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.document.patch/JsonPatchRefusal // com.davils.kaml.document.patch/JsonPatchRefusal.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.document.patch/JsonPatchRefusal> // com.davils.kaml.document.patch/JsonPatchRefusal.values|values#static(){}[0]
+}
+
+sealed interface com.davils.kaml.document.patch/JsonPatchEdit { // com.davils.kaml.document.patch/JsonPatchEdit|null[0]
+    final class Edited : com.davils.kaml.document.patch/JsonPatchEdit { // com.davils.kaml.document.patch/JsonPatchEdit.Edited|null[0]
+        constructor <init>(kotlin.collections/List<com.davils.kore.core.text/TextEdit>, com.davils.kaml.core.syntax/YamlSyntaxTree) // com.davils.kaml.document.patch/JsonPatchEdit.Edited.<init>|<init>(kotlin.collections.List<com.davils.kore.core.text.TextEdit>;com.davils.kaml.core.syntax.YamlSyntaxTree){}[0]
+
+        final val edits // com.davils.kaml.document.patch/JsonPatchEdit.Edited.edits|{}edits[0]
+            final fun <get-edits>(): kotlin.collections/List<com.davils.kore.core.text/TextEdit> // com.davils.kaml.document.patch/JsonPatchEdit.Edited.edits.<get-edits>|<get-edits>(){}[0]
+        final val tree // com.davils.kaml.document.patch/JsonPatchEdit.Edited.tree|{}tree[0]
+            final fun <get-tree>(): com.davils.kaml.core.syntax/YamlSyntaxTree // com.davils.kaml.document.patch/JsonPatchEdit.Edited.tree.<get-tree>|<get-tree>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchEdit.Edited.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchEdit.Edited.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchEdit.Edited.toString|toString(){}[0]
+    }
+
+    final class Failed : com.davils.kaml.document.patch/JsonPatchEdit { // com.davils.kaml.document.patch/JsonPatchEdit.Failed|null[0]
+        constructor <init>(kotlin/Int, com.davils.kaml.document.patch/JsonPatchRefusal) // com.davils.kaml.document.patch/JsonPatchEdit.Failed.<init>|<init>(kotlin.Int;com.davils.kaml.document.patch.JsonPatchRefusal){}[0]
+
+        final val index // com.davils.kaml.document.patch/JsonPatchEdit.Failed.index|{}index[0]
+            final fun <get-index>(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchEdit.Failed.index.<get-index>|<get-index>(){}[0]
+        final val reason // com.davils.kaml.document.patch/JsonPatchEdit.Failed.reason|{}reason[0]
+            final fun <get-reason>(): com.davils.kaml.document.patch/JsonPatchRefusal // com.davils.kaml.document.patch/JsonPatchEdit.Failed.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchEdit.Failed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchEdit.Failed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchEdit.Failed.toString|toString(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation|null[0]
+    abstract val path // com.davils.kaml.document.patch/JsonPatchOperation.path|{}path[0]
+        abstract fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.path.<get-path>|<get-path>(){}[0]
+
+    final class Add : com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation.Add|null[0]
+        constructor <init>(com.davils.kaml.document.pointer/JsonPointer, com.davils.kaml.core.node/YamlNode) // com.davils.kaml.document.patch/JsonPatchOperation.Add.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer;com.davils.kaml.core.node.YamlNode){}[0]
+
+        final val path // com.davils.kaml.document.patch/JsonPatchOperation.Add.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Add.path.<get-path>|<get-path>(){}[0]
+        final val value // com.davils.kaml.document.patch/JsonPatchOperation.Add.value|{}value[0]
+            final fun <get-value>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonPatchOperation.Add.value.<get-value>|<get-value>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchOperation.Add.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchOperation.Add.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchOperation.Add.toString|toString(){}[0]
+    }
+
+    final class Copy : com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation.Copy|null[0]
+        constructor <init>(com.davils.kaml.document.pointer/JsonPointer, com.davils.kaml.document.pointer/JsonPointer) // com.davils.kaml.document.patch/JsonPatchOperation.Copy.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer;com.davils.kaml.document.pointer.JsonPointer){}[0]
+
+        final val from // com.davils.kaml.document.patch/JsonPatchOperation.Copy.from|{}from[0]
+            final fun <get-from>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Copy.from.<get-from>|<get-from>(){}[0]
+        final val path // com.davils.kaml.document.patch/JsonPatchOperation.Copy.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Copy.path.<get-path>|<get-path>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchOperation.Copy.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchOperation.Copy.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchOperation.Copy.toString|toString(){}[0]
+    }
+
+    final class Move : com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation.Move|null[0]
+        constructor <init>(com.davils.kaml.document.pointer/JsonPointer, com.davils.kaml.document.pointer/JsonPointer) // com.davils.kaml.document.patch/JsonPatchOperation.Move.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer;com.davils.kaml.document.pointer.JsonPointer){}[0]
+
+        final val from // com.davils.kaml.document.patch/JsonPatchOperation.Move.from|{}from[0]
+            final fun <get-from>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Move.from.<get-from>|<get-from>(){}[0]
+        final val path // com.davils.kaml.document.patch/JsonPatchOperation.Move.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Move.path.<get-path>|<get-path>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchOperation.Move.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchOperation.Move.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchOperation.Move.toString|toString(){}[0]
+    }
+
+    final class Remove : com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation.Remove|null[0]
+        constructor <init>(com.davils.kaml.document.pointer/JsonPointer) // com.davils.kaml.document.patch/JsonPatchOperation.Remove.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer){}[0]
+
+        final val path // com.davils.kaml.document.patch/JsonPatchOperation.Remove.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Remove.path.<get-path>|<get-path>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchOperation.Remove.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchOperation.Remove.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchOperation.Remove.toString|toString(){}[0]
+    }
+
+    final class Replace : com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation.Replace|null[0]
+        constructor <init>(com.davils.kaml.document.pointer/JsonPointer, com.davils.kaml.core.node/YamlNode) // com.davils.kaml.document.patch/JsonPatchOperation.Replace.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer;com.davils.kaml.core.node.YamlNode){}[0]
+
+        final val path // com.davils.kaml.document.patch/JsonPatchOperation.Replace.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Replace.path.<get-path>|<get-path>(){}[0]
+        final val value // com.davils.kaml.document.patch/JsonPatchOperation.Replace.value|{}value[0]
+            final fun <get-value>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonPatchOperation.Replace.value.<get-value>|<get-value>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchOperation.Replace.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchOperation.Replace.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchOperation.Replace.toString|toString(){}[0]
+    }
+
+    final class Test : com.davils.kaml.document.patch/JsonPatchOperation { // com.davils.kaml.document.patch/JsonPatchOperation.Test|null[0]
+        constructor <init>(com.davils.kaml.document.pointer/JsonPointer, com.davils.kaml.core.node/YamlNode) // com.davils.kaml.document.patch/JsonPatchOperation.Test.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer;com.davils.kaml.core.node.YamlNode){}[0]
+
+        final val path // com.davils.kaml.document.patch/JsonPatchOperation.Test.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.patch/JsonPatchOperation.Test.path.<get-path>|<get-path>(){}[0]
+        final val value // com.davils.kaml.document.patch/JsonPatchOperation.Test.value|{}value[0]
+            final fun <get-value>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonPatchOperation.Test.value.<get-value>|<get-value>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchOperation.Test.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchOperation.Test.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchOperation.Test.toString|toString(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.document.patch/JsonPatchReading { // com.davils.kaml.document.patch/JsonPatchReading|null[0]
+    final class Invalid : com.davils.kaml.document.patch/JsonPatchReading { // com.davils.kaml.document.patch/JsonPatchReading.Invalid|null[0]
+        constructor <init>(kotlin/Int, kotlin/String) // com.davils.kaml.document.patch/JsonPatchReading.Invalid.<init>|<init>(kotlin.Int;kotlin.String){}[0]
+
+        final val index // com.davils.kaml.document.patch/JsonPatchReading.Invalid.index|{}index[0]
+            final fun <get-index>(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchReading.Invalid.index.<get-index>|<get-index>(){}[0]
+        final val reason // com.davils.kaml.document.patch/JsonPatchReading.Invalid.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // com.davils.kaml.document.patch/JsonPatchReading.Invalid.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchReading.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchReading.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchReading.Invalid.toString|toString(){}[0]
+    }
+
+    final class Read : com.davils.kaml.document.patch/JsonPatchReading { // com.davils.kaml.document.patch/JsonPatchReading.Read|null[0]
+        constructor <init>(com.davils.kaml.document.patch/JsonPatch) // com.davils.kaml.document.patch/JsonPatchReading.Read.<init>|<init>(com.davils.kaml.document.patch.JsonPatch){}[0]
+
+        final val patch // com.davils.kaml.document.patch/JsonPatchReading.Read.patch|{}patch[0]
+            final fun <get-patch>(): com.davils.kaml.document.patch/JsonPatch // com.davils.kaml.document.patch/JsonPatchReading.Read.patch.<get-patch>|<get-patch>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchReading.Read.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchReading.Read.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchReading.Read.toString|toString(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.document.patch/JsonPatchResult { // com.davils.kaml.document.patch/JsonPatchResult|null[0]
+    final class Applied : com.davils.kaml.document.patch/JsonPatchResult { // com.davils.kaml.document.patch/JsonPatchResult.Applied|null[0]
+        constructor <init>(com.davils.kaml.core.node/YamlNode) // com.davils.kaml.document.patch/JsonPatchResult.Applied.<init>|<init>(com.davils.kaml.core.node.YamlNode){}[0]
+
+        final val node // com.davils.kaml.document.patch/JsonPatchResult.Applied.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonPatchResult.Applied.node.<get-node>|<get-node>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchResult.Applied.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchResult.Applied.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchResult.Applied.toString|toString(){}[0]
+    }
+
+    final class Failed : com.davils.kaml.document.patch/JsonPatchResult { // com.davils.kaml.document.patch/JsonPatchResult.Failed|null[0]
+        constructor <init>(kotlin/Int, com.davils.kaml.document.patch/JsonPatchRefusal) // com.davils.kaml.document.patch/JsonPatchResult.Failed.<init>|<init>(kotlin.Int;com.davils.kaml.document.patch.JsonPatchRefusal){}[0]
+
+        final val index // com.davils.kaml.document.patch/JsonPatchResult.Failed.index|{}index[0]
+            final fun <get-index>(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchResult.Failed.index.<get-index>|<get-index>(){}[0]
+        final val reason // com.davils.kaml.document.patch/JsonPatchResult.Failed.reason|{}reason[0]
+            final fun <get-reason>(): com.davils.kaml.document.patch/JsonPatchRefusal // com.davils.kaml.document.patch/JsonPatchResult.Failed.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatchResult.Failed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatchResult.Failed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatchResult.Failed.toString|toString(){}[0]
+    }
+}
+
+final class com.davils.kaml.document.patch/JsonMergePatch { // com.davils.kaml.document.patch/JsonMergePatch|null[0]
+    constructor <init>(com.davils.kaml.core.node/YamlNode, com.davils.kaml.core.limit/YamlLimits = ...) // com.davils.kaml.document.patch/JsonMergePatch.<init>|<init>(com.davils.kaml.core.node.YamlNode;com.davils.kaml.core.limit.YamlLimits){}[0]
+
+    final val limits // com.davils.kaml.document.patch/JsonMergePatch.limits|{}limits[0]
+        final fun <get-limits>(): com.davils.kaml.core.limit/YamlLimits // com.davils.kaml.document.patch/JsonMergePatch.limits.<get-limits>|<get-limits>(){}[0]
+    final val patch // com.davils.kaml.document.patch/JsonMergePatch.patch|{}patch[0]
+        final fun <get-patch>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonMergePatch.patch.<get-patch>|<get-patch>(){}[0]
+
+    final fun apply(com.davils.kaml.core.node/YamlNode): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonMergePatch.apply|apply(com.davils.kaml.core.node.YamlNode){}[0]
+    final fun apply(com.davils.kaml.core.syntax/YamlSyntaxTree, kotlin/Int = ...): com.davils.kaml.document.patch/JsonPatchEdit // com.davils.kaml.document.patch/JsonMergePatch.apply|apply(com.davils.kaml.core.syntax.YamlSyntaxTree;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonMergePatch.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonMergePatch.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonMergePatch.toString|toString(){}[0]
+}
+
+final class com.davils.kaml.document.patch/JsonPatch { // com.davils.kaml.document.patch/JsonPatch|null[0]
+    constructor <init>(kotlin.collections/List<com.davils.kaml.document.patch/JsonPatchOperation>, com.davils.kaml.core.limit/YamlLimits = ...) // com.davils.kaml.document.patch/JsonPatch.<init>|<init>(kotlin.collections.List<com.davils.kaml.document.patch.JsonPatchOperation>;com.davils.kaml.core.limit.YamlLimits){}[0]
+
+    final val limits // com.davils.kaml.document.patch/JsonPatch.limits|{}limits[0]
+        final fun <get-limits>(): com.davils.kaml.core.limit/YamlLimits // com.davils.kaml.document.patch/JsonPatch.limits.<get-limits>|<get-limits>(){}[0]
+    final val operations // com.davils.kaml.document.patch/JsonPatch.operations|{}operations[0]
+        final fun <get-operations>(): kotlin.collections/List<com.davils.kaml.document.patch/JsonPatchOperation> // com.davils.kaml.document.patch/JsonPatch.operations.<get-operations>|<get-operations>(){}[0]
+
+    final fun apply(com.davils.kaml.core.node/YamlNode): com.davils.kaml.document.patch/JsonPatchResult // com.davils.kaml.document.patch/JsonPatch.apply|apply(com.davils.kaml.core.node.YamlNode){}[0]
+    final fun apply(com.davils.kaml.core.syntax/YamlSyntaxTree, kotlin/Int = ...): com.davils.kaml.document.patch/JsonPatchEdit // com.davils.kaml.document.patch/JsonPatch.apply|apply(com.davils.kaml.core.syntax.YamlSyntaxTree;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.patch/JsonPatch.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.document.patch/JsonPatch.hashCode|hashCode(){}[0]
+    final fun toNode(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.patch/JsonPatch.toNode|toNode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.patch/JsonPatch.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.document.patch/JsonPatch.Companion|null[0]
+        final fun diff(com.davils.kaml.core.node/YamlNode, com.davils.kaml.core.node/YamlNode, com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.patch/JsonPatch // com.davils.kaml.document.patch/JsonPatch.Companion.diff|diff(com.davils.kaml.core.node.YamlNode;com.davils.kaml.core.node.YamlNode;com.davils.kaml.core.limit.YamlLimits){}[0]
+        final fun read(com.davils.kaml.core.node/YamlNode, com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.patch/JsonPatchReading // com.davils.kaml.document.patch/JsonPatch.Companion.read|read(com.davils.kaml.core.node.YamlNode;com.davils.kaml.core.limit.YamlLimits){}[0]
+    }
+}
+
 final class com.davils.kaml.document.path/JsonPath { // com.davils.kaml.document.path/JsonPath|null[0]
     final val expression // com.davils.kaml.document.path/JsonPath.expression|{}expression[0]
         final fun <get-expression>(): kotlin/String // com.davils.kaml.document.path/JsonPath.expression.<get-expression>|<get-expression>(){}[0]
