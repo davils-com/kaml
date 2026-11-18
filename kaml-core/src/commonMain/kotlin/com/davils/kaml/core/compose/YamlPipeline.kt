@@ -62,7 +62,7 @@ internal class YamlPipeline(configuration: YamlConfiguration) {
     fun read(source: YamlSource): Reading {
         val leastCharacters = source.byteLength / MOST_BYTES_PER_CHARACTER
         if (leastCharacters > limits.maximumInputLength) return tooLong()
-        val decoded = SourceDecoding.decode(source)
+        val decoded = SourceDecoding.decode(source, limits.maximumInputLength)
         return readText(decoded.text, decoded.diagnostics)
     }
 

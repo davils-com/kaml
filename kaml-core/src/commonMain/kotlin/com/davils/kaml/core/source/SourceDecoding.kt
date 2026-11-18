@@ -27,10 +27,10 @@ internal object SourceDecoding {
     private const val WIDE: Int = 4
     private const val NARROW: Int = 2
 
-    fun decode(source: YamlSource): DecodedSource {
+    fun decode(source: YamlSource, maximumLength: Int = Int.MAX_VALUE): DecodedSource {
         val text = source.text
         if (text != null) return DecodedSource(text, YamlEncoding.Utf8, emptyList())
-        return decode(source.bytes)
+        return decode(source.bytes, maximumLength)
     }
 
     fun encodingOf(bytes: ByteArray): YamlEncoding {
@@ -38,9 +38,9 @@ internal object SourceDecoding {
         return wide(head, bytes.size) ?: narrow(head, bytes.size) ?: YamlEncoding.Utf8
     }
 
-    private fun decode(bytes: ByteArray): DecodedSource {
+    private fun decode(bytes: ByteArray, maximumLength: Int): DecodedSource {
         val encoding = encodingOf(bytes)
-        val decoded = TextDecoders.decode(bytes, encoding)
+        val decoded = TextDecoders.decode(bytes, encoding, maximumLength)
         val diagnostics = listOfNotNull(decoded.firstInvalidByte?.let { offset -> invalid(encoding, offset) })
         return DecodedSource(decoded.text, encoding, diagnostics)
     }

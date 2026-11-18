@@ -52,23 +52,31 @@ internal object TextDecoders {
             Shape(continuations = 3, leadBits = FOUR_BYTE_LEAD_BITS, smallest = SMALLEST_FOUR_BYTE),
     )
 
-    fun decode(bytes: ByteArray, encoding: YamlEncoding): Decoded = when (encoding) {
-        YamlEncoding.Utf8 -> utf8(bytes)
-        YamlEncoding.Utf16LittleEndian -> utf16(bytes, isBigEndian = false)
-        YamlEncoding.Utf16BigEndian -> utf16(bytes, isBigEndian = true)
-        YamlEncoding.Utf32LittleEndian -> utf32(bytes, isBigEndian = false)
-        YamlEncoding.Utf32BigEndian -> utf32(bytes, isBigEndian = true)
+    fun decode(bytes: ByteArray, encoding: YamlEncoding, maximumLength: Int = Int.MAX_VALUE): Decoded {
+        val output = Output(capacity = bytes.size / unitOf(encoding), maximumLength = maximumLength)
+        when (encoding) {
+            YamlEncoding.Utf8 -> utf8(bytes, output)
+            YamlEncoding.Utf16LittleEndian -> utf16(bytes, isBigEndian = false, output = output)
+            YamlEncoding.Utf16BigEndian -> utf16(bytes, isBigEndian = true, output = output)
+            YamlEncoding.Utf32LittleEndian -> utf32(bytes, isBigEndian = false, output = output)
+            YamlEncoding.Utf32BigEndian -> utf32(bytes, isBigEndian = true, output = output)
+        }
+        return output.finish()
     }
 
-    private fun utf8(bytes: ByteArray): Decoded {
-        val output = Output(bytes.size)
+    private fun unitOf(encoding: YamlEncoding): Int = when (encoding) {
+        YamlEncoding.Utf8 -> 1
+        YamlEncoding.Utf16LittleEndian, YamlEncoding.Utf16BigEndian -> UTF16_UNIT
+        YamlEncoding.Utf32LittleEndian, YamlEncoding.Utf32BigEndian -> UTF32_UNIT
+    }
+
+    private fun utf8(bytes: ByteArray, output: Output) {
         var index = 0
-        while (index < bytes.size) {
+        while (index < bytes.size && output.isOpen) {
             val sequence = utf8Sequence(bytes, index)
             output.add(codePoint = sequence.codePoint, byteIndex = index)
             index += sequence.length
         }
-        return output.finish()
     }
 
     private fun utf8Sequence(bytes: ByteArray, index: Int): Sequence {
@@ -101,15 +109,13 @@ internal object TextDecoders {
         return value and BYTE_MASK and CONTINUATION_MASK == ASCII_END
     }
 
-    private fun utf16(bytes: ByteArray, isBigEndian: Boolean): Decoded {
-        val output = Output(bytes.size / UTF16_UNIT)
+    private fun utf16(bytes: ByteArray, isBigEndian: Boolean, output: Output) {
         var index = 0
-        while (index < bytes.size) {
+        while (index < bytes.size && output.isOpen) {
             val sequence = utf16Sequence(bytes, index, isBigEndian)
             output.add(codePoint = sequence.codePoint, byteIndex = index)
             index += sequence.length
         }
-        return output.finish()
     }
 
     private fun utf16Sequence(bytes: ByteArray, index: Int, isBigEndian: Boolean): Sequence {
@@ -127,16 +133,14 @@ internal object TextDecoders {
         return Sequence(codePoint = SUPPLEMENTARY_START + upper + (low - LOW_SURROGATE_START), length = UTF16_UNIT * 2)
     }
 
-    private fun utf32(bytes: ByteArray, isBigEndian: Boolean): Decoded {
-        val output = Output(bytes.size / UTF32_UNIT)
+    private fun utf32(bytes: ByteArray, isBigEndian: Boolean, output: Output) {
         var index = 0
-        while (index < bytes.size) {
+        while (index < bytes.size && output.isOpen) {
             val codePoint = unitAt(bytes = bytes, index = index, width = UTF32_UNIT, isBigEndian = isBigEndian)
             val isValid = codePoint != null && codePoint in 0..LAST_CODE_POINT && !isSurrogate(codePoint)
             output.add(codePoint = codePoint?.takeIf { isValid } ?: Sequence.INVALID, byteIndex = index)
             index += UTF32_UNIT
         }
-        return output.finish()
     }
 
     private fun unitAt(bytes: ByteArray, index: Int, width: Int, isBigEndian: Boolean): Int? {
@@ -164,9 +168,11 @@ internal object TextDecoders {
         }
     }
 
-    private class Output(capacity: Int) {
-        private val text = StringBuilder(capacity)
+    private class Output(capacity: Int, private val maximumLength: Int) {
+        private val text = StringBuilder(minOf(a = capacity, b = maximumLength) + 2)
         private var firstInvalidByte: Int? = null
+
+        val isOpen: Boolean get() = text.length <= maximumLength
 
         fun add(codePoint: Int, byteIndex: Int) {
             if (codePoint == Sequence.INVALID && firstInvalidByte == null) firstInvalidByte = byteIndex

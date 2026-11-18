@@ -49,7 +49,8 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
      *
      * A longer source is refused with an [com.davils.kaml.core.diagnostic.YamlDiagnosticCode.InputTooLong] diagnostic
      * before it is parsed, and a source of bytes is refused before it is decoded when it holds more than four bytes per
-     * allowed code unit. The syntax tree and its incremental reparse check the same limit.
+     * allowed code unit; otherwise its decoding stops as soon as the text passes the limit. The syntax tree and its
+     * incremental reparse check the same limit.
      *
      * @since 1.0.0
      */
