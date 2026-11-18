@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.21"
 kreate = "5.2.0"
-kore = "2.1.0"
+kore = "2.1.0-SNAPSHOT"
 coroutines = "1.11.0"
 serialization = "1.13.0"
 # Floors for the classpaths of build tools, raised past known vulnerabilities.
@@ -13,6 +13,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 kotlin-serialization-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kreate-gradle-plugin = { module = "com.davils.kreate:com.davils.kreate.gradle.plugin", version.ref = "kreate" }
 kore-core = { module = "com.davils:kore-core", version.ref = "kore" }
+kore-testing = { module = "com.davils:kore-testing", version.ref = "kore" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
