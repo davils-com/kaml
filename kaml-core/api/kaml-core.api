@@ -926,3 +926,81 @@ public final class com/davils/kaml/core/syntax/ast/YamlValueSyntax$Sequence : co
 	public final fun isFlow ()Z
 }
 
+public final class com/davils/kaml/core/syntax/edit/YamlEditRefusal : java/lang/Enum {
+	public static final field MissingDocument Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public static final field MissingPath Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public static final field NotAMapping Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public static final field NotASequence Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public static final field Unsupported Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public static fun values ()[Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+}
+
+public abstract interface class com/davils/kaml/core/syntax/edit/YamlEditResult {
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlEditResult$Edited : com/davils/kaml/core/syntax/edit/YamlEditResult {
+	public fun <init> (Ljava/util/List;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEdits ()Ljava/util/List;
+	public final fun getTree ()Lcom/davils/kaml/core/syntax/YamlSyntaxTree;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlEditResult$Refused : com/davils/kaml/core/syntax/edit/YamlEditResult {
+	public fun <init> (Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;Lcom/davils/kaml/core/syntax/edit/YamlPath;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Lcom/davils/kaml/core/syntax/edit/YamlPath;
+	public final fun getReason ()Lcom/davils/kaml/core/syntax/edit/YamlEditRefusal;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlEditor {
+	public fun <init> (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;I)V
+	public synthetic fun <init> (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun append (Lcom/davils/kaml/core/syntax/edit/YamlPath;Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/core/syntax/edit/YamlEditResult;
+	public final fun comment (Lcom/davils/kaml/core/syntax/edit/YamlPath;Ljava/util/List;)Lcom/davils/kaml/core/syntax/edit/YamlEditResult;
+	public final fun insert (Lcom/davils/kaml/core/syntax/edit/YamlPath;Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/core/syntax/edit/YamlEditResult;
+	public final fun remove (Lcom/davils/kaml/core/syntax/edit/YamlPath;)Lcom/davils/kaml/core/syntax/edit/YamlEditResult;
+	public final fun rename (Lcom/davils/kaml/core/syntax/edit/YamlPath;Ljava/lang/String;)Lcom/davils/kaml/core/syntax/edit/YamlEditResult;
+	public final fun set (Lcom/davils/kaml/core/syntax/edit/YamlPath;Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/core/syntax/edit/YamlEditResult;
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlPath {
+	public static final field Companion Lcom/davils/kaml/core/syntax/edit/YamlPath$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLast ()Lcom/davils/kaml/core/syntax/edit/YamlPath$Segment;
+	public final fun getParent ()Lcom/davils/kaml/core/syntax/edit/YamlPath;
+	public final fun getSegments ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun index (I)Lcom/davils/kaml/core/syntax/edit/YamlPath;
+	public final fun key (Ljava/lang/String;)Lcom/davils/kaml/core/syntax/edit/YamlPath;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlPath$Companion {
+	public final fun getROOT ()Lcom/davils/kaml/core/syntax/edit/YamlPath;
+}
+
+public abstract interface class com/davils/kaml/core/syntax/edit/YamlPath$Segment {
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlPath$Segment$Index : com/davils/kaml/core/syntax/edit/YamlPath$Segment {
+	public fun <init> (I)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndex ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/syntax/edit/YamlPath$Segment$Key : com/davils/kaml/core/syntax/edit/YamlPath$Segment {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

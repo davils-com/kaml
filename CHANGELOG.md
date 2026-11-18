@@ -30,6 +30,8 @@ way.
   lossless, stack-safe parser and a composer that charges every budget while it works, so a billion laughs document
   fails at its budget.
 - **The lossless syntax tree** with incremental reparsing and a typed view, which no limit can be bypassed through.
+- **The editor**, which changes values, keys and comments of a document as text edits that keep the rest of it and
+  cannot inject YAML.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

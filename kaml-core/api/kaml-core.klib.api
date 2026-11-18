@@ -148,6 +148,20 @@ final enum class com.davils.kaml.core.source/YamlEncoding : kotlin/Enum<com.davi
     final fun values(): kotlin/Array<com.davils.kaml.core.source/YamlEncoding> // com.davils.kaml.core.source/YamlEncoding.values|values#static(){}[0]
 }
 
+final enum class com.davils.kaml.core.syntax.edit/YamlEditRefusal : kotlin/Enum<com.davils.kaml.core.syntax.edit/YamlEditRefusal> { // com.davils.kaml.core.syntax.edit/YamlEditRefusal|null[0]
+    enum entry MissingDocument // com.davils.kaml.core.syntax.edit/YamlEditRefusal.MissingDocument|null[0]
+    enum entry MissingPath // com.davils.kaml.core.syntax.edit/YamlEditRefusal.MissingPath|null[0]
+    enum entry NotAMapping // com.davils.kaml.core.syntax.edit/YamlEditRefusal.NotAMapping|null[0]
+    enum entry NotASequence // com.davils.kaml.core.syntax.edit/YamlEditRefusal.NotASequence|null[0]
+    enum entry Unsupported // com.davils.kaml.core.syntax.edit/YamlEditRefusal.Unsupported|null[0]
+
+    final val entries // com.davils.kaml.core.syntax.edit/YamlEditRefusal.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.syntax.edit/YamlEditRefusal> // com.davils.kaml.core.syntax.edit/YamlEditRefusal.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.syntax.edit/YamlEditRefusal // com.davils.kaml.core.syntax.edit/YamlEditRefusal.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.syntax.edit/YamlEditRefusal> // com.davils.kaml.core.syntax.edit/YamlEditRefusal.values|values#static(){}[0]
+}
+
 final enum class com.davils.kaml.core.syntax/YamlSyntaxKind : kotlin/Enum<com.davils.kaml.core.syntax/YamlSyntaxKind> { // com.davils.kaml.core.syntax/YamlSyntaxKind|null[0]
     enum entry ALIAS // com.davils.kaml.core.syntax/YamlSyntaxKind.ALIAS|null[0]
     enum entry ALIAS_NODE // com.davils.kaml.core.syntax/YamlSyntaxKind.ALIAS_NODE|null[0]
@@ -501,6 +515,34 @@ sealed interface com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils
             final fun <get-items>(): kotlin.collections/List<com.davils.kaml.core.syntax.ast/YamlValueSyntax> // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.items.<get-items>|<get-items>(){}[0]
         final val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.node|{}node[0]
             final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.node.<get-node>|<get-node>(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.core.syntax.edit/YamlEditResult { // com.davils.kaml.core.syntax.edit/YamlEditResult|null[0]
+    final class Edited : com.davils.kaml.core.syntax.edit/YamlEditResult { // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited|null[0]
+        constructor <init>(kotlin.collections/List<com.davils.kore.core.text/TextEdit>, com.davils.kaml.core.syntax/YamlSyntaxTree) // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.<init>|<init>(kotlin.collections.List<com.davils.kore.core.text.TextEdit>;com.davils.kaml.core.syntax.YamlSyntaxTree){}[0]
+
+        final val edits // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.edits|{}edits[0]
+            final fun <get-edits>(): kotlin.collections/List<com.davils.kore.core.text/TextEdit> // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.edits.<get-edits>|<get-edits>(){}[0]
+        final val tree // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.tree|{}tree[0]
+            final fun <get-tree>(): com.davils.kaml.core.syntax/YamlSyntaxTree // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.tree.<get-tree>|<get-tree>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlEditResult.Edited.toString|toString(){}[0]
+    }
+
+    final class Refused : com.davils.kaml.core.syntax.edit/YamlEditResult { // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused|null[0]
+        constructor <init>(com.davils.kaml.core.syntax.edit/YamlEditRefusal, com.davils.kaml.core.syntax.edit/YamlPath) // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.<init>|<init>(com.davils.kaml.core.syntax.edit.YamlEditRefusal;com.davils.kaml.core.syntax.edit.YamlPath){}[0]
+
+        final val path // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.path|{}path[0]
+            final fun <get-path>(): com.davils.kaml.core.syntax.edit/YamlPath // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.path.<get-path>|<get-path>(){}[0]
+        final val reason // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.reason|{}reason[0]
+            final fun <get-reason>(): com.davils.kaml.core.syntax.edit/YamlEditRefusal // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.toString|toString(){}[0]
     }
 }
 
@@ -974,6 +1016,61 @@ final class com.davils.kaml.core.syntax.ast/YamlEntrySyntax { // com.davils.kaml
         final fun <get-trailingComment>(): kotlin/String? // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.trailingComment.<get-trailingComment>|<get-trailingComment>(){}[0]
     final val value // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.value|{}value[0]
         final fun <get-value>(): com.davils.kaml.core.syntax.ast/YamlValueSyntax? // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.value.<get-value>|<get-value>(){}[0]
+}
+
+final class com.davils.kaml.core.syntax.edit/YamlEditor { // com.davils.kaml.core.syntax.edit/YamlEditor|null[0]
+    constructor <init>(com.davils.kaml.core.syntax/YamlSyntaxTree, kotlin/Int = ...) // com.davils.kaml.core.syntax.edit/YamlEditor.<init>|<init>(com.davils.kaml.core.syntax.YamlSyntaxTree;kotlin.Int){}[0]
+
+    final fun append(com.davils.kaml.core.syntax.edit/YamlPath, com.davils.kaml.core.node/YamlNode): com.davils.kaml.core.syntax.edit/YamlEditResult // com.davils.kaml.core.syntax.edit/YamlEditor.append|append(com.davils.kaml.core.syntax.edit.YamlPath;com.davils.kaml.core.node.YamlNode){}[0]
+    final fun comment(com.davils.kaml.core.syntax.edit/YamlPath, kotlin.collections/List<kotlin/String>): com.davils.kaml.core.syntax.edit/YamlEditResult // com.davils.kaml.core.syntax.edit/YamlEditor.comment|comment(com.davils.kaml.core.syntax.edit.YamlPath;kotlin.collections.List<kotlin.String>){}[0]
+    final fun insert(com.davils.kaml.core.syntax.edit/YamlPath, com.davils.kaml.core.node/YamlNode): com.davils.kaml.core.syntax.edit/YamlEditResult // com.davils.kaml.core.syntax.edit/YamlEditor.insert|insert(com.davils.kaml.core.syntax.edit.YamlPath;com.davils.kaml.core.node.YamlNode){}[0]
+    final fun remove(com.davils.kaml.core.syntax.edit/YamlPath): com.davils.kaml.core.syntax.edit/YamlEditResult // com.davils.kaml.core.syntax.edit/YamlEditor.remove|remove(com.davils.kaml.core.syntax.edit.YamlPath){}[0]
+    final fun rename(com.davils.kaml.core.syntax.edit/YamlPath, kotlin/String): com.davils.kaml.core.syntax.edit/YamlEditResult // com.davils.kaml.core.syntax.edit/YamlEditor.rename|rename(com.davils.kaml.core.syntax.edit.YamlPath;kotlin.String){}[0]
+    final fun set(com.davils.kaml.core.syntax.edit/YamlPath, com.davils.kaml.core.node/YamlNode): com.davils.kaml.core.syntax.edit/YamlEditResult // com.davils.kaml.core.syntax.edit/YamlEditor.set|set(com.davils.kaml.core.syntax.edit.YamlPath;com.davils.kaml.core.node.YamlNode){}[0]
+}
+
+final class com.davils.kaml.core.syntax.edit/YamlPath { // com.davils.kaml.core.syntax.edit/YamlPath|null[0]
+    final val last // com.davils.kaml.core.syntax.edit/YamlPath.last|{}last[0]
+        final fun <get-last>(): com.davils.kaml.core.syntax.edit/YamlPath.Segment? // com.davils.kaml.core.syntax.edit/YamlPath.last.<get-last>|<get-last>(){}[0]
+    final val parent // com.davils.kaml.core.syntax.edit/YamlPath.parent|{}parent[0]
+        final fun <get-parent>(): com.davils.kaml.core.syntax.edit/YamlPath? // com.davils.kaml.core.syntax.edit/YamlPath.parent.<get-parent>|<get-parent>(){}[0]
+    final val segments // com.davils.kaml.core.syntax.edit/YamlPath.segments|{}segments[0]
+        final fun <get-segments>(): kotlin.collections/List<com.davils.kaml.core.syntax.edit/YamlPath.Segment> // com.davils.kaml.core.syntax.edit/YamlPath.segments.<get-segments>|<get-segments>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.edit/YamlPath.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlPath.hashCode|hashCode(){}[0]
+    final fun index(kotlin/Int): com.davils.kaml.core.syntax.edit/YamlPath // com.davils.kaml.core.syntax.edit/YamlPath.index|index(kotlin.Int){}[0]
+    final fun key(kotlin/String): com.davils.kaml.core.syntax.edit/YamlPath // com.davils.kaml.core.syntax.edit/YamlPath.key|key(kotlin.String){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlPath.toString|toString(){}[0]
+
+    sealed interface Segment { // com.davils.kaml.core.syntax.edit/YamlPath.Segment|null[0]
+        final class Index : com.davils.kaml.core.syntax.edit/YamlPath.Segment { // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index|null[0]
+            constructor <init>(kotlin/Int) // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index.<init>|<init>(kotlin.Int){}[0]
+
+            final val index // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index.index|{}index[0]
+                final fun <get-index>(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index.index.<get-index>|<get-index>(){}[0]
+
+            final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index.equals|equals(kotlin.Any?){}[0]
+            final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index.hashCode|hashCode(){}[0]
+            final fun toString(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Index.toString|toString(){}[0]
+        }
+
+        final class Key : com.davils.kaml.core.syntax.edit/YamlPath.Segment { // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key|null[0]
+            constructor <init>(kotlin/String) // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key.<init>|<init>(kotlin.String){}[0]
+
+            final val name // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key.name|{}name[0]
+                final fun <get-name>(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key.name.<get-name>|<get-name>(){}[0]
+
+            final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key.equals|equals(kotlin.Any?){}[0]
+            final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key.hashCode|hashCode(){}[0]
+            final fun toString(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlPath.Segment.Key.toString|toString(){}[0]
+        }
+    }
+
+    final object Companion { // com.davils.kaml.core.syntax.edit/YamlPath.Companion|null[0]
+        final val ROOT // com.davils.kaml.core.syntax.edit/YamlPath.Companion.ROOT|{}ROOT[0]
+            final fun <get-ROOT>(): com.davils.kaml.core.syntax.edit/YamlPath // com.davils.kaml.core.syntax.edit/YamlPath.Companion.ROOT.<get-ROOT>|<get-ROOT>(){}[0]
+    }
 }
 
 final class com.davils.kaml.core.syntax/YamlSyntaxNode : com.davils.kaml.core.syntax/YamlSyntaxElement { // com.davils.kaml.core.syntax/YamlSyntaxNode|null[0]
