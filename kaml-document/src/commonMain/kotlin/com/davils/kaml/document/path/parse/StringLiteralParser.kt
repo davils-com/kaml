@@ -85,12 +85,14 @@ internal class StringLiteralParser(private val cursor: PathCursor) {
 
     private fun hexadecimal(): Char {
         val digits = (0 until HEX_LENGTH).map { ahead -> cursor.peek(ahead) }
-        val isHexadecimal = digits.all { it != null && it.digitToIntOrNull(HEX_RADIX) != null }
+        val isHexadecimal = digits.all { digit -> digit != null && isAsciiHexadecimal(digit) }
         if (!isHexadecimal) cursor.fail("expected four hexadecimal digits")
         cursor.advance(HEX_LENGTH)
         val code = digits.joinToString("").toInt(HEX_RADIX)
         return code.toChar()
     }
+
+    private fun isAsciiHexadecimal(digit: Char): Boolean = digit in '0'..'9' || digit in 'a'..'f' || digit in 'A'..'F'
 
     private companion object {
         const val SPACE: Int = 0x20
