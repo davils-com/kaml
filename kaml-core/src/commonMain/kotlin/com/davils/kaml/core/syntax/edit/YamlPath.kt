@@ -16,6 +16,7 @@
 
 package com.davils.kaml.core.syntax.edit
 
+import com.davils.kore.core.Limits
 import com.davils.kore.core.annotation.DavilsInternal
 import com.davils.kore.core.text.SafeText
 
@@ -77,10 +78,24 @@ public class YamlPath private constructor(segments: List<Segment>) {
      * Returns the path as `/` followed by its segments separated by `/`, with each key quoted and escaped, such as
      * `/"server"/0`.
      *
+     * The text is bounded however long the path is: once it reaches 256 characters, the segments after it are left
+     * out, and only their number is shown.
+     *
      * @return the escaped, readable form of the path.
      * @since 1.0.0
      */
-    override fun toString(): String = "/" + segments.joinToString("/")
+    override fun toString(): String {
+        val shown = StringBuilder(SEPARATOR)
+        var count = 0
+        while (count < segments.size && shown.length < Limits.MAX_DISPLAY_LENGTH) {
+            if (count > 0) shown.append(SEPARATOR)
+            shown.append(segments[count].toString())
+            count++
+        }
+        val omitted = segments.size - count
+        if (omitted > 0) shown.append("$SEPARATOR\u2026(+$omitted segments)")
+        return shown.toString()
+    }
 
     /**
      * A segment of a [YamlPath].
@@ -130,6 +145,8 @@ public class YamlPath private constructor(segments: List<Segment>) {
      * @since 1.0.0
      */
     public companion object {
+        private const val SEPARATOR: String = "/"
+
         /**
          * The empty path, which addresses the root value of a document.
          *

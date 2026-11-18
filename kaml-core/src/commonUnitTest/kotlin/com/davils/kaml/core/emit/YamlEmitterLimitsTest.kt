@@ -42,6 +42,7 @@ import io.kotest.matchers.shouldBe
 private const val SHORT_OUTPUT: Int = 16
 private const val LONG_TEXT: Int = 64
 private const val READABLE_DEPTH: Int = 64
+private const val SHALLOW_DEPTH: Int = 8
 
 private val range: TextRange = TextRange.at(0)
 private val streamStart: YamlEvent = YamlEvent.StreamStart(range = range)
@@ -120,45 +121,61 @@ class YamlEmitterLimitsTest : FunSpec({
     }
 
     context("the depth") {
-        test("lets nodes nest as deep as the hard limit in every style") {
-            val depth = YamlLimits.HARD_DEPTH
+        val deep = yaml { limits { maximumDepth = YamlLimits.HARD_DEPTH } }
+        val shallow = yaml { limits { maximumDepth = SHALLOW_DEPTH } }
+
+        test("lets nodes nest one level less deep than the depth limit in every style") {
+            val depth = YamlLimits.HARD_DEPTH - 1
             val keys = (0 until depth - 1).joinToString(separator = "\n") { level -> "  ".repeat(level) + "k:" }
             val brackets = "[".repeat(depth) + "]".repeat(depth)
 
-            yaml.emit(nestedSequences(depth, YamlCollectionStyle.Block)) shouldBe "- ".repeat(depth - 1) + "[]\n"
-            yaml.emit(nestedSequences(depth, YamlCollectionStyle.Flow)) shouldBe "$brackets\n"
-            yaml.emit(nestedMappings(depth, YamlCollectionStyle.Block)) shouldBe "$keys {}\n"
-            yaml.emit(nestedMappings(depth, YamlCollectionStyle.Flow)) shouldBe
+            deep.emit(nestedSequences(depth, YamlCollectionStyle.Block)) shouldBe "- ".repeat(depth - 1) + "[]\n"
+            deep.emit(nestedSequences(depth, YamlCollectionStyle.Flow)) shouldBe "$brackets\n"
+            deep.emit(nestedMappings(depth, YamlCollectionStyle.Block)) shouldBe "$keys {}\n"
+            deep.emit(nestedMappings(depth, YamlCollectionStyle.Flow)) shouldBe
                 "{k: ".repeat(depth - 1) + "{}" + "}".repeat(depth - 1) + "\n"
         }
 
-        test("writes deeply nested nodes that read back as the same graph") {
+        test("writes nodes as deep as the configuration allows, which read back as the same graph") {
             YamlCollectionStyle.entries.forEach { style ->
-                listOf(nestedSequences(READABLE_DEPTH, style), nestedMappings(READABLE_DEPTH, style)).forEach { node ->
-                    yaml.root(yaml.emit(node)) shouldBe node
-                }
+                val nodes = listOf(nestedSequences(SHALLOW_DEPTH - 1, style), nestedMappings(SHALLOW_DEPTH - 1, style))
+                nodes.forEach { node -> shallow.root(shallow.emit(node)) shouldBe node }
+            }
+            deep.root(deep.emit(nestedSequences(READABLE_DEPTH, YamlCollectionStyle.Flow))) shouldBe
+                nestedSequences(READABLE_DEPTH, YamlCollectionStyle.Flow)
+        }
+
+        test("refuses a node that its parser would refuse for its depth") {
+            YamlCollectionStyle.entries.forEach { style ->
+                shouldThrow<IllegalArgumentException> { shallow.emit(nestedSequences(SHALLOW_DEPTH, style)) }
+                    .message shouldBe Representer.tooDeep(SHALLOW_DEPTH)
+                shouldThrow<IllegalArgumentException> { shallow.emit(nestedMappings(SHALLOW_DEPTH, style)) }
+                shouldThrow<IllegalArgumentException> { yaml.emit(nestedSequences(YamlLimits.HARD_DEPTH, style)) }
+                shouldThrow<IllegalArgumentException> { deep.emit(nestedMappings(YamlLimits.HARD_DEPTH, style)) }
             }
         }
 
-        test("refuses a node that nests deeper than the hard limit") {
-            YamlCollectionStyle.entries.forEach { style ->
-                shouldThrow<IllegalArgumentException> { yaml.emit(nestedSequences(YamlLimits.HARD_DEPTH + 1, style)) }
-                shouldThrow<IllegalArgumentException> { yaml.emit(nestedMappings(YamlLimits.HARD_DEPTH + 1, style)) }
-            }
+        test("counts the collections of a key toward the depth") {
+            val fitting = keyedBy(nestedSequences(SHALLOW_DEPTH - 2, YamlCollectionStyle.Flow))
+            val tooDeep = keyedBy(nestedSequences(SHALLOW_DEPTH - 1, YamlCollectionStyle.Flow))
+
+            shallow.root(shallow.emit(fitting)) shouldBe fitting
+            shouldThrow<IllegalArgumentException> { shallow.emit(tooDeep) }
         }
 
-        test("lets events nest as deep as the hard limit") {
-            val depth = YamlLimits.HARD_DEPTH
+        test("lets events nest one level less deep than the depth limit") {
+            val depth = YamlLimits.HARD_DEPTH - 1
 
-            yaml.emitEvents(nestedEvents(depth)) shouldBe "- ".repeat(depth - 1) + "[]\n"
-            yaml.root(yaml.emitEvents(nestedEvents(READABLE_DEPTH))) shouldBe
-                nestedSequences(READABLE_DEPTH, YamlCollectionStyle.Block)
+            deep.emitEvents(nestedEvents(depth)) shouldBe "- ".repeat(depth - 1) + "[]\n"
+            shallow.root(shallow.emitEvents(nestedEvents(SHALLOW_DEPTH - 1))) shouldBe
+                nestedSequences(SHALLOW_DEPTH - 1, YamlCollectionStyle.Block)
         }
 
-        test("refuses events that nest deeper than the hard limit") {
+        test("refuses events that its parser would refuse for their depth") {
             shouldThrow<IllegalArgumentException> {
-                yaml.emitEvents(nestedEvents(YamlLimits.HARD_DEPTH + 1))
-            }.message shouldBe EventTree.TOO_DEEP
+                shallow.emitEvents(nestedEvents(SHALLOW_DEPTH))
+            }.message shouldBe EventTree.tooDeep(SHALLOW_DEPTH)
+            shouldThrow<IllegalArgumentException> { deep.emitEvents(nestedEvents(YamlLimits.HARD_DEPTH)) }
         }
     }
 
@@ -275,6 +292,9 @@ private fun nestedMappings(depth: Int, style: YamlCollectionStyle): YamlNode {
     repeat(depth - 1) { node = yamlMapping(listOf(YamlEntry(key = yamlScalar("k"), value = node)), style = style) }
     return node
 }
+
+private fun keyedBy(key: YamlNode): YamlNode =
+    yamlMapping(entries = listOf(YamlEntry(key = key, value = yamlScalar("v"))))
 
 private fun nestedEvents(depth: Int): List<YamlEvent> = buildList {
     add(documentStart)

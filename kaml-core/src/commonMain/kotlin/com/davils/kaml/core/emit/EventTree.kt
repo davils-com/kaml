@@ -23,7 +23,7 @@ import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
 
-internal class EventTree {
+internal class EventTree(private val limits: YamlLimits) {
     private val documents = ArrayList<EmitDocument>()
     private val stack = ArrayDeque<Open>()
     private val defined = HashMap<String, String>()
@@ -103,7 +103,7 @@ internal class EventTree {
 
     private fun open(anchor: YamlAnchor?, tag: YamlTag?, style: YamlCollectionStyle, isMapping: Boolean) {
         requireNodeAllowed()
-        require(stack.size < YamlLimits.HARD_DEPTH) { TOO_DEEP }
+        require(stack.size + 1 < limits.maximumDepth) { tooDeep(limits.maximumDepth) }
         stack.addLast(Open(anchor = anchorName(anchor), tag = tag, style = style, isMapping = isMapping))
     }
 
@@ -192,6 +192,7 @@ internal class EventTree {
         const val UNPAIRED_KEY: String = "A mapping end event follows a key without a value"
         const val UNDEFINED_ALIAS: String = "An alias event refers to an anchor no earlier node of its document defines"
         const val UNFINISHED: String = "The events end inside a document"
-        const val TOO_DEEP: String = "The events nest collections deeper than ${YamlLimits.HARD_DEPTH} levels"
+
+        fun tooDeep(maximumDepth: Int): String = "The events nest collections deeper than $maximumDepth levels"
     }
 }

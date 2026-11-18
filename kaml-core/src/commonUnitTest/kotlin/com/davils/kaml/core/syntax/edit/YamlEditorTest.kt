@@ -59,6 +59,9 @@ private const val ENTRY_LINE: String = "a: 1\n"
 private const val TWO_LINES: String = "x\ny"
 private const val BLOCK_TWO_LINES: String = "a: |-"
 private const val FLOW_ENTRY: String = "{a: 1}"
+private const val LONG_PATH: Int = 2_000
+private const val LONG_KEY: Int = 40
+private const val SHOWN_PATH: Int = 600
 
 class YamlEditorTest : FunSpec({
     val root = YamlPath.ROOT
@@ -531,6 +534,16 @@ class YamlEditorTest : FunSpec({
             index shouldNotBe YamlPath.Segment.Index(2)
             index.equals(key) shouldBe false
             root.key("1") shouldNotBe root.index(1)
+        }
+
+        test("describe themselves within a bounded length however many segments they have") {
+            val long = (0 until LONG_PATH).fold(root) { path, index -> path.key("k".repeat(index % LONG_KEY)) }
+            val shown = long.toString()
+
+            (shown.length < SHOWN_PATH) shouldBe true
+            shown shouldContain "segments)"
+            (0 until LONG_KEY).fold(root) { path, index -> path.index(index) }.toString() shouldBe
+                (0 until LONG_KEY).joinToString(separator = "/", prefix = "/")
         }
 
         test("escape their keys") {

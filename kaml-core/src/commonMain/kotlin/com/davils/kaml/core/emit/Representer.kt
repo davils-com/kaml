@@ -16,7 +16,7 @@
 
 package com.davils.kaml.core.emit
 
-import com.davils.kaml.core.limit.YamlLimits
+import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.NodeIdentity
@@ -25,9 +25,11 @@ import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 
 internal class Representer(
-    private val options: YamlEmitOptions,
+    configuration: YamlConfiguration,
     private val comments: YamlComments = YamlComments.None,
 ) {
+    private val options = configuration.emitter
+    private val limits = configuration.limits
     private val references = HashMap<NodeIdentity, Int>()
     private val names = HashMap<NodeIdentity, String>()
     private val anchors = AnchorNames()
@@ -97,8 +99,9 @@ internal class Representer(
     }
 
     private fun nested(depth: Int): Int {
-        require(depth < YamlLimits.HARD_DEPTH) { TOO_DEEP }
-        return depth + 1
+        val nesting = depth + 1
+        require(nesting < limits.maximumDepth) { tooDeep(limits.maximumDepth) }
+        return nesting
     }
 
     private fun ordered(node: YamlNode.Mapping): List<YamlEntry> {
@@ -135,13 +138,13 @@ internal class Representer(
         PlainResolution.keeps(text = text, tag = node.tag, value = node.canonical, compatibility = compatibility)
 
     companion object {
-        const val TOO_DEEP: String = "The node nests collections deeper than ${YamlLimits.HARD_DEPTH} levels"
-
         private val implicitTags: Set<YamlTag> = setOf(
             YamlTag.NULL,
             YamlTag.BOOLEAN,
             YamlTag.INTEGER,
             YamlTag.FLOAT,
         )
+
+        fun tooDeep(maximumDepth: Int): String = "The node nests collections deeper than $maximumDepth levels"
     }
 }
