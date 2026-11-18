@@ -43,6 +43,8 @@ way.
   keys that are not strings or are given twice.
 - **JSON Pointer** (RFC 6901) on the node graph and on the syntax tree, where a duplicate key resolves to
   its first occurrence.
+- **A linear-time I-Regexp engine** (RFC 9485) for `match` and `search` of JSONPath, with bounded patterns,
+  programs and steps.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
