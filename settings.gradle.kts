@@ -126,3 +126,4 @@ dependencyResolutionManagement {
 rootProject.name = "kaml"
 
 include(":kaml-core")
+include(":kaml-serialization")

@@ -33,6 +33,12 @@ way.
 - **The editor**, which changes values, keys and comments of a document as text edits that keep the rest of it and
   cannot inject YAML.
 - **The formatter**, which refuses every change that would change the meaning of a document.
+- **`YamlFormat` for kotlinx.serialization** with its configuration and DSL, naming strategies, polymorphism by
+  property, local tag or wrapper through the public structure protocol and a closed registry of serializers, the
+  annotations `YamlComment`, `YamlFlow`, `YamlNames` and `YamlStyle`, and positioned diagnostics through
+  `decodeOrFailure` and `decodeAll`. Decoding applies `YamlLimits` to every node graph, also one built in code,
+  refuses names that collide and keys given twice, checks every number against the range of its type, and never
+  echoes input or the message of a serializer.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

@@ -1,0 +1,181 @@
+// Klib ABI Dump
+// Targets: [wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <com.davils:kaml-serialization>
+open annotation class com.davils.kaml.serialization.annotation/YamlComment : kotlin/Annotation { // com.davils.kaml.serialization.annotation/YamlComment|null[0]
+    constructor <init>(kotlin/Array<out kotlin/String>...) // com.davils.kaml.serialization.annotation/YamlComment.<init>|<init>(kotlin.Array<out|kotlin.String>...){}[0]
+
+    final val lines // com.davils.kaml.serialization.annotation/YamlComment.lines|{}lines[0]
+        final fun <get-lines>(): kotlin/Array<out kotlin/String> // com.davils.kaml.serialization.annotation/YamlComment.lines.<get-lines>|<get-lines>(){}[0]
+}
+
+open annotation class com.davils.kaml.serialization.annotation/YamlFlow : kotlin/Annotation { // com.davils.kaml.serialization.annotation/YamlFlow|null[0]
+    constructor <init>() // com.davils.kaml.serialization.annotation/YamlFlow.<init>|<init>(){}[0]
+}
+
+open annotation class com.davils.kaml.serialization.annotation/YamlNames : kotlin/Annotation { // com.davils.kaml.serialization.annotation/YamlNames|null[0]
+    constructor <init>(kotlin/Array<out kotlin/String>...) // com.davils.kaml.serialization.annotation/YamlNames.<init>|<init>(kotlin.Array<out|kotlin.String>...){}[0]
+
+    final val names // com.davils.kaml.serialization.annotation/YamlNames.names|{}names[0]
+        final fun <get-names>(): kotlin/Array<out kotlin/String> // com.davils.kaml.serialization.annotation/YamlNames.names.<get-names>|<get-names>(){}[0]
+}
+
+open annotation class com.davils.kaml.serialization.annotation/YamlStyle : kotlin/Annotation { // com.davils.kaml.serialization.annotation/YamlStyle|null[0]
+    constructor <init>(com.davils.kaml.core.model/YamlScalarStyle) // com.davils.kaml.serialization.annotation/YamlStyle.<init>|<init>(com.davils.kaml.core.model.YamlScalarStyle){}[0]
+
+    final val scalar // com.davils.kaml.serialization.annotation/YamlStyle.scalar|{}scalar[0]
+        final fun <get-scalar>(): com.davils.kaml.core.model/YamlScalarStyle // com.davils.kaml.serialization.annotation/YamlStyle.scalar.<get-scalar>|<get-scalar>(){}[0]
+}
+
+final enum class com.davils.kaml.serialization/YamlPolymorphism : kotlin/Enum<com.davils.kaml.serialization/YamlPolymorphism> { // com.davils.kaml.serialization/YamlPolymorphism|null[0]
+    enum entry Property // com.davils.kaml.serialization/YamlPolymorphism.Property|null[0]
+    enum entry Tag // com.davils.kaml.serialization/YamlPolymorphism.Tag|null[0]
+    enum entry Wrapped // com.davils.kaml.serialization/YamlPolymorphism.Wrapped|null[0]
+
+    final val entries // com.davils.kaml.serialization/YamlPolymorphism.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.serialization/YamlPolymorphism> // com.davils.kaml.serialization/YamlPolymorphism.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.serialization/YamlPolymorphism // com.davils.kaml.serialization/YamlPolymorphism.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.serialization/YamlPolymorphism> // com.davils.kaml.serialization/YamlPolymorphism.values|values#static(){}[0]
+}
+
+abstract fun interface com.davils.kaml.serialization/YamlNamingStrategy { // com.davils.kaml.serialization/YamlNamingStrategy|null[0]
+    abstract fun nameOf(kotlinx.serialization.descriptors/SerialDescriptor, kotlin/Int, kotlin/String): kotlin/String // com.davils.kaml.serialization/YamlNamingStrategy.nameOf|nameOf(kotlinx.serialization.descriptors.SerialDescriptor;kotlin.Int;kotlin.String){}[0]
+
+    final object Companion { // com.davils.kaml.serialization/YamlNamingStrategy.Companion|null[0]
+        final val Identity // com.davils.kaml.serialization/YamlNamingStrategy.Companion.Identity|{}Identity[0]
+            final fun <get-Identity>(): com.davils.kaml.serialization/YamlNamingStrategy // com.davils.kaml.serialization/YamlNamingStrategy.Companion.Identity.<get-Identity>|<get-Identity>(){}[0]
+        final val KebabCase // com.davils.kaml.serialization/YamlNamingStrategy.Companion.KebabCase|{}KebabCase[0]
+            final fun <get-KebabCase>(): com.davils.kaml.serialization/YamlNamingStrategy // com.davils.kaml.serialization/YamlNamingStrategy.Companion.KebabCase.<get-KebabCase>|<get-KebabCase>(){}[0]
+        final val SnakeCase // com.davils.kaml.serialization/YamlNamingStrategy.Companion.SnakeCase|{}SnakeCase[0]
+            final fun <get-SnakeCase>(): com.davils.kaml.serialization/YamlNamingStrategy // com.davils.kaml.serialization/YamlNamingStrategy.Companion.SnakeCase.<get-SnakeCase>|<get-SnakeCase>(){}[0]
+    }
+}
+
+sealed interface <#A: out kotlin/Any?> com.davils.kaml.serialization/YamlDecoding { // com.davils.kaml.serialization/YamlDecoding|null[0]
+    abstract val diagnostics // com.davils.kaml.serialization/YamlDecoding.diagnostics|{}diagnostics[0]
+        abstract fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.serialization/YamlDecoding.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+
+    final class <#A1: out kotlin/Any?> Decoded : com.davils.kaml.serialization/YamlDecoding<#A1> { // com.davils.kaml.serialization/YamlDecoding.Decoded|null[0]
+        final val diagnostics // com.davils.kaml.serialization/YamlDecoding.Decoded.diagnostics|{}diagnostics[0]
+            final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.serialization/YamlDecoding.Decoded.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+        final val value // com.davils.kaml.serialization/YamlDecoding.Decoded.value|{}value[0]
+            final fun <get-value>(): #A1 // com.davils.kaml.serialization/YamlDecoding.Decoded.value.<get-value>|<get-value>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.serialization/YamlDecoding.Decoded.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.serialization/YamlDecoding.Decoded.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.serialization/YamlDecoding.Decoded.toString|toString(){}[0]
+    }
+
+    final class Failed : com.davils.kaml.serialization/YamlDecoding<kotlin/Nothing> { // com.davils.kaml.serialization/YamlDecoding.Failed|null[0]
+        final val diagnostics // com.davils.kaml.serialization/YamlDecoding.Failed.diagnostics|{}diagnostics[0]
+            final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.serialization/YamlDecoding.Failed.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.serialization/YamlDecoding.Failed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.serialization/YamlDecoding.Failed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.serialization/YamlDecoding.Failed.toString|toString(){}[0]
+    }
+}
+
+final class com.davils.kaml.serialization/YamlDecodingException : kotlinx.serialization/SerializationException { // com.davils.kaml.serialization/YamlDecodingException|null[0]
+    final val diagnostics // com.davils.kaml.serialization/YamlDecodingException.diagnostics|{}diagnostics[0]
+        final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.serialization/YamlDecodingException.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+}
+
+final class com.davils.kaml.serialization/YamlFormat : kotlinx.serialization/StringFormat { // com.davils.kaml.serialization/YamlFormat|null[0]
+    final val configuration // com.davils.kaml.serialization/YamlFormat.configuration|{}configuration[0]
+        final fun <get-configuration>(): com.davils.kaml.serialization/YamlFormatConfiguration // com.davils.kaml.serialization/YamlFormat.configuration.<get-configuration>|<get-configuration>(){}[0]
+    final val serializersModule // com.davils.kaml.serialization/YamlFormat.serializersModule|{}serializersModule[0]
+        final fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // com.davils.kaml.serialization/YamlFormat.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+
+    final fun <#A1: kotlin/Any?> decodeAll(kotlinx.serialization/DeserializationStrategy<#A1>, kotlin/String): com.davils.kaml.serialization/YamlDecoding<kotlin.collections/List<#A1>> // com.davils.kaml.serialization/YamlFormat.decodeAll|decodeAll(kotlinx.serialization.DeserializationStrategy<0:0>;kotlin.String){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> decodeFromNode(kotlinx.serialization/DeserializationStrategy<#A1>, com.davils.kaml.core.node/YamlNode): #A1 // com.davils.kaml.serialization/YamlFormat.decodeFromNode|decodeFromNode(kotlinx.serialization.DeserializationStrategy<0:0>;com.davils.kaml.core.node.YamlNode){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> decodeFromString(kotlinx.serialization/DeserializationStrategy<#A1>, kotlin/String): #A1 // com.davils.kaml.serialization/YamlFormat.decodeFromString|decodeFromString(kotlinx.serialization.DeserializationStrategy<0:0>;kotlin.String){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> decodeOrFailure(kotlinx.serialization/DeserializationStrategy<#A1>, com.davils.kaml.core.node/YamlNode): com.davils.kaml.serialization/YamlDecoding<#A1> // com.davils.kaml.serialization/YamlFormat.decodeOrFailure|decodeOrFailure(kotlinx.serialization.DeserializationStrategy<0:0>;com.davils.kaml.core.node.YamlNode){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> decodeOrFailure(kotlinx.serialization/DeserializationStrategy<#A1>, kotlin/String): com.davils.kaml.serialization/YamlDecoding<#A1> // com.davils.kaml.serialization/YamlFormat.decodeOrFailure|decodeOrFailure(kotlinx.serialization.DeserializationStrategy<0:0>;kotlin.String){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> encodeToNode(kotlinx.serialization/SerializationStrategy<#A1>, #A1): com.davils.kaml.core.node/YamlNode // com.davils.kaml.serialization/YamlFormat.encodeToNode|encodeToNode(kotlinx.serialization.SerializationStrategy<0:0>;0:0){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> encodeToString(kotlinx.serialization/SerializationStrategy<#A1>, #A1): kotlin/String // com.davils.kaml.serialization/YamlFormat.encodeToString|encodeToString(kotlinx.serialization.SerializationStrategy<0:0>;0:0){0§<kotlin.Any?>}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.serialization/YamlFormat.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.serialization/YamlFormat.Companion|null[0]
+        final val Default // com.davils.kaml.serialization/YamlFormat.Companion.Default|{}Default[0]
+            final fun <get-Default>(): com.davils.kaml.serialization/YamlFormat // com.davils.kaml.serialization/YamlFormat.Companion.Default.<get-Default>|<get-Default>(){}[0]
+    }
+}
+
+final class com.davils.kaml.serialization/YamlFormatBuilder : com.davils.kore.core.dsl/ValidatingBuilder<com.davils.kaml.serialization/YamlFormatConfiguration> { // com.davils.kaml.serialization/YamlFormatBuilder|null[0]
+    final var classDiscriminator // com.davils.kaml.serialization/YamlFormatBuilder.classDiscriminator|{}classDiscriminator[0]
+        final fun <get-classDiscriminator>(): kotlin/String // com.davils.kaml.serialization/YamlFormatBuilder.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+        final fun <set-classDiscriminator>(kotlin/String) // com.davils.kaml.serialization/YamlFormatBuilder.classDiscriminator.<set-classDiscriminator>|<set-classDiscriminator>(kotlin.String){}[0]
+    final var hasExplicitNulls // com.davils.kaml.serialization/YamlFormatBuilder.hasExplicitNulls|{}hasExplicitNulls[0]
+        final fun <get-hasExplicitNulls>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatBuilder.hasExplicitNulls.<get-hasExplicitNulls>|<get-hasExplicitNulls>(){}[0]
+        final fun <set-hasExplicitNulls>(kotlin/Boolean) // com.davils.kaml.serialization/YamlFormatBuilder.hasExplicitNulls.<set-hasExplicitNulls>|<set-hasExplicitNulls>(kotlin.Boolean){}[0]
+    final var isDefaultEncoded // com.davils.kaml.serialization/YamlFormatBuilder.isDefaultEncoded|{}isDefaultEncoded[0]
+        final fun <get-isDefaultEncoded>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatBuilder.isDefaultEncoded.<get-isDefaultEncoded>|<get-isDefaultEncoded>(){}[0]
+        final fun <set-isDefaultEncoded>(kotlin/Boolean) // com.davils.kaml.serialization/YamlFormatBuilder.isDefaultEncoded.<set-isDefaultEncoded>|<set-isDefaultEncoded>(kotlin.Boolean){}[0]
+    final var isInputCoerced // com.davils.kaml.serialization/YamlFormatBuilder.isInputCoerced|{}isInputCoerced[0]
+        final fun <get-isInputCoerced>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatBuilder.isInputCoerced.<get-isInputCoerced>|<get-isInputCoerced>(){}[0]
+        final fun <set-isInputCoerced>(kotlin/Boolean) // com.davils.kaml.serialization/YamlFormatBuilder.isInputCoerced.<set-isInputCoerced>|<set-isInputCoerced>(kotlin.Boolean){}[0]
+    final var isUnknownKeyIgnored // com.davils.kaml.serialization/YamlFormatBuilder.isUnknownKeyIgnored|{}isUnknownKeyIgnored[0]
+        final fun <get-isUnknownKeyIgnored>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatBuilder.isUnknownKeyIgnored.<get-isUnknownKeyIgnored>|<get-isUnknownKeyIgnored>(){}[0]
+        final fun <set-isUnknownKeyIgnored>(kotlin/Boolean) // com.davils.kaml.serialization/YamlFormatBuilder.isUnknownKeyIgnored.<set-isUnknownKeyIgnored>|<set-isUnknownKeyIgnored>(kotlin.Boolean){}[0]
+    final var namingStrategy // com.davils.kaml.serialization/YamlFormatBuilder.namingStrategy|{}namingStrategy[0]
+        final fun <get-namingStrategy>(): com.davils.kaml.serialization/YamlNamingStrategy // com.davils.kaml.serialization/YamlFormatBuilder.namingStrategy.<get-namingStrategy>|<get-namingStrategy>(){}[0]
+        final fun <set-namingStrategy>(com.davils.kaml.serialization/YamlNamingStrategy) // com.davils.kaml.serialization/YamlFormatBuilder.namingStrategy.<set-namingStrategy>|<set-namingStrategy>(com.davils.kaml.serialization.YamlNamingStrategy){}[0]
+    final var polymorphism // com.davils.kaml.serialization/YamlFormatBuilder.polymorphism|{}polymorphism[0]
+        final fun <get-polymorphism>(): com.davils.kaml.serialization/YamlPolymorphism // com.davils.kaml.serialization/YamlFormatBuilder.polymorphism.<get-polymorphism>|<get-polymorphism>(){}[0]
+        final fun <set-polymorphism>(com.davils.kaml.serialization/YamlPolymorphism) // com.davils.kaml.serialization/YamlFormatBuilder.polymorphism.<set-polymorphism>|<set-polymorphism>(com.davils.kaml.serialization.YamlPolymorphism){}[0]
+    final var serializersModule // com.davils.kaml.serialization/YamlFormatBuilder.serializersModule|{}serializersModule[0]
+        final fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // com.davils.kaml.serialization/YamlFormatBuilder.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+        final fun <set-serializersModule>(kotlinx.serialization.modules/SerializersModule) // com.davils.kaml.serialization/YamlFormatBuilder.serializersModule.<set-serializersModule>|<set-serializersModule>(kotlinx.serialization.modules.SerializersModule){}[0]
+    final var yaml // com.davils.kaml.serialization/YamlFormatBuilder.yaml|{}yaml[0]
+        final fun <get-yaml>(): com.davils.kaml.core/Yaml // com.davils.kaml.serialization/YamlFormatBuilder.yaml.<get-yaml>|<get-yaml>(){}[0]
+        final fun <set-yaml>(com.davils.kaml.core/Yaml) // com.davils.kaml.serialization/YamlFormatBuilder.yaml.<set-yaml>|<set-yaml>(com.davils.kaml.core.Yaml){}[0]
+
+    final fun yaml(kotlin/Function1<com.davils.kaml.core/YamlBuilder, kotlin/Unit>) // com.davils.kaml.serialization/YamlFormatBuilder.yaml|yaml(kotlin.Function1<com.davils.kaml.core.YamlBuilder,kotlin.Unit>){}[0]
+
+    final object Companion { // com.davils.kaml.serialization/YamlFormatBuilder.Companion|null[0]
+        final const val DEFAULT_DISCRIMINATOR // com.davils.kaml.serialization/YamlFormatBuilder.Companion.DEFAULT_DISCRIMINATOR|{}DEFAULT_DISCRIMINATOR[0]
+            final fun <get-DEFAULT_DISCRIMINATOR>(): kotlin/String // com.davils.kaml.serialization/YamlFormatBuilder.Companion.DEFAULT_DISCRIMINATOR.<get-DEFAULT_DISCRIMINATOR>|<get-DEFAULT_DISCRIMINATOR>(){}[0]
+    }
+}
+
+final class com.davils.kaml.serialization/YamlFormatConfiguration : com.davils.kore.core.validation/Validatable { // com.davils.kaml.serialization/YamlFormatConfiguration|null[0]
+    final val classDiscriminator // com.davils.kaml.serialization/YamlFormatConfiguration.classDiscriminator|{}classDiscriminator[0]
+        final fun <get-classDiscriminator>(): kotlin/String // com.davils.kaml.serialization/YamlFormatConfiguration.classDiscriminator.<get-classDiscriminator>|<get-classDiscriminator>(){}[0]
+    final val hasExplicitNulls // com.davils.kaml.serialization/YamlFormatConfiguration.hasExplicitNulls|{}hasExplicitNulls[0]
+        final fun <get-hasExplicitNulls>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatConfiguration.hasExplicitNulls.<get-hasExplicitNulls>|<get-hasExplicitNulls>(){}[0]
+    final val isDefaultEncoded // com.davils.kaml.serialization/YamlFormatConfiguration.isDefaultEncoded|{}isDefaultEncoded[0]
+        final fun <get-isDefaultEncoded>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatConfiguration.isDefaultEncoded.<get-isDefaultEncoded>|<get-isDefaultEncoded>(){}[0]
+    final val isInputCoerced // com.davils.kaml.serialization/YamlFormatConfiguration.isInputCoerced|{}isInputCoerced[0]
+        final fun <get-isInputCoerced>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatConfiguration.isInputCoerced.<get-isInputCoerced>|<get-isInputCoerced>(){}[0]
+    final val isUnknownKeyIgnored // com.davils.kaml.serialization/YamlFormatConfiguration.isUnknownKeyIgnored|{}isUnknownKeyIgnored[0]
+        final fun <get-isUnknownKeyIgnored>(): kotlin/Boolean // com.davils.kaml.serialization/YamlFormatConfiguration.isUnknownKeyIgnored.<get-isUnknownKeyIgnored>|<get-isUnknownKeyIgnored>(){}[0]
+    final val namingStrategy // com.davils.kaml.serialization/YamlFormatConfiguration.namingStrategy|{}namingStrategy[0]
+        final fun <get-namingStrategy>(): com.davils.kaml.serialization/YamlNamingStrategy // com.davils.kaml.serialization/YamlFormatConfiguration.namingStrategy.<get-namingStrategy>|<get-namingStrategy>(){}[0]
+    final val polymorphism // com.davils.kaml.serialization/YamlFormatConfiguration.polymorphism|{}polymorphism[0]
+        final fun <get-polymorphism>(): com.davils.kaml.serialization/YamlPolymorphism // com.davils.kaml.serialization/YamlFormatConfiguration.polymorphism.<get-polymorphism>|<get-polymorphism>(){}[0]
+    final val serializersModule // com.davils.kaml.serialization/YamlFormatConfiguration.serializersModule|{}serializersModule[0]
+        final fun <get-serializersModule>(): kotlinx.serialization.modules/SerializersModule // com.davils.kaml.serialization/YamlFormatConfiguration.serializersModule.<get-serializersModule>|<get-serializersModule>(){}[0]
+    final val yaml // com.davils.kaml.serialization/YamlFormatConfiguration.yaml|{}yaml[0]
+        final fun <get-yaml>(): com.davils.kaml.core/Yaml // com.davils.kaml.serialization/YamlFormatConfiguration.yaml.<get-yaml>|<get-yaml>(){}[0]
+
+    final fun (com.davils.kore.core.validation/ValidationScope).validate() // com.davils.kaml.serialization/YamlFormatConfiguration.validate|validate@com.davils.kore.core.validation.ValidationScope(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.serialization/YamlFormatConfiguration.toString|toString(){}[0]
+}
+
+final object com.davils.kaml.serialization/YamlFormatViolationCodes { // com.davils.kaml.serialization/YamlFormatViolationCodes|null[0]
+    final val BLANK_DISCRIMINATOR // com.davils.kaml.serialization/YamlFormatViolationCodes.BLANK_DISCRIMINATOR|{}BLANK_DISCRIMINATOR[0]
+        final fun <get-BLANK_DISCRIMINATOR>(): com.davils.kore.core.validation.violation/ViolationCode // com.davils.kaml.serialization/YamlFormatViolationCodes.BLANK_DISCRIMINATOR.<get-BLANK_DISCRIMINATOR>|<get-BLANK_DISCRIMINATOR>(){}[0]
+}
+
+final fun com.davils.kaml.serialization/yamlFormat(kotlin/Function1<com.davils.kaml.serialization/YamlFormatBuilder, kotlin/Unit> = ...): com.davils.kaml.serialization/YamlFormat // com.davils.kaml.serialization/yamlFormat|yamlFormat(kotlin.Function1<com.davils.kaml.serialization.YamlFormatBuilder,kotlin.Unit>){}[0]
+final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/decodeAll(kotlin/String): com.davils.kaml.serialization/YamlDecoding<kotlin.collections/List<#A>> // com.davils.kaml.serialization/decodeAll|decodeAll@com.davils.kaml.serialization.YamlFormat(kotlin.String){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/decodeFromNode(com.davils.kaml.core.node/YamlNode): #A // com.davils.kaml.serialization/decodeFromNode|decodeFromNode@com.davils.kaml.serialization.YamlFormat(com.davils.kaml.core.node.YamlNode){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/decodeOrFailure(com.davils.kaml.core.node/YamlNode): com.davils.kaml.serialization/YamlDecoding<#A> // com.davils.kaml.serialization/decodeOrFailure|decodeOrFailure@com.davils.kaml.serialization.YamlFormat(com.davils.kaml.core.node.YamlNode){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/decodeOrFailure(kotlin/String): com.davils.kaml.serialization/YamlDecoding<#A> // com.davils.kaml.serialization/decodeOrFailure|decodeOrFailure@com.davils.kaml.serialization.YamlFormat(kotlin.String){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/encodeToNode(#A): com.davils.kaml.core.node/YamlNode // com.davils.kaml.serialization/encodeToNode|encodeToNode@com.davils.kaml.serialization.YamlFormat(0:0){0§<kotlin.Any?>}[0]

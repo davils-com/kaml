@@ -1,0 +1,147 @@
+public abstract interface class com/davils/kaml/serialization/YamlDecoding {
+	public abstract fun getDiagnostics ()Ljava/util/List;
+}
+
+public final class com/davils/kaml/serialization/YamlDecoding$Decoded : com/davils/kaml/serialization/YamlDecoding {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDiagnostics ()Ljava/util/List;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/YamlDecoding$Failed : com/davils/kaml/serialization/YamlDecoding {
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDiagnostics ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/YamlDecodingException : kotlinx/serialization/SerializationException {
+	public final fun getDiagnostics ()Ljava/util/List;
+}
+
+public final class com/davils/kaml/serialization/YamlFormat : kotlinx/serialization/StringFormat {
+	public static final field Companion Lcom/davils/kaml/serialization/YamlFormat$Companion;
+	public final fun decodeAll (Lkotlinx/serialization/DeserializationStrategy;Ljava/lang/String;)Lcom/davils/kaml/serialization/YamlDecoding;
+	public final fun decodeFromNode (Lkotlinx/serialization/DeserializationStrategy;Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/Object;
+	public fun decodeFromString (Lkotlinx/serialization/DeserializationStrategy;Ljava/lang/String;)Ljava/lang/Object;
+	public final fun decodeOrFailure (Lkotlinx/serialization/DeserializationStrategy;Lcom/davils/kaml/core/node/YamlNode;)Lcom/davils/kaml/serialization/YamlDecoding;
+	public final fun decodeOrFailure (Lkotlinx/serialization/DeserializationStrategy;Ljava/lang/String;)Lcom/davils/kaml/serialization/YamlDecoding;
+	public final fun encodeToNode (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode;
+	public fun encodeToString (Lkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)Ljava/lang/String;
+	public final fun getConfiguration ()Lcom/davils/kaml/serialization/YamlFormatConfiguration;
+	public fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/YamlFormat$Companion {
+	public final fun getDefault ()Lcom/davils/kaml/serialization/YamlFormat;
+}
+
+public final class com/davils/kaml/serialization/YamlFormatBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public static final field Companion Lcom/davils/kaml/serialization/YamlFormatBuilder$Companion;
+	public static final field DEFAULT_DISCRIMINATOR Ljava/lang/String;
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun getClassDiscriminator ()Ljava/lang/String;
+	public final fun getHasExplicitNulls ()Z
+	public final fun getNamingStrategy ()Lcom/davils/kaml/serialization/YamlNamingStrategy;
+	public final fun getPolymorphism ()Lcom/davils/kaml/serialization/YamlPolymorphism;
+	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
+	public final fun getYaml ()Lcom/davils/kaml/core/Yaml;
+	public final fun isDefaultEncoded ()Z
+	public final fun isInputCoerced ()Z
+	public final fun isUnknownKeyIgnored ()Z
+	public final fun setClassDiscriminator (Ljava/lang/String;)V
+	public final fun setDefaultEncoded (Z)V
+	public final fun setHasExplicitNulls (Z)V
+	public final fun setInputCoerced (Z)V
+	public final fun setNamingStrategy (Lcom/davils/kaml/serialization/YamlNamingStrategy;)V
+	public final fun setPolymorphism (Lcom/davils/kaml/serialization/YamlPolymorphism;)V
+	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
+	public final fun setUnknownKeyIgnored (Z)V
+	public final fun setYaml (Lcom/davils/kaml/core/Yaml;)V
+	public final fun yaml (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/davils/kaml/serialization/YamlFormatBuilder$Companion {
+}
+
+public final class com/davils/kaml/serialization/YamlFormatConfiguration : com/davils/kore/core/validation/Validatable {
+	public final fun getClassDiscriminator ()Ljava/lang/String;
+	public final fun getHasExplicitNulls ()Z
+	public final fun getNamingStrategy ()Lcom/davils/kaml/serialization/YamlNamingStrategy;
+	public final fun getPolymorphism ()Lcom/davils/kaml/serialization/YamlPolymorphism;
+	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
+	public final fun getYaml ()Lcom/davils/kaml/core/Yaml;
+	public final fun isDefaultEncoded ()Z
+	public final fun isInputCoerced ()Z
+	public final fun isUnknownKeyIgnored ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/serialization/YamlFormatViolationCodes {
+	public static final field INSTANCE Lcom/davils/kaml/serialization/YamlFormatViolationCodes;
+	public final fun getBLANK_DISCRIMINATOR-J_S2PC0 ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/YamlFormatsKt {
+	public static final fun yamlFormat (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/serialization/YamlFormat;
+	public static synthetic fun yamlFormat$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/davils/kaml/serialization/YamlFormat;
+}
+
+public abstract interface class com/davils/kaml/serialization/YamlNamingStrategy {
+	public static final field Companion Lcom/davils/kaml/serialization/YamlNamingStrategy$Companion;
+	public abstract fun nameOf (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/String;)Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/YamlNamingStrategy$Companion {
+	public final fun getIdentity ()Lcom/davils/kaml/serialization/YamlNamingStrategy;
+	public final fun getKebabCase ()Lcom/davils/kaml/serialization/YamlNamingStrategy;
+	public final fun getSnakeCase ()Lcom/davils/kaml/serialization/YamlNamingStrategy;
+}
+
+public final class com/davils/kaml/serialization/YamlPolymorphism : java/lang/Enum {
+	public static final field Property Lcom/davils/kaml/serialization/YamlPolymorphism;
+	public static final field Tag Lcom/davils/kaml/serialization/YamlPolymorphism;
+	public static final field Wrapped Lcom/davils/kaml/serialization/YamlPolymorphism;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/serialization/YamlPolymorphism;
+	public static fun values ()[Lcom/davils/kaml/serialization/YamlPolymorphism;
+}
+
+public abstract interface annotation class com/davils/kaml/serialization/annotation/YamlComment : java/lang/annotation/Annotation {
+	public abstract fun lines ()[Ljava/lang/String;
+}
+
+public final synthetic class com/davils/kaml/serialization/annotation/YamlComment$Impl : com/davils/kaml/serialization/annotation/YamlComment {
+	public fun <init> ([Ljava/lang/String;)V
+	public final synthetic fun lines ()[Ljava/lang/String;
+}
+
+public abstract interface annotation class com/davils/kaml/serialization/annotation/YamlFlow : java/lang/annotation/Annotation {
+}
+
+public final synthetic class com/davils/kaml/serialization/annotation/YamlFlow$Impl : com/davils/kaml/serialization/annotation/YamlFlow {
+	public fun <init> ()V
+}
+
+public abstract interface annotation class com/davils/kaml/serialization/annotation/YamlNames : java/lang/annotation/Annotation {
+	public abstract fun names ()[Ljava/lang/String;
+}
+
+public final synthetic class com/davils/kaml/serialization/annotation/YamlNames$Impl : com/davils/kaml/serialization/annotation/YamlNames {
+	public fun <init> ([Ljava/lang/String;)V
+	public final synthetic fun names ()[Ljava/lang/String;
+}
+
+public abstract interface annotation class com/davils/kaml/serialization/annotation/YamlStyle : java/lang/annotation/Annotation {
+	public abstract fun scalar ()Lcom/davils/kaml/core/model/YamlScalarStyle;
+}
+
+public final synthetic class com/davils/kaml/serialization/annotation/YamlStyle$Impl : com/davils/kaml/serialization/annotation/YamlStyle {
+	public fun <init> (Lcom/davils/kaml/core/model/YamlScalarStyle;)V
+	public final synthetic fun scalar ()Lcom/davils/kaml/core/model/YamlScalarStyle;
+}
+
