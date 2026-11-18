@@ -26,6 +26,7 @@ internal class ParseState(
     source: String,
     private val maximumDepth: Int = YamlLimits.HARD_DEPTH,
     private val maximumDiagnostics: Int = YamlLimits.HARD_DIAGNOSTICS,
+    private val maximumNodes: Long = YamlLimits.HARD_NODES,
 ) {
     val text: String = source.replace(oldChar = END, newChar = NONCHARACTER)
     val cursor: Cursor = Cursor(text)
@@ -90,20 +91,24 @@ internal class ParseState(
     }
 
     suspend fun Descent.nested(body: suspend Descent.() -> Unit) {
-        if (isAborted) return
-        if (depth >= maximumDepth) {
-            abort()
-            return
-        }
+        val isTooDeep = !isAborted && depth >= maximumDepth
+        if (isTooDeep) abort(YamlDiagnosticCode.TooDeep, "The document nests deeper than $maximumDepth levels")
+        if (!hasNodeBudget()) return
         depth++
         callRecursive(Nesting(body))
         depth--
     }
 
-    private fun abort() {
+    fun hasNodeBudget(): Boolean {
+        val isExceeded = !isAborted && builder.nodes > maximumNodes
+        if (isExceeded) abort(YamlDiagnosticCode.TooManyNodes, "The stream has more than $maximumNodes nodes")
+        return !isAborted
+    }
+
+    private fun abort(code: YamlDiagnosticCode, message: String) {
         isAborted = true
         val range = span(start = position, end = text.length)
-        report(YamlDiagnosticCode.TooDeep, range, "The document nests deeper than $maximumDepth levels")
+        report(code, range, message)
         builder.startNode(YamlSyntaxKind.ERROR)
         emitTo(YamlSyntaxKind.UNEXPECTED, text.length)
         builder.finishNode()

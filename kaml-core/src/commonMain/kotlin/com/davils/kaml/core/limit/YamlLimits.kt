@@ -71,7 +71,8 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
      * The most nodes a stream may have, counted as they are built: 5,000,000 by default, at most [HARD_NODES].
      *
      * The node beyond the limit stops the work with a [com.davils.kaml.core.diagnostic.YamlDiagnosticCode.TooManyNodes]
-     * diagnostic. [com.davils.kaml.core.node.detached] charges the same limit with the nodes it creates and throws an
+     * diagnostic. The parser charges the limit while it builds the syntax tree, so the rest of an oversized document is
+     * never built. [com.davils.kaml.core.node.detached] charges the same limit with the nodes it creates and throws an
      * [IllegalArgumentException] beyond it.
      *
      * @since 1.0.0

@@ -39,8 +39,8 @@ import com.davils.kore.core.text.TextEdit
  * The limits of [yaml] apply before any work is done. A text longer than `YamlLimits.maximumInputLength` is not
  * parsed: its tree holds no tokens, so its [root] does not cover [text], and [diagnostics] holds a single
  * `InputTooLong` diagnostic. Nesting deeper than `YamlLimits.maximumDepth` stops the parser with a `TooDeep`
- * diagnostic and leaves the rest of the text in an error node, and at most `YamlLimits.maximumDiagnostics`
- * diagnostics are reported. The same limits apply to an incremental [edit].
+ * diagnostic and more nodes than `YamlLimits.maximumNodes` with a `TooManyNodes` diagnostic, each leaving the rest
+ * of the text in an error node, and at most `YamlLimits.maximumDiagnostics` diagnostics are reported. The same limits apply to an incremental [edit].
  *
  * A tree is immutable and safe to share between threads; [root], [lines] and [documents] are computed once, when
  * they are first asked for. The [text] and the text of every element come from the input unchanged and must be

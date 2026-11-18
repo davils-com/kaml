@@ -24,8 +24,14 @@ internal object SyntaxParser {
         text: String,
         maximumDepth: Int = YamlLimits.HARD_DEPTH,
         maximumDiagnostics: Int = YamlLimits.HARD_DIAGNOSTICS,
+        maximumNodes: Long = YamlLimits.HARD_NODES,
     ): ParsedSyntax {
-        val state = ParseState(source = text, maximumDepth = maximumDepth, maximumDiagnostics = maximumDiagnostics)
+        val state = ParseState(
+            source = text,
+            maximumDepth = maximumDepth,
+            maximumDiagnostics = maximumDiagnostics,
+            maximumNodes = maximumNodes,
+        )
         val trivia = Trivia(state)
         val properties = Properties(state, trivia)
         val plain = PlainScalars(state, trivia)

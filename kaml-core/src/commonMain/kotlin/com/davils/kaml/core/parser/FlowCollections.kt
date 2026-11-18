@@ -44,7 +44,7 @@ internal class FlowCollections(
 
     private suspend fun Descent.entryStep(indent: Int, shape: FlowShape, start: Int): Boolean {
         pairs.separation(indent)
-        val isFinished = closed(shape) || unterminated(start)
+        val isFinished = !state.hasNodeBudget() || closed(shape) || unterminated(start)
         if (isFinished) return false
         val before = state.position
         if (!emptyEntry()) entryWithSeparator(indent, shape, before)

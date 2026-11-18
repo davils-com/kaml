@@ -28,6 +28,9 @@ internal class GreenBuilder(private val text: String) {
 
     val depth: Int get() = parents.size
 
+    var nodes: Long = 0L
+        private set
+
     fun token(kind: YamlSyntaxKind, start: Int, end: Int) {
         if (end <= start) return
         val token = GreenToken(kind, text.substring(startIndex = start, endIndex = end))
@@ -48,12 +51,13 @@ internal class GreenBuilder(private val text: String) {
 
     fun finishNode() {
         val open = parents.removeAt(parents.lastIndex)
+        if (open.kind.isValueNode || open.kind == YamlSyntaxKind.FLOW_PAIR) nodes++
         val node = GreenNode(open.kind, children.subList(open.first, children.size).toList())
         repeat(children.size - open.first) { children.removeAt(children.lastIndex) }
         children.add(node)
     }
 
-    fun mark(): BuilderMark = BuilderMark(children = children.size, parents = parents.size)
+    fun mark(): BuilderMark = BuilderMark(children = children.size, parents = parents.size, nodes = nodes)
 
     fun rewind(mark: BuilderMark) {
         while (parents.size > mark.parents) {
@@ -62,6 +66,7 @@ internal class GreenBuilder(private val text: String) {
         while (children.size > mark.children) {
             children.removeAt(children.lastIndex)
         }
+        nodes = mark.nodes
     }
 
     fun finish(): GreenNode = children.single() as GreenNode

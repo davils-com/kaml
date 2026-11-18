@@ -72,9 +72,12 @@ internal class YamlPipeline(configuration: YamlConfiguration) {
             text = text,
             maximumDepth = limits.maximumDepth,
             maximumDiagnostics = limits.maximumDiagnostics,
+            maximumNodes = limits.maximumNodes,
         )
         val walk = walk(text, syntax.root)
-        val diagnostics = capped(earlier + syntax.diagnostics + walk.diagnostics)
+        val parserCodes = syntax.diagnostics.mapTo(HashSet(), YamlDiagnostic::code)
+        val walkDiagnostics = walk.diagnostics.filterNot { it.code in limitCodes && it.code in parserCodes }
+        val diagnostics = capped(earlier + syntax.diagnostics + walkDiagnostics)
         return Reading(
             root = syntax.root,
             events = walk.events,
@@ -139,6 +142,8 @@ internal class YamlPipeline(configuration: YamlConfiguration) {
 
     private companion object {
         const val MOST_BYTES_PER_CHARACTER: Int = 4
+
+        val limitCodes: Set<YamlDiagnosticCode> = setOf(YamlDiagnosticCode.TooDeep, YamlDiagnosticCode.TooManyNodes)
 
         val walkerCodes: Set<YamlDiagnosticCode> = setOf(
             YamlDiagnosticCode.InvalidDirective,

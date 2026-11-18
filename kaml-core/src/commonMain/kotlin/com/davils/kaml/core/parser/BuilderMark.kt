@@ -16,4 +16,4 @@
 
 package com.davils.kaml.core.parser
 
-internal data class BuilderMark(val children: Int, val parents: Int)
+internal data class BuilderMark(val children: Int, val parents: Int, val nodes: Long)
