@@ -24,7 +24,7 @@ import com.davils.kaml.core.syntax.internal.GreenToken
 internal class GreenBuilder(private val text: String) {
     private val children = ArrayList<GreenElement>()
     private val parents = ArrayList<OpenNode>()
-    private val interned = HashMap<GreenToken, GreenToken>()
+    private val interned = TokenTable()
 
     val depth: Int get() = parents.size
 
@@ -68,7 +68,7 @@ internal class GreenBuilder(private val text: String) {
 
     private fun intern(token: GreenToken): GreenToken {
         if (token.length > INTERNED_LENGTH) return token
-        return interned.getOrPut(token) { token }
+        return interned.intern(token)
     }
 
     private data class OpenNode(val kind: YamlSyntaxKind, val first: Int)
