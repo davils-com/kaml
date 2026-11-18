@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-@file:OptIn(DavilsInternal::class)
-
 package com.davils.kaml.core.model
-
-import com.davils.kore.core.annotation.DavilsInternal
-import com.davils.kore.core.text.SafeText
 
 private const val FLOW_INDICATORS: String = ",[]{}"
 private const val SPACE: Int = 0x20
@@ -31,7 +26,6 @@ private const val NARROW_NO_BREAK_SPACE: Int = 0x202F
 private const val MATHEMATICAL_SPACE: Int = 0x205F
 private const val IDEOGRAPHIC_SPACE: Int = 0x3000
 private const val FIRST_SURROGATE: Int = 0xD800
-private const val LAST_SURROGATE: Int = 0xDFFF
 private const val SUPPLEMENTARY_START: Int = 0x10000
 private const val SURROGATE_BITS: Int = 10
 private const val SUPPLEMENTARY_CHARS: Int = 2
@@ -61,8 +55,7 @@ internal object AnchorAlphabet {
     private fun isAllowed(codePoint: Int): Boolean {
         val isSpace = spaces.any { range -> codePoint in range }
         val isFlowIndicator = FLOW_INDICATORS.any { indicator -> indicator.code == codePoint }
-        val isSurrogate = codePoint in FIRST_SURROGATE..LAST_SURROGATE
-        return SafeText.isSafe(codePoint) && !isSpace && !isFlowIndicator && !isSurrogate
+        return VisibleCodePoints.isVisible(codePoint) && !isSpace && !isFlowIndicator
     }
 
     private fun codePointAt(text: String, index: Int): Int {

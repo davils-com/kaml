@@ -65,6 +65,12 @@ class QuotedTextTest : FunSpec({
             ) shouldBe "\"é \uD83D\uDE00 ${HostileFragments.HEBREW_ALEF}\""
         }
 
+        test("keeps letters that only newer Unicode tables know as they are, on every target") {
+            val garay = "\uD803\uDD50"
+            QuotedText.of(garay) shouldBe quotedAs(garay)
+            QuotedText.isVisible(garay) shouldBe true
+        }
+
         test("writes text that is safe to show and parses back to the same string") {
             checkAll(CASES, writableTexts) { text ->
                 val quoted = QuotedText.of(text)

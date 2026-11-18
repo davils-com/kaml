@@ -16,10 +16,8 @@
 
 package com.davils.kaml.core.syntax.edit
 
-import com.davils.kore.core.annotation.DavilsInternal
-import com.davils.kore.core.text.SafeText
+import com.davils.kaml.core.model.VisibleCodePoints
 
-@OptIn(DavilsInternal::class)
 internal object QuotedText {
     private const val HEX_RADIX: Int = 16
     private const val BYTE_DIGITS: Int = 2
@@ -48,7 +46,7 @@ internal object QuotedText {
 
     fun isShownAsIs(text: String): Boolean = isEvery(text, ::isRaw)
 
-    fun isVisible(text: String): Boolean = isEvery(text, SafeText::isSafe)
+    fun isVisible(text: String): Boolean = isEvery(text, VisibleCodePoints::isVisible)
 
     private fun escaped(codePoint: Int, raw: String): String {
         val name = named[codePoint]
@@ -56,7 +54,7 @@ internal object QuotedText {
         return raw.takeIf { isRaw(codePoint) } ?: hexEscape(codePoint)
     }
 
-    private fun isRaw(codePoint: Int): Boolean = SafeText.isSafe(codePoint) && codePoint !in named
+    private fun isRaw(codePoint: Int): Boolean = VisibleCodePoints.isVisible(codePoint) && codePoint !in named
 
     private fun isEvery(text: String, predicate: (Int) -> Boolean): Boolean {
         var isEvery = true
