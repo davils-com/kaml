@@ -26,6 +26,10 @@ internal class Cursor(val text: String) {
     var line: Int = 0
         private set
 
+    private var knownFrom: Int = -1
+
+    private var knownEnd: Int = -1
+
     val column: Int get() = position - lineStart
 
     val isFreshLine: Boolean get() = position == lineStart
@@ -50,22 +54,12 @@ internal class Cursor(val text: String) {
         line = mark.line
     }
 
-    fun columnOf(index: Int): Int = index - lineStartOf(index)
-
-    fun lineStartOf(index: Int): Int {
-        var start = index
-        while (start > 0 && !text[start - 1].isBreak()) {
-            start--
-        }
-        return start
-    }
+    fun isLineStartAt(index: Int): Boolean = index == 0 || charAt(index - 1).isBreak()
 
     fun lineEndOf(index: Int): Int {
-        var end = index
-        while (end < text.length && !text[end].isBreak()) {
-            end++
-        }
-        return end
+        val isKnown = index in knownFrom..knownEnd
+        if (!isKnown) remember(index)
+        return knownEnd
     }
 
     fun nextLineStart(index: Int): Int {
@@ -79,6 +73,16 @@ internal class Cursor(val text: String) {
         val isLineStart = index == 0 || charAt(index - 1).isBreak() || charAt(index - 1) == BYTE_ORDER_MARK
         val isMarker = text.startsWith(DOCUMENT_START, index) || text.startsWith(DOCUMENT_END, index)
         return isLineStart && isMarker && charAt(index + MARKER_LENGTH).isBlankOrEnd()
+    }
+
+    private fun remember(index: Int) {
+        var end = index
+        while (end < text.length && end != knownFrom && !text[end].isBreak()) {
+            end++
+        }
+        val isJoined = end == knownFrom
+        if (!isJoined) knownEnd = end
+        knownFrom = index
     }
 
     private fun step() {

@@ -13,22 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.davils.kaml.core.fixture
 
 import io.kotest.matchers.comparables.shouldBeLessThan
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 import kotlin.time.measureTime
 
 internal const val GROWTH_FACTOR: Int = 16
 
 private const val RUNS: Int = 5
 private const val SLACK: Int = 3
+private const val LEAST_MICROSECONDS: Long = 20_000L
 private val NOISE: Duration = 100.milliseconds
 
 internal fun fastestRun(action: () -> Unit): Duration = List(RUNS) { measureTime(action) }.min()
 
 internal infix fun Duration.shouldGrowLinearlyFrom(small: Duration) {
     this shouldBeLessThan maxOf(a = small * GROWTH_FACTOR * SLACK, b = NOISE)
+}
+
+internal fun timeRatio(small: String, large: String, read: (String) -> Unit): Double {
+    read(large)
+    read(small)
+    var fastestSmall = Double.MAX_VALUE
+    var fastestLarge = Double.MAX_VALUE
+    repeat(RUNS) {
+        fastestSmall = minOf(a = fastestSmall, b = timeOf(small, read))
+        fastestLarge = minOf(a = fastestLarge, b = timeOf(large, read))
+    }
+    return fastestLarge / fastestSmall
+}
+
+private fun timeOf(text: String, read: (String) -> Unit): Double {
+    val start = TimeSource.Monotonic.markNow()
+    var repeats = 0
+    var elapsed = 0L
+    while (repeats == 0 || elapsed < LEAST_MICROSECONDS) {
+        read(text)
+        repeats++
+        elapsed = start.elapsedNow().inWholeMicroseconds
+    }
+    return maxOf(a = elapsed, b = 1L).toDouble() / repeats
 }

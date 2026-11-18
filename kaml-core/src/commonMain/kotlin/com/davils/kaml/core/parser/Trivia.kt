@@ -21,6 +21,8 @@ import com.davils.kaml.core.syntax.YamlSyntaxKind
 
 internal class Trivia(private val state: ParseState) {
     private val cursor = state.cursor
+    private var searchedFrom = -1
+    private var found: ContentLine? = null
 
     fun whitespace() {
         state.emitTo(YamlSyntaxKind.WHITESPACE, whitespaceEnd(state.position))
@@ -35,7 +37,7 @@ internal class Trivia(private val state: ParseState) {
     }
 
     fun isCommentAt(index: Int): Boolean {
-        val isSeparated = index == cursor.lineStartOf(index) || state.charAt(index - 1).isWhite()
+        val isSeparated = cursor.isLineStartAt(index) || state.charAt(index - 1).isWhite()
         return state.charAt(index) == '#' && isSeparated
     }
 
@@ -64,6 +66,14 @@ internal class Trivia(private val state: ParseState) {
     fun nextContentLine(): ContentLine? = contentLineFrom(scanStart())
 
     fun contentLineFrom(from: Int): ContentLine? {
+        if (from != searchedFrom) {
+            found = searchFrom(from)
+            searchedFrom = from
+        }
+        return found
+    }
+
+    private fun searchFrom(from: Int): ContentLine? {
         var lineStart = from
         while (lineStart < state.text.length) {
             val line = lineAt(lineStart)
