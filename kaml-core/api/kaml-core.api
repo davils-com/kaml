@@ -162,3 +162,115 @@ public final class com/davils/kaml/core/limit/YamlLimitsDslKt {
 	public static synthetic fun yamlLimits$default (Lcom/davils/kaml/core/limit/YamlLimits;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/davils/kaml/core/limit/YamlLimits;
 }
 
+public final class com/davils/kaml/core/model/YamlAnchor {
+	public static final field Companion Lcom/davils/kaml/core/model/YamlAnchor$Companion;
+	public static final field MAX_NAME_LENGTH I
+	public static final synthetic fun box-impl (Ljava/lang/String;)Lcom/davils/kaml/core/model/YamlAnchor;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/model/YamlAnchor$Companion {
+	public final fun isValidName (Ljava/lang/String;)Z
+}
+
+public final class com/davils/kaml/core/model/YamlCollectionStyle : java/lang/Enum {
+	public static final field Block Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public static final field Flow Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public static fun values ()[Lcom/davils/kaml/core/model/YamlCollectionStyle;
+}
+
+public final class com/davils/kaml/core/model/YamlNodeKind : java/lang/Enum {
+	public static final field Mapping Lcom/davils/kaml/core/model/YamlNodeKind;
+	public static final field Scalar Lcom/davils/kaml/core/model/YamlNodeKind;
+	public static final field Sequence Lcom/davils/kaml/core/model/YamlNodeKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/model/YamlNodeKind;
+	public static fun values ()[Lcom/davils/kaml/core/model/YamlNodeKind;
+}
+
+public final class com/davils/kaml/core/model/YamlScalarStyle : java/lang/Enum {
+	public static final field DoubleQuoted Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public static final field Folded Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public static final field Literal Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public static final field Plain Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public static final field SingleQuoted Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public static fun values ()[Lcom/davils/kaml/core/model/YamlScalarStyle;
+}
+
+public final class com/davils/kaml/core/model/YamlTag {
+	public static final field CORE_TAG_PREFIX Ljava/lang/String;
+	public static final field Companion Lcom/davils/kaml/core/model/YamlTag$Companion;
+	public static final synthetic fun box-impl (Ljava/lang/String;)Lcom/davils/kaml/core/model/YamlTag;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getUri ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public static final fun isCore-impl (Ljava/lang/String;)Z
+	public static final fun isLocal-impl (Ljava/lang/String;)Z
+	public static final fun isNonSpecific-impl (Ljava/lang/String;)Z
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/model/YamlTag$Companion {
+	public final fun core-3_1DpyU (Ljava/lang/String;)Ljava/lang/String;
+	public final fun getBINARY-AX47Ni0 ()Ljava/lang/String;
+	public final fun getBOOLEAN-AX47Ni0 ()Ljava/lang/String;
+	public final fun getFLOAT-AX47Ni0 ()Ljava/lang/String;
+	public final fun getINTEGER-AX47Ni0 ()Ljava/lang/String;
+	public final fun getMAPPING-AX47Ni0 ()Ljava/lang/String;
+	public final fun getMERGE-AX47Ni0 ()Ljava/lang/String;
+	public final fun getNON_SPECIFIC-AX47Ni0 ()Ljava/lang/String;
+	public final fun getNULL-AX47Ni0 ()Ljava/lang/String;
+	public final fun getORDERED_MAP-AX47Ni0 ()Ljava/lang/String;
+	public final fun getPAIRS-AX47Ni0 ()Ljava/lang/String;
+	public final fun getSEQUENCE-AX47Ni0 ()Ljava/lang/String;
+	public final fun getSET-AX47Ni0 ()Ljava/lang/String;
+	public final fun getSTRING-AX47Ni0 ()Ljava/lang/String;
+	public final fun getTIMESTAMP-AX47Ni0 ()Ljava/lang/String;
+	public final fun getVALUE-AX47Ni0 ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/model/YamlTagDirective {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHandle ()Ljava/lang/String;
+	public final fun getPrefix ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/model/YamlVersion : java/lang/Comparable {
+	public static final field Companion Lcom/davils/kaml/core/model/YamlVersion$Companion;
+	public fun <init> (II)V
+	public fun compareTo (Lcom/davils/kaml/core/model/YamlVersion;)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/model/YamlVersion$Companion {
+	public final fun getV1_1 ()Lcom/davils/kaml/core/model/YamlVersion;
+	public final fun getV1_2 ()Lcom/davils/kaml/core/model/YamlVersion;
+}
+

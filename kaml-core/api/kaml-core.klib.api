@@ -73,6 +73,43 @@ final enum class com.davils.kaml.core.diagnostic/YamlDiagnosticCode : kotlin/Enu
     final fun values(): kotlin/Array<com.davils.kaml.core.diagnostic/YamlDiagnosticCode> // com.davils.kaml.core.diagnostic/YamlDiagnosticCode.values|values#static(){}[0]
 }
 
+final enum class com.davils.kaml.core.model/YamlCollectionStyle : kotlin/Enum<com.davils.kaml.core.model/YamlCollectionStyle> { // com.davils.kaml.core.model/YamlCollectionStyle|null[0]
+    enum entry Block // com.davils.kaml.core.model/YamlCollectionStyle.Block|null[0]
+    enum entry Flow // com.davils.kaml.core.model/YamlCollectionStyle.Flow|null[0]
+
+    final val entries // com.davils.kaml.core.model/YamlCollectionStyle.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.model/YamlCollectionStyle> // com.davils.kaml.core.model/YamlCollectionStyle.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.model/YamlCollectionStyle // com.davils.kaml.core.model/YamlCollectionStyle.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.model/YamlCollectionStyle> // com.davils.kaml.core.model/YamlCollectionStyle.values|values#static(){}[0]
+}
+
+final enum class com.davils.kaml.core.model/YamlNodeKind : kotlin/Enum<com.davils.kaml.core.model/YamlNodeKind> { // com.davils.kaml.core.model/YamlNodeKind|null[0]
+    enum entry Mapping // com.davils.kaml.core.model/YamlNodeKind.Mapping|null[0]
+    enum entry Scalar // com.davils.kaml.core.model/YamlNodeKind.Scalar|null[0]
+    enum entry Sequence // com.davils.kaml.core.model/YamlNodeKind.Sequence|null[0]
+
+    final val entries // com.davils.kaml.core.model/YamlNodeKind.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.model/YamlNodeKind> // com.davils.kaml.core.model/YamlNodeKind.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.model/YamlNodeKind // com.davils.kaml.core.model/YamlNodeKind.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.model/YamlNodeKind> // com.davils.kaml.core.model/YamlNodeKind.values|values#static(){}[0]
+}
+
+final enum class com.davils.kaml.core.model/YamlScalarStyle : kotlin/Enum<com.davils.kaml.core.model/YamlScalarStyle> { // com.davils.kaml.core.model/YamlScalarStyle|null[0]
+    enum entry DoubleQuoted // com.davils.kaml.core.model/YamlScalarStyle.DoubleQuoted|null[0]
+    enum entry Folded // com.davils.kaml.core.model/YamlScalarStyle.Folded|null[0]
+    enum entry Literal // com.davils.kaml.core.model/YamlScalarStyle.Literal|null[0]
+    enum entry Plain // com.davils.kaml.core.model/YamlScalarStyle.Plain|null[0]
+    enum entry SingleQuoted // com.davils.kaml.core.model/YamlScalarStyle.SingleQuoted|null[0]
+
+    final val entries // com.davils.kaml.core.model/YamlScalarStyle.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.model/YamlScalarStyle> // com.davils.kaml.core.model/YamlScalarStyle.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.model/YamlScalarStyle // com.davils.kaml.core.model/YamlScalarStyle.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.model/YamlScalarStyle> // com.davils.kaml.core.model/YamlScalarStyle.values|values#static(){}[0]
+}
+
 final class com.davils.kaml.core.diagnostic/YamlDiagnostic { // com.davils.kaml.core.diagnostic/YamlDiagnostic|null[0]
     constructor <init>(com.davils.kaml.core.diagnostic/YamlDiagnosticCode, com.davils.kore.core.text/TextRange, kotlin/String, com.davils.kore.core.validation.violation/Severity = ...) // com.davils.kaml.core.diagnostic/YamlDiagnostic.<init>|<init>(com.davils.kaml.core.diagnostic.YamlDiagnosticCode;com.davils.kore.core.text.TextRange;kotlin.String;com.davils.kore.core.validation.violation.Severity){}[0]
 
@@ -204,6 +241,113 @@ final class com.davils.kaml.core.limit/YamlLimitsBuilder : com.davils.kore.core.
             final fun <get-DEFAULT_OUTPUT_LENGTH>(): kotlin/Int // com.davils.kaml.core.limit/YamlLimitsBuilder.Companion.DEFAULT_OUTPUT_LENGTH.<get-DEFAULT_OUTPUT_LENGTH>|<get-DEFAULT_OUTPUT_LENGTH>(){}[0]
         final const val DEFAULT_SCALAR_LENGTH // com.davils.kaml.core.limit/YamlLimitsBuilder.Companion.DEFAULT_SCALAR_LENGTH|{}DEFAULT_SCALAR_LENGTH[0]
             final fun <get-DEFAULT_SCALAR_LENGTH>(): kotlin/Int // com.davils.kaml.core.limit/YamlLimitsBuilder.Companion.DEFAULT_SCALAR_LENGTH.<get-DEFAULT_SCALAR_LENGTH>|<get-DEFAULT_SCALAR_LENGTH>(){}[0]
+    }
+}
+
+final class com.davils.kaml.core.model/YamlTagDirective { // com.davils.kaml.core.model/YamlTagDirective|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // com.davils.kaml.core.model/YamlTagDirective.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val handle // com.davils.kaml.core.model/YamlTagDirective.handle|{}handle[0]
+        final fun <get-handle>(): kotlin/String // com.davils.kaml.core.model/YamlTagDirective.handle.<get-handle>|<get-handle>(){}[0]
+    final val prefix // com.davils.kaml.core.model/YamlTagDirective.prefix|{}prefix[0]
+        final fun <get-prefix>(): kotlin/String // com.davils.kaml.core.model/YamlTagDirective.prefix.<get-prefix>|<get-prefix>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.model/YamlTagDirective.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.model/YamlTagDirective.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.model/YamlTagDirective.toString|toString(){}[0]
+}
+
+final class com.davils.kaml.core.model/YamlVersion : kotlin/Comparable<com.davils.kaml.core.model/YamlVersion> { // com.davils.kaml.core.model/YamlVersion|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // com.davils.kaml.core.model/YamlVersion.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    final val major // com.davils.kaml.core.model/YamlVersion.major|{}major[0]
+        final fun <get-major>(): kotlin/Int // com.davils.kaml.core.model/YamlVersion.major.<get-major>|<get-major>(){}[0]
+    final val minor // com.davils.kaml.core.model/YamlVersion.minor|{}minor[0]
+        final fun <get-minor>(): kotlin/Int // com.davils.kaml.core.model/YamlVersion.minor.<get-minor>|<get-minor>(){}[0]
+
+    final fun compareTo(com.davils.kaml.core.model/YamlVersion): kotlin/Int // com.davils.kaml.core.model/YamlVersion.compareTo|compareTo(com.davils.kaml.core.model.YamlVersion){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.model/YamlVersion.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.model/YamlVersion.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.model/YamlVersion.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.model/YamlVersion.Companion|null[0]
+        final val V1_1 // com.davils.kaml.core.model/YamlVersion.Companion.V1_1|{}V1_1[0]
+            final fun <get-V1_1>(): com.davils.kaml.core.model/YamlVersion // com.davils.kaml.core.model/YamlVersion.Companion.V1_1.<get-V1_1>|<get-V1_1>(){}[0]
+        final val V1_2 // com.davils.kaml.core.model/YamlVersion.Companion.V1_2|{}V1_2[0]
+            final fun <get-V1_2>(): com.davils.kaml.core.model/YamlVersion // com.davils.kaml.core.model/YamlVersion.Companion.V1_2.<get-V1_2>|<get-V1_2>(){}[0]
+    }
+}
+
+final value class com.davils.kaml.core.model/YamlAnchor { // com.davils.kaml.core.model/YamlAnchor|null[0]
+    constructor <init>(kotlin/String) // com.davils.kaml.core.model/YamlAnchor.<init>|<init>(kotlin.String){}[0]
+
+    final val name // com.davils.kaml.core.model/YamlAnchor.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.davils.kaml.core.model/YamlAnchor.name.<get-name>|<get-name>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.model/YamlAnchor.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.model/YamlAnchor.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.model/YamlAnchor.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.model/YamlAnchor.Companion|null[0]
+        final const val MAX_NAME_LENGTH // com.davils.kaml.core.model/YamlAnchor.Companion.MAX_NAME_LENGTH|{}MAX_NAME_LENGTH[0]
+            final fun <get-MAX_NAME_LENGTH>(): kotlin/Int // com.davils.kaml.core.model/YamlAnchor.Companion.MAX_NAME_LENGTH.<get-MAX_NAME_LENGTH>|<get-MAX_NAME_LENGTH>(){}[0]
+
+        final fun isValidName(kotlin/String): kotlin/Boolean // com.davils.kaml.core.model/YamlAnchor.Companion.isValidName|isValidName(kotlin.String){}[0]
+    }
+}
+
+final value class com.davils.kaml.core.model/YamlTag { // com.davils.kaml.core.model/YamlTag|null[0]
+    constructor <init>(kotlin/String) // com.davils.kaml.core.model/YamlTag.<init>|<init>(kotlin.String){}[0]
+
+    final val isCore // com.davils.kaml.core.model/YamlTag.isCore|{}isCore[0]
+        final fun <get-isCore>(): kotlin/Boolean // com.davils.kaml.core.model/YamlTag.isCore.<get-isCore>|<get-isCore>(){}[0]
+    final val isLocal // com.davils.kaml.core.model/YamlTag.isLocal|{}isLocal[0]
+        final fun <get-isLocal>(): kotlin/Boolean // com.davils.kaml.core.model/YamlTag.isLocal.<get-isLocal>|<get-isLocal>(){}[0]
+    final val isNonSpecific // com.davils.kaml.core.model/YamlTag.isNonSpecific|{}isNonSpecific[0]
+        final fun <get-isNonSpecific>(): kotlin/Boolean // com.davils.kaml.core.model/YamlTag.isNonSpecific.<get-isNonSpecific>|<get-isNonSpecific>(){}[0]
+    final val uri // com.davils.kaml.core.model/YamlTag.uri|{}uri[0]
+        final fun <get-uri>(): kotlin/String // com.davils.kaml.core.model/YamlTag.uri.<get-uri>|<get-uri>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.model/YamlTag.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.model/YamlTag.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.model/YamlTag.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.model/YamlTag.Companion|null[0]
+        final const val CORE_TAG_PREFIX // com.davils.kaml.core.model/YamlTag.Companion.CORE_TAG_PREFIX|{}CORE_TAG_PREFIX[0]
+            final fun <get-CORE_TAG_PREFIX>(): kotlin/String // com.davils.kaml.core.model/YamlTag.Companion.CORE_TAG_PREFIX.<get-CORE_TAG_PREFIX>|<get-CORE_TAG_PREFIX>(){}[0]
+
+        final val BINARY // com.davils.kaml.core.model/YamlTag.Companion.BINARY|{}BINARY[0]
+            final fun <get-BINARY>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.BINARY.<get-BINARY>|<get-BINARY>(){}[0]
+        final val BOOLEAN // com.davils.kaml.core.model/YamlTag.Companion.BOOLEAN|{}BOOLEAN[0]
+            final fun <get-BOOLEAN>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.BOOLEAN.<get-BOOLEAN>|<get-BOOLEAN>(){}[0]
+        final val FLOAT // com.davils.kaml.core.model/YamlTag.Companion.FLOAT|{}FLOAT[0]
+            final fun <get-FLOAT>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.FLOAT.<get-FLOAT>|<get-FLOAT>(){}[0]
+        final val INTEGER // com.davils.kaml.core.model/YamlTag.Companion.INTEGER|{}INTEGER[0]
+            final fun <get-INTEGER>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.INTEGER.<get-INTEGER>|<get-INTEGER>(){}[0]
+        final val MAPPING // com.davils.kaml.core.model/YamlTag.Companion.MAPPING|{}MAPPING[0]
+            final fun <get-MAPPING>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.MAPPING.<get-MAPPING>|<get-MAPPING>(){}[0]
+        final val MERGE // com.davils.kaml.core.model/YamlTag.Companion.MERGE|{}MERGE[0]
+            final fun <get-MERGE>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.MERGE.<get-MERGE>|<get-MERGE>(){}[0]
+        final val NON_SPECIFIC // com.davils.kaml.core.model/YamlTag.Companion.NON_SPECIFIC|{}NON_SPECIFIC[0]
+            final fun <get-NON_SPECIFIC>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.NON_SPECIFIC.<get-NON_SPECIFIC>|<get-NON_SPECIFIC>(){}[0]
+        final val NULL // com.davils.kaml.core.model/YamlTag.Companion.NULL|{}NULL[0]
+            final fun <get-NULL>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.NULL.<get-NULL>|<get-NULL>(){}[0]
+        final val ORDERED_MAP // com.davils.kaml.core.model/YamlTag.Companion.ORDERED_MAP|{}ORDERED_MAP[0]
+            final fun <get-ORDERED_MAP>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.ORDERED_MAP.<get-ORDERED_MAP>|<get-ORDERED_MAP>(){}[0]
+        final val PAIRS // com.davils.kaml.core.model/YamlTag.Companion.PAIRS|{}PAIRS[0]
+            final fun <get-PAIRS>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.PAIRS.<get-PAIRS>|<get-PAIRS>(){}[0]
+        final val SEQUENCE // com.davils.kaml.core.model/YamlTag.Companion.SEQUENCE|{}SEQUENCE[0]
+            final fun <get-SEQUENCE>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.SEQUENCE.<get-SEQUENCE>|<get-SEQUENCE>(){}[0]
+        final val SET // com.davils.kaml.core.model/YamlTag.Companion.SET|{}SET[0]
+            final fun <get-SET>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.SET.<get-SET>|<get-SET>(){}[0]
+        final val STRING // com.davils.kaml.core.model/YamlTag.Companion.STRING|{}STRING[0]
+            final fun <get-STRING>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.STRING.<get-STRING>|<get-STRING>(){}[0]
+        final val TIMESTAMP // com.davils.kaml.core.model/YamlTag.Companion.TIMESTAMP|{}TIMESTAMP[0]
+            final fun <get-TIMESTAMP>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.TIMESTAMP.<get-TIMESTAMP>|<get-TIMESTAMP>(){}[0]
+        final val VALUE // com.davils.kaml.core.model/YamlTag.Companion.VALUE|{}VALUE[0]
+            final fun <get-VALUE>(): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.VALUE.<get-VALUE>|<get-VALUE>(){}[0]
+
+        final fun core(kotlin/String): com.davils.kaml.core.model/YamlTag // com.davils.kaml.core.model/YamlTag.Companion.core|core(kotlin.String){}[0]
     }
 }
 

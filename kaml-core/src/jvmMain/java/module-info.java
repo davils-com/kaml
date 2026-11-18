@@ -21,4 +21,5 @@ module com.davils.kaml.core {
     exports com.davils.kaml.core;
     exports com.davils.kaml.core.diagnostic;
     exports com.davils.kaml.core.limit;
+    exports com.davils.kaml.core.model;
 }
