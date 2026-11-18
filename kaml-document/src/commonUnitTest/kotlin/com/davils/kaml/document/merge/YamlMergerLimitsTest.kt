@@ -32,8 +32,36 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 private const val ITEMS: Int = 20_000
+
+private const val NAME: String = "name"
+private const val COLLIDING_BITS: Int = 3
+private const val FEW_BITS: Int = 11
+private const val MANY_BITS: Int = 13
+private const val GROWTH: Int = 8
+private val slack: Duration = 200.milliseconds
+
+private fun colliding(bits: Int): List<String> = (0 until (1 shl bits)).map { number ->
+    (0 until bits).joinToString("") { bit -> "Aa".takeIf { number shr bit and 1 == 0 } ?: "BB" }
+}
+
+private fun named(names: List<String>): YamlNode =
+    yamlSequence(names.map { name -> yamlMapping(listOf(YamlEntry(key = yamlScalar(NAME), value = yamlScalar(name)))) })
+
+private fun mergedByName(names: List<String>): YamlMerged {
+    val byName = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey(NAME) }
+    return YamlMerger(byName).merge(listOf(YamlLayer("a", named(names)), YamlLayer("b", named(names))))
+}
+
+private fun timed(work: () -> Unit): Duration {
+    val mark = TimeSource.Monotonic.markNow()
+    work()
+    return mark.elapsedNow()
+}
 
 private fun item(name: Int, member: String): YamlNode = yamlMapping(
     listOf(
@@ -44,7 +72,7 @@ private fun item(name: Int, member: String): YamlNode = yamlMapping(
 
 class YamlMergerLimitsTest : FunSpec({
     context("keyed sequences") {
-        test("merge through a hash index, however many items they hold") {
+        test("merge through an index, however many items they hold") {
             val options = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey("name") }
             val base = yamlSequence((0 until ITEMS).map { item(it, "a") })
             val overlay = yamlSequence((0 until ITEMS).reversed().map { item(it, "b") })
@@ -56,6 +84,29 @@ class YamlMergerLimitsTest : FunSpec({
 
             items.size shouldBe ITEMS
             items.last() shouldBe nodeOf("{name: n${ITEMS - 1}, a: 1, b: 1}")
+        }
+    }
+
+    context("keyed sequences whose identities have colliding hash codes") {
+        test("are what the test feeds the merge") {
+            val hashCodes = colliding(COLLIDING_BITS).map(String::hashCode)
+
+            hashCodes.toSet().size shouldBe 1
+        }
+
+        test("merge in near-linear time on every target") {
+            val few = colliding(FEW_BITS)
+            val many = colliding(MANY_BITS)
+            val fewTime = timed { mergedByName(few) }
+            val manyTime = timed { mergedByName(many) }
+
+            (manyTime < fewTime * GROWTH + slack) shouldBe true
+        }
+
+        test("merge the items with the same identity") {
+            val names = colliding(COLLIDING_BITS)
+
+            (mergedByName(names).node as YamlNode.Sequence).items.size shouldBe names.size
         }
     }
 

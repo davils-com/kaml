@@ -16,14 +16,20 @@
 
 package com.davils.kaml.document.internal
 
+import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.YamlNode
+
 internal class KeyedSlots<T : Any>(
     items: List<T>,
+    private val budget: WorkBudget,
     private val keyOf: (T) -> String?,
-    private val nodeOf: (T) -> Any? = { null },
+    private val nodeOf: (T) -> YamlNode? = { null },
 ) {
     private val slots = ArrayList<T?>(items)
-    private val positions = HashMap<String, ArrayDeque<Int>>()
-    private val nodes = HashMap<Any, Int>()
+    private val keys = OrderedIndex<String>()
+    private val positions = ArrayList<ArrayDeque<Int>>()
+    private val hashes = OrderedIndex<Int>()
+    private val buckets = ArrayList<ArrayDeque<Int>>()
 
     init {
         items.forEachIndexed { index, item -> indexed(item, index) }
@@ -31,18 +37,16 @@ internal class KeyedSlots<T : Any>(
 
     val items: List<T> get() = slots.filterNotNull()
 
-    fun positionOf(key: String?, node: Any? = null): Int? {
-        val byKey = key?.let(positions::get)?.firstOrNull()
-        return byKey ?: node?.let(nodes::get)
+    fun positionOf(key: String?, node: YamlNode? = null): Int? {
+        val byKey = key?.let(::livePositionOf)
+        return byKey ?: node?.let(::equalPositionOf)
     }
 
     fun at(position: Int): T? = slots[position]
 
     fun remove(position: Int?) {
-        val item = position?.let(slots::get) ?: return
-        slots[position] = null
-        keyOf(item)?.let { key -> positions[key]?.remove(position) }
-        nodeOf(item)?.let(nodes::remove)
+        val live = position?.takeIf { slots[it] != null } ?: return
+        slots[live] = null
     }
 
     fun append(item: T) {
@@ -55,7 +59,35 @@ internal class KeyedSlots<T : Any>(
     }
 
     private fun indexed(item: T, position: Int) {
-        keyOf(item)?.let { key -> positions.getOrPut(key) { ArrayDeque() }.addLast(position) }
-        nodeOf(item)?.let { node -> nodes.getOrPut(node) { position } }
+        keyOf(item)?.let { key -> groupOf(keys, positions, key).addLast(position) }
+        nodeOf(item)?.let { node -> groupOf(hashes, buckets, node.hashCode()).addLast(position) }
+    }
+
+    private fun livePositionOf(key: String): Int? {
+        val group = keys.ordinalOf(key)?.let(positions::get) ?: return null
+        while (group.isNotEmpty() && slots[group.first()] == null) group.removeFirst()
+        return group.firstOrNull()
+    }
+
+    private fun equalPositionOf(node: YamlNode): Int? {
+        val isText = node is YamlNode.Scalar && node.tag == YamlTag.STRING
+        val ordinal = hashes.ordinalOf(node.hashCode())?.takeIf { !isText } ?: return null
+        return buckets[ordinal].firstOrNull { position -> isEqualAt(position, node) }
+    }
+
+    private fun isEqualAt(position: Int, node: YamlNode): Boolean {
+        budget.charge()
+        val item = slots[position]
+        return item != null && nodeOf(item) == node
+    }
+
+    private fun <K : Comparable<K>> groupOf(
+        index: OrderedIndex<K>,
+        groups: MutableList<ArrayDeque<Int>>,
+        key: K,
+    ): ArrayDeque<Int> {
+        val ordinal = index.ordinalFor(key)
+        if (ordinal == groups.size) groups.add(ArrayDeque())
+        return groups[ordinal]
     }
 }

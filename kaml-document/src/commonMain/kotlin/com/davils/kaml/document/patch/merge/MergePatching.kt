@@ -28,7 +28,8 @@ import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.graph.GraphNodes
 
 internal class MergePatching(limits: YamlLimits) {
-    private val count = NodeCount(WorkBudget(limits.maximumNodes, "maximumNodes"), limits.maximumDepth)
+    private val budget = WorkBudget(limits.maximumNodes, "maximumNodes")
+    private val count = NodeCount(budget, limits.maximumDepth)
 
     fun merged(target: YamlNode?, patch: YamlNode): YamlNode = merged(target, patch, 0)
 
@@ -36,7 +37,12 @@ internal class MergePatching(limits: YamlLimits) {
         val members = patch as? YamlNode.Mapping ?: return charged(patch, depth)
         count.checkDepth(depth)
         val base = target as? YamlNode.Mapping ?: yamlMapping(emptyList())
-        val slots = KeyedSlots(base.entries, { entry -> Members.tokenOf(entry.key) }, YamlEntry::key)
+        val slots = KeyedSlots(
+            items = base.entries,
+            budget = budget,
+            keyOf = { entry -> Members.tokenOf(entry.key) },
+            nodeOf = YamlEntry::key,
+        )
         members.entries.forEach { member -> withMember(slots, member, depth) }
         return GraphNodes.withEntries(base, slots.items, anchor = null)
     }

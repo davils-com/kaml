@@ -58,8 +58,9 @@ public sealed interface YamlSequenceMerge {
     /**
      * The items are mappings identified by the text of their member [key]: a later item merges into the earlier item
      * with the same identity, the first one when several share it, and is appended when there is none. An item
-     * without the member is appended. The items are found through a hash index, so the merge takes time in
-     * proportion to the items, not to their product.
+     * without the member is appended. The items are found through an ordered index of their identities, so the merge
+     * takes time in proportion to the items times the logarithm of their number, not to their product, also when the
+     * hash codes of the identities collide.
      *
      * @param key the name of the member that identifies an item; must not be blank.
      * @since 1.0.0

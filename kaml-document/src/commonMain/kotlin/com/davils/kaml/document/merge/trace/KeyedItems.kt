@@ -21,10 +21,15 @@ import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.string
 import com.davils.kaml.document.internal.KeyedSlots
 import com.davils.kaml.document.internal.Members
+import com.davils.kaml.document.internal.WorkBudget
 
-internal class KeyedItems(private val layers: LayerMerging, private val markers: DeletionMarkers) {
+internal class KeyedItems(
+    private val layers: LayerMerging,
+    private val markers: DeletionMarkers,
+    private val budget: WorkBudget,
+) {
     fun merged(base: Traced.Items, sequence: YamlNode.Sequence, items: Overlay, key: String): Traced {
-        val slots = KeyedSlots(base.items, keyOf = { item -> keyOf(item, key) })
+        val slots = KeyedSlots(base.items, budget, keyOf = { item -> keyOf(item, key) })
         sequence.items.forEach { item -> withItem(slots, items.with(item), key) }
         return Traced.Items(base.template, slots.items, items.layer)
     }

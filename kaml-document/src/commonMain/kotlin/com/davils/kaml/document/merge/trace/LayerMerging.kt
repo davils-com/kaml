@@ -32,9 +32,10 @@ import com.davils.kaml.document.pointer.JsonPointer
 private const val ANY: String = "*"
 
 internal class LayerMerging(private val options: YamlMergeOptions, limits: YamlLimits) {
-    private val count = NodeCount(WorkBudget(limits.maximumNodes, "maximumNodes"), limits.maximumDepth)
+    private val budget = WorkBudget(limits.maximumNodes, "maximumNodes")
+    private val count = NodeCount(budget, limits.maximumDepth)
     private val markers = DeletionMarkers(options.deletion, count)
-    private val keyed = KeyedItems(this, markers)
+    private val keyed = KeyedItems(this, markers, budget)
 
     fun merged(layers: List<YamlLayer>): YamlMerged {
         val first = layers.first()
@@ -59,7 +60,12 @@ internal class LayerMerging(private val options: YamlMergeOptions, limits: YamlL
 
     private fun mergedMapping(base: Traced, mapping: YamlNode.Mapping, overlay: Overlay): Traced {
         val members = TracedNodes.members(base) ?: return whole(mapping, overlay.layer, overlay.pattern.tokens.size)
-        val slots = KeyedSlots(members.entries, { entry -> Members.tokenOf(entry.key) }, TracedEntry::key)
+        val slots = KeyedSlots(
+            items = members.entries,
+            budget = budget,
+            keyOf = { entry -> Members.tokenOf(entry.key) },
+            nodeOf = TracedEntry::key,
+        )
         mapping.entries.forEach { entry -> withEntry(slots, entry, overlay) }
         return Traced.Members(members.template, slots.items, overlay.layer)
     }
