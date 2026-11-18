@@ -87,19 +87,21 @@ internal object Yaml11Forms : ScalarForms {
 
     private fun radix(text: String, compact: String): String? {
         val isNegative = text.startsWith("-")
-        val prefixed = compact.drop(RADIX_PREFIX_LENGTH)
         val binary = BINARY_RADIX.takeIf { Yaml11Patterns.isBinary(text) }
-        val radix = binary ?: HEX_RADIX.takeIf { Yaml11Patterns.isHex(text) }
-        if (radix != null) return IntegerText.ofRadix(isNegative, prefixed, radix)
-        val octalDigits = compact.drop(1).ifEmpty { "0" }
-        return IntegerText.ofRadix(isNegative, octalDigits, OCTAL_RADIX).takeIf { Yaml11Patterns.isOctal(text) }
+        val prefixed = binary ?: HEX_RADIX.takeIf { Yaml11Patterns.isHex(text) }
+        val radix = prefixed ?: OCTAL_RADIX.takeIf { Yaml11Patterns.isOctal(text) } ?: return null
+        val prefixLength = RADIX_PREFIX_LENGTH.takeIf { prefixed != null } ?: 1
+        return IntegerText.ofRadix(isNegative, compact.drop(prefixLength), radix)
     }
 
     private fun decimalOrSexagesimal(text: String, isNegative: Boolean, compact: String): String? {
         if (Yaml11Patterns.isDecimal(text)) return IntegerText.decimal(isNegative, compact)
+        return compact.takeIf { Yaml11Patterns.isSexagesimal(text) }?.let { digits -> sexagesimal(isNegative, digits) }
+    }
+
+    private fun sexagesimal(isNegative: Boolean, compact: String): String {
         val places = compact.split(':')
-        val sexagesimal = IntegerText.ofSexagesimal(isNegative, places.first(), places.drop(1))
-        return sexagesimal.takeIf { Yaml11Patterns.isSexagesimal(text) }
+        return IntegerText.ofSexagesimal(isNegative, places.first(), places.drop(1))
     }
 
     private fun floating(text: String): ScalarValue? {
