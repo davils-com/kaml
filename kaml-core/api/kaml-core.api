@@ -1,3 +1,89 @@
+public final class com/davils/kaml/core/Yaml {
+	public static final field Companion Lcom/davils/kaml/core/Yaml$Companion;
+	public final fun emit (Lcom/davils/kaml/core/node/YamlDocument;)Ljava/lang/String;
+	public final fun emit (Lcom/davils/kaml/core/node/YamlDocument;Lcom/davils/kaml/core/emit/YamlComments;)Ljava/lang/String;
+	public final fun emit (Lcom/davils/kaml/core/node/YamlNode;)Ljava/lang/String;
+	public final fun emit (Lcom/davils/kaml/core/node/YamlStream;)Ljava/lang/String;
+	public final fun emitEvents (Ljava/util/List;)Ljava/lang/String;
+	public final fun events (Lcom/davils/kaml/core/source/YamlSource;)Lcom/davils/kaml/core/event/YamlEventResult;
+	public final fun getConfiguration ()Lcom/davils/kaml/core/YamlConfiguration;
+	public final fun parse (Lcom/davils/kaml/core/source/YamlSource;)Lcom/davils/kaml/core/YamlParseResult;
+	public final fun parse (Ljava/lang/String;)Lcom/davils/kaml/core/YamlParseResult;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/Yaml$Companion {
+	public final fun getDefault ()Lcom/davils/kaml/core/Yaml;
+}
+
+public final class com/davils/kaml/core/YamlBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun emitter (Lkotlin/jvm/functions/Function1;)V
+	public final fun getDuplicateKeys ()Lcom/davils/kaml/core/YamlDuplicateKeys;
+	public final fun getEmitter ()Lcom/davils/kaml/core/emit/YamlEmitOptions;
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getSchema ()Lcom/davils/kaml/core/schema/YamlSchema;
+	public final fun getUnknownTags ()Lcom/davils/kaml/core/YamlUnknownTags;
+	public final fun isSchemaSelectedByVersion ()Z
+	public final fun limits (Lkotlin/jvm/functions/Function1;)V
+	public final fun setDuplicateKeys (Lcom/davils/kaml/core/YamlDuplicateKeys;)V
+	public final fun setEmitter (Lcom/davils/kaml/core/emit/YamlEmitOptions;)V
+	public final fun setLimits (Lcom/davils/kaml/core/limit/YamlLimits;)V
+	public final fun setSchema (Lcom/davils/kaml/core/schema/YamlSchema;)V
+	public final fun setSchemaSelectedByVersion (Z)V
+	public final fun setUnknownTags (Lcom/davils/kaml/core/YamlUnknownTags;)V
+}
+
+public final class com/davils/kaml/core/YamlConfiguration : com/davils/kore/core/validation/Validatable {
+	public final fun getDuplicateKeys ()Lcom/davils/kaml/core/YamlDuplicateKeys;
+	public final fun getEmitter ()Lcom/davils/kaml/core/emit/YamlEmitOptions;
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getSchema ()Lcom/davils/kaml/core/schema/YamlSchema;
+	public final fun getUnknownTags ()Lcom/davils/kaml/core/YamlUnknownTags;
+	public final fun isSchemaSelectedByVersion ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/core/YamlDuplicateKeys : java/lang/Enum {
+	public static final field KeepFirst Lcom/davils/kaml/core/YamlDuplicateKeys;
+	public static final field KeepLast Lcom/davils/kaml/core/YamlDuplicateKeys;
+	public static final field Refuse Lcom/davils/kaml/core/YamlDuplicateKeys;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/YamlDuplicateKeys;
+	public static fun values ()[Lcom/davils/kaml/core/YamlDuplicateKeys;
+}
+
+public abstract interface class com/davils/kaml/core/YamlParseResult {
+	public abstract fun getDiagnostics ()Ljava/util/List;
+}
+
+public final class com/davils/kaml/core/YamlParseResult$Failed : com/davils/kaml/core/YamlParseResult {
+	public fun <init> (Ljava/util/List;Lcom/davils/kaml/core/node/YamlStream;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDiagnostics ()Ljava/util/List;
+	public final fun getPartial ()Lcom/davils/kaml/core/node/YamlStream;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/YamlParseResult$Parsed : com/davils/kaml/core/YamlParseResult {
+	public fun <init> (Lcom/davils/kaml/core/node/YamlStream;Ljava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDiagnostics ()Ljava/util/List;
+	public final fun getStream ()Lcom/davils/kaml/core/node/YamlStream;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/YamlUnknownTags : java/lang/Enum {
+	public static final field Keep Lcom/davils/kaml/core/YamlUnknownTags;
+	public static final field Refuse Lcom/davils/kaml/core/YamlUnknownTags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/YamlUnknownTags;
+	public static fun values ()[Lcom/davils/kaml/core/YamlUnknownTags;
+}
+
 public final class com/davils/kaml/core/YamlViolationCodes {
 	public static final field INSTANCE Lcom/davils/kaml/core/YamlViolationCodes;
 	public final fun getABOVE_HARD_LIMIT-J_S2PC0 ()Ljava/lang/String;
@@ -7,6 +93,11 @@ public final class com/davils/kaml/core/YamlViolationCodes {
 	public final fun getINVALID_INDENT-J_S2PC0 ()Ljava/lang/String;
 	public final fun getINVALID_LINE_BREAK-J_S2PC0 ()Ljava/lang/String;
 	public final fun getNOT_POSITIVE-J_S2PC0 ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/YamlsKt {
+	public static final fun yaml (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/Yaml;
+	public static synthetic fun yaml$default (Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/davils/kaml/core/Yaml;
 }
 
 public final class com/davils/kaml/core/diagnostic/YamlDiagnostic {
@@ -650,5 +741,82 @@ public final class com/davils/kaml/core/schema/YamlTagDefinition {
 	public final fun getTag-AX47Ni0 ()Ljava/lang/String;
 	public final fun isImplicit ()Z
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/source/YamlEncoding : java/lang/Enum {
+	public static final field Utf16BigEndian Lcom/davils/kaml/core/source/YamlEncoding;
+	public static final field Utf16LittleEndian Lcom/davils/kaml/core/source/YamlEncoding;
+	public static final field Utf32BigEndian Lcom/davils/kaml/core/source/YamlEncoding;
+	public static final field Utf32LittleEndian Lcom/davils/kaml/core/source/YamlEncoding;
+	public static final field Utf8 Lcom/davils/kaml/core/source/YamlEncoding;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/source/YamlEncoding;
+	public static fun values ()[Lcom/davils/kaml/core/source/YamlEncoding;
+}
+
+public final class com/davils/kaml/core/source/YamlSource {
+	public static final field Companion Lcom/davils/kaml/core/source/YamlSource$Companion;
+	public final fun getName ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/source/YamlSource$Companion {
+	public final fun of (Ljava/lang/String;Ljava/lang/String;)Lcom/davils/kaml/core/source/YamlSource;
+	public final fun of ([BLjava/lang/String;)Lcom/davils/kaml/core/source/YamlSource;
+	public static synthetic fun of$default (Lcom/davils/kaml/core/source/YamlSource$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/davils/kaml/core/source/YamlSource;
+	public static synthetic fun of$default (Lcom/davils/kaml/core/source/YamlSource$Companion;[BLjava/lang/String;ILjava/lang/Object;)Lcom/davils/kaml/core/source/YamlSource;
+}
+
+public final class com/davils/kaml/core/syntax/YamlSyntaxKind : java/lang/Enum {
+	public static final field ALIAS Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field ALIAS_NODE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field ANCHOR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_MAPPING Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_MAPPING_ENTRY Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_SCALAR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_SCALAR_CONTENT Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_SCALAR_HEADER Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_SEQUENCE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BLOCK_SEQUENCE_ENTRY Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field BYTE_ORDER_MARK Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field COMMENT Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DIRECTIVE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DIRECTIVE_NAME Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DIRECTIVE_PARAMETER Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DOCUMENT Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DOCUMENT_END Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DOCUMENT_START Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field DOUBLE_QUOTED_SCALAR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field EMPTY_NODE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field ERROR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_ENTRY_SEPARATOR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_MAPPING Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_MAPPING_END Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_MAPPING_ENTRY Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_MAPPING_START Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_PAIR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_SEQUENCE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_SEQUENCE_END Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field FLOW_SEQUENCE_START Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field KEY Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field LINE_BREAK Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field MAPPING_KEY Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field MAPPING_VALUE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field PLAIN_SCALAR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field PROPERTIES Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field SCALAR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field SEQUENCE_ENTRY Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field SINGLE_QUOTED_SCALAR Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field STREAM Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field TAG Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field UNEXPECTED Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field VALUE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static final field WHITESPACE Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun isToken ()Z
+	public final fun isTrivia ()Z
+	public final fun isValueNode ()Z
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
+	public static fun values ()[Lcom/davils/kaml/core/syntax/YamlSyntaxKind;
 }
 

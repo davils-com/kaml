@@ -134,6 +134,102 @@ final enum class com.davils.kaml.core.model/YamlScalarStyle : kotlin/Enum<com.da
     final fun values(): kotlin/Array<com.davils.kaml.core.model/YamlScalarStyle> // com.davils.kaml.core.model/YamlScalarStyle.values|values#static(){}[0]
 }
 
+final enum class com.davils.kaml.core.source/YamlEncoding : kotlin/Enum<com.davils.kaml.core.source/YamlEncoding> { // com.davils.kaml.core.source/YamlEncoding|null[0]
+    enum entry Utf16BigEndian // com.davils.kaml.core.source/YamlEncoding.Utf16BigEndian|null[0]
+    enum entry Utf16LittleEndian // com.davils.kaml.core.source/YamlEncoding.Utf16LittleEndian|null[0]
+    enum entry Utf32BigEndian // com.davils.kaml.core.source/YamlEncoding.Utf32BigEndian|null[0]
+    enum entry Utf32LittleEndian // com.davils.kaml.core.source/YamlEncoding.Utf32LittleEndian|null[0]
+    enum entry Utf8 // com.davils.kaml.core.source/YamlEncoding.Utf8|null[0]
+
+    final val entries // com.davils.kaml.core.source/YamlEncoding.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.source/YamlEncoding> // com.davils.kaml.core.source/YamlEncoding.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.source/YamlEncoding // com.davils.kaml.core.source/YamlEncoding.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.source/YamlEncoding> // com.davils.kaml.core.source/YamlEncoding.values|values#static(){}[0]
+}
+
+final enum class com.davils.kaml.core.syntax/YamlSyntaxKind : kotlin/Enum<com.davils.kaml.core.syntax/YamlSyntaxKind> { // com.davils.kaml.core.syntax/YamlSyntaxKind|null[0]
+    enum entry ALIAS // com.davils.kaml.core.syntax/YamlSyntaxKind.ALIAS|null[0]
+    enum entry ALIAS_NODE // com.davils.kaml.core.syntax/YamlSyntaxKind.ALIAS_NODE|null[0]
+    enum entry ANCHOR // com.davils.kaml.core.syntax/YamlSyntaxKind.ANCHOR|null[0]
+    enum entry BLOCK_MAPPING // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_MAPPING|null[0]
+    enum entry BLOCK_MAPPING_ENTRY // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_MAPPING_ENTRY|null[0]
+    enum entry BLOCK_SCALAR // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_SCALAR|null[0]
+    enum entry BLOCK_SCALAR_CONTENT // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_SCALAR_CONTENT|null[0]
+    enum entry BLOCK_SCALAR_HEADER // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_SCALAR_HEADER|null[0]
+    enum entry BLOCK_SEQUENCE // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_SEQUENCE|null[0]
+    enum entry BLOCK_SEQUENCE_ENTRY // com.davils.kaml.core.syntax/YamlSyntaxKind.BLOCK_SEQUENCE_ENTRY|null[0]
+    enum entry BYTE_ORDER_MARK // com.davils.kaml.core.syntax/YamlSyntaxKind.BYTE_ORDER_MARK|null[0]
+    enum entry COMMENT // com.davils.kaml.core.syntax/YamlSyntaxKind.COMMENT|null[0]
+    enum entry DIRECTIVE // com.davils.kaml.core.syntax/YamlSyntaxKind.DIRECTIVE|null[0]
+    enum entry DIRECTIVE_NAME // com.davils.kaml.core.syntax/YamlSyntaxKind.DIRECTIVE_NAME|null[0]
+    enum entry DIRECTIVE_PARAMETER // com.davils.kaml.core.syntax/YamlSyntaxKind.DIRECTIVE_PARAMETER|null[0]
+    enum entry DOCUMENT // com.davils.kaml.core.syntax/YamlSyntaxKind.DOCUMENT|null[0]
+    enum entry DOCUMENT_END // com.davils.kaml.core.syntax/YamlSyntaxKind.DOCUMENT_END|null[0]
+    enum entry DOCUMENT_START // com.davils.kaml.core.syntax/YamlSyntaxKind.DOCUMENT_START|null[0]
+    enum entry DOUBLE_QUOTED_SCALAR // com.davils.kaml.core.syntax/YamlSyntaxKind.DOUBLE_QUOTED_SCALAR|null[0]
+    enum entry EMPTY_NODE // com.davils.kaml.core.syntax/YamlSyntaxKind.EMPTY_NODE|null[0]
+    enum entry ERROR // com.davils.kaml.core.syntax/YamlSyntaxKind.ERROR|null[0]
+    enum entry FLOW_ENTRY_SEPARATOR // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_ENTRY_SEPARATOR|null[0]
+    enum entry FLOW_MAPPING // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_MAPPING|null[0]
+    enum entry FLOW_MAPPING_END // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_MAPPING_END|null[0]
+    enum entry FLOW_MAPPING_ENTRY // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_MAPPING_ENTRY|null[0]
+    enum entry FLOW_MAPPING_START // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_MAPPING_START|null[0]
+    enum entry FLOW_PAIR // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_PAIR|null[0]
+    enum entry FLOW_SEQUENCE // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_SEQUENCE|null[0]
+    enum entry FLOW_SEQUENCE_END // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_SEQUENCE_END|null[0]
+    enum entry FLOW_SEQUENCE_START // com.davils.kaml.core.syntax/YamlSyntaxKind.FLOW_SEQUENCE_START|null[0]
+    enum entry KEY // com.davils.kaml.core.syntax/YamlSyntaxKind.KEY|null[0]
+    enum entry LINE_BREAK // com.davils.kaml.core.syntax/YamlSyntaxKind.LINE_BREAK|null[0]
+    enum entry MAPPING_KEY // com.davils.kaml.core.syntax/YamlSyntaxKind.MAPPING_KEY|null[0]
+    enum entry MAPPING_VALUE // com.davils.kaml.core.syntax/YamlSyntaxKind.MAPPING_VALUE|null[0]
+    enum entry PLAIN_SCALAR // com.davils.kaml.core.syntax/YamlSyntaxKind.PLAIN_SCALAR|null[0]
+    enum entry PROPERTIES // com.davils.kaml.core.syntax/YamlSyntaxKind.PROPERTIES|null[0]
+    enum entry SCALAR // com.davils.kaml.core.syntax/YamlSyntaxKind.SCALAR|null[0]
+    enum entry SEQUENCE_ENTRY // com.davils.kaml.core.syntax/YamlSyntaxKind.SEQUENCE_ENTRY|null[0]
+    enum entry SINGLE_QUOTED_SCALAR // com.davils.kaml.core.syntax/YamlSyntaxKind.SINGLE_QUOTED_SCALAR|null[0]
+    enum entry STREAM // com.davils.kaml.core.syntax/YamlSyntaxKind.STREAM|null[0]
+    enum entry TAG // com.davils.kaml.core.syntax/YamlSyntaxKind.TAG|null[0]
+    enum entry UNEXPECTED // com.davils.kaml.core.syntax/YamlSyntaxKind.UNEXPECTED|null[0]
+    enum entry VALUE // com.davils.kaml.core.syntax/YamlSyntaxKind.VALUE|null[0]
+    enum entry WHITESPACE // com.davils.kaml.core.syntax/YamlSyntaxKind.WHITESPACE|null[0]
+
+    final val entries // com.davils.kaml.core.syntax/YamlSyntaxKind.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.syntax/YamlSyntaxKind> // com.davils.kaml.core.syntax/YamlSyntaxKind.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val isToken // com.davils.kaml.core.syntax/YamlSyntaxKind.isToken|{}isToken[0]
+        final fun <get-isToken>(): kotlin/Boolean // com.davils.kaml.core.syntax/YamlSyntaxKind.isToken.<get-isToken>|<get-isToken>(){}[0]
+    final val isTrivia // com.davils.kaml.core.syntax/YamlSyntaxKind.isTrivia|{}isTrivia[0]
+        final fun <get-isTrivia>(): kotlin/Boolean // com.davils.kaml.core.syntax/YamlSyntaxKind.isTrivia.<get-isTrivia>|<get-isTrivia>(){}[0]
+    final val isValueNode // com.davils.kaml.core.syntax/YamlSyntaxKind.isValueNode|{}isValueNode[0]
+        final fun <get-isValueNode>(): kotlin/Boolean // com.davils.kaml.core.syntax/YamlSyntaxKind.isValueNode.<get-isValueNode>|<get-isValueNode>(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.syntax/YamlSyntaxKind // com.davils.kaml.core.syntax/YamlSyntaxKind.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.syntax/YamlSyntaxKind> // com.davils.kaml.core.syntax/YamlSyntaxKind.values|values#static(){}[0]
+}
+
+final enum class com.davils.kaml.core/YamlDuplicateKeys : kotlin/Enum<com.davils.kaml.core/YamlDuplicateKeys> { // com.davils.kaml.core/YamlDuplicateKeys|null[0]
+    enum entry KeepFirst // com.davils.kaml.core/YamlDuplicateKeys.KeepFirst|null[0]
+    enum entry KeepLast // com.davils.kaml.core/YamlDuplicateKeys.KeepLast|null[0]
+    enum entry Refuse // com.davils.kaml.core/YamlDuplicateKeys.Refuse|null[0]
+
+    final val entries // com.davils.kaml.core/YamlDuplicateKeys.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core/YamlDuplicateKeys> // com.davils.kaml.core/YamlDuplicateKeys.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core/YamlDuplicateKeys // com.davils.kaml.core/YamlDuplicateKeys.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core/YamlDuplicateKeys> // com.davils.kaml.core/YamlDuplicateKeys.values|values#static(){}[0]
+}
+
+final enum class com.davils.kaml.core/YamlUnknownTags : kotlin/Enum<com.davils.kaml.core/YamlUnknownTags> { // com.davils.kaml.core/YamlUnknownTags|null[0]
+    enum entry Keep // com.davils.kaml.core/YamlUnknownTags.Keep|null[0]
+    enum entry Refuse // com.davils.kaml.core/YamlUnknownTags.Refuse|null[0]
+
+    final val entries // com.davils.kaml.core/YamlUnknownTags.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core/YamlUnknownTags> // com.davils.kaml.core/YamlUnknownTags.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core/YamlUnknownTags // com.davils.kaml.core/YamlUnknownTags.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core/YamlUnknownTags> // com.davils.kaml.core/YamlUnknownTags.values|values#static(){}[0]
+}
+
 sealed interface com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent|null[0]
     abstract val range // com.davils.kaml.core.event/YamlEvent.range|{}range[0]
         abstract fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.range.<get-range>|<get-range>(){}[0]
@@ -355,6 +451,37 @@ sealed interface com.davils.kaml.core.node/YamlNode { // com.davils.kaml.core.no
         final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.node/YamlNode.Sequence.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // com.davils.kaml.core.node/YamlNode.Sequence.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // com.davils.kaml.core.node/YamlNode.Sequence.toString|toString(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.core/YamlParseResult { // com.davils.kaml.core/YamlParseResult|null[0]
+    abstract val diagnostics // com.davils.kaml.core/YamlParseResult.diagnostics|{}diagnostics[0]
+        abstract fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.core/YamlParseResult.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+
+    final class Failed : com.davils.kaml.core/YamlParseResult { // com.davils.kaml.core/YamlParseResult.Failed|null[0]
+        constructor <init>(kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic>, com.davils.kaml.core.node/YamlStream) // com.davils.kaml.core/YamlParseResult.Failed.<init>|<init>(kotlin.collections.List<com.davils.kaml.core.diagnostic.YamlDiagnostic>;com.davils.kaml.core.node.YamlStream){}[0]
+
+        final val diagnostics // com.davils.kaml.core/YamlParseResult.Failed.diagnostics|{}diagnostics[0]
+            final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.core/YamlParseResult.Failed.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+        final val partial // com.davils.kaml.core/YamlParseResult.Failed.partial|{}partial[0]
+            final fun <get-partial>(): com.davils.kaml.core.node/YamlStream // com.davils.kaml.core/YamlParseResult.Failed.partial.<get-partial>|<get-partial>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core/YamlParseResult.Failed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core/YamlParseResult.Failed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core/YamlParseResult.Failed.toString|toString(){}[0]
+    }
+
+    final class Parsed : com.davils.kaml.core/YamlParseResult { // com.davils.kaml.core/YamlParseResult.Parsed|null[0]
+        constructor <init>(com.davils.kaml.core.node/YamlStream, kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic>) // com.davils.kaml.core/YamlParseResult.Parsed.<init>|<init>(com.davils.kaml.core.node.YamlStream;kotlin.collections.List<com.davils.kaml.core.diagnostic.YamlDiagnostic>){}[0]
+
+        final val diagnostics // com.davils.kaml.core/YamlParseResult.Parsed.diagnostics|{}diagnostics[0]
+            final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.core/YamlParseResult.Parsed.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+        final val stream // com.davils.kaml.core/YamlParseResult.Parsed.stream|{}stream[0]
+            final fun <get-stream>(): com.davils.kaml.core.node/YamlStream // com.davils.kaml.core/YamlParseResult.Parsed.stream.<get-stream>|<get-stream>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core/YamlParseResult.Parsed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core/YamlParseResult.Parsed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core/YamlParseResult.Parsed.toString|toString(){}[0]
     }
 }
 
@@ -744,6 +871,80 @@ final class com.davils.kaml.core.schema/YamlTagDefinition { // com.davils.kaml.c
     final fun toString(): kotlin/String // com.davils.kaml.core.schema/YamlTagDefinition.toString|toString(){}[0]
 }
 
+final class com.davils.kaml.core.source/YamlSource { // com.davils.kaml.core.source/YamlSource|null[0]
+    final val name // com.davils.kaml.core.source/YamlSource.name|{}name[0]
+        final fun <get-name>(): kotlin/String? // com.davils.kaml.core.source/YamlSource.name.<get-name>|<get-name>(){}[0]
+
+    final fun toString(): kotlin/String // com.davils.kaml.core.source/YamlSource.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.source/YamlSource.Companion|null[0]
+        final fun of(kotlin/ByteArray, kotlin/String? = ...): com.davils.kaml.core.source/YamlSource // com.davils.kaml.core.source/YamlSource.Companion.of|of(kotlin.ByteArray;kotlin.String?){}[0]
+        final fun of(kotlin/String, kotlin/String? = ...): com.davils.kaml.core.source/YamlSource // com.davils.kaml.core.source/YamlSource.Companion.of|of(kotlin.String;kotlin.String?){}[0]
+    }
+}
+
+final class com.davils.kaml.core/Yaml { // com.davils.kaml.core/Yaml|null[0]
+    final val configuration // com.davils.kaml.core/Yaml.configuration|{}configuration[0]
+        final fun <get-configuration>(): com.davils.kaml.core/YamlConfiguration // com.davils.kaml.core/Yaml.configuration.<get-configuration>|<get-configuration>(){}[0]
+
+    final fun emit(com.davils.kaml.core.node/YamlDocument): kotlin/String // com.davils.kaml.core/Yaml.emit|emit(com.davils.kaml.core.node.YamlDocument){}[0]
+    final fun emit(com.davils.kaml.core.node/YamlDocument, com.davils.kaml.core.emit/YamlComments): kotlin/String // com.davils.kaml.core/Yaml.emit|emit(com.davils.kaml.core.node.YamlDocument;com.davils.kaml.core.emit.YamlComments){}[0]
+    final fun emit(com.davils.kaml.core.node/YamlNode): kotlin/String // com.davils.kaml.core/Yaml.emit|emit(com.davils.kaml.core.node.YamlNode){}[0]
+    final fun emit(com.davils.kaml.core.node/YamlStream): kotlin/String // com.davils.kaml.core/Yaml.emit|emit(com.davils.kaml.core.node.YamlStream){}[0]
+    final fun emitEvents(kotlin.collections/List<com.davils.kaml.core.event/YamlEvent>): kotlin/String // com.davils.kaml.core/Yaml.emitEvents|emitEvents(kotlin.collections.List<com.davils.kaml.core.event.YamlEvent>){}[0]
+    final fun events(com.davils.kaml.core.source/YamlSource): com.davils.kaml.core.event/YamlEventResult // com.davils.kaml.core/Yaml.events|events(com.davils.kaml.core.source.YamlSource){}[0]
+    final fun parse(com.davils.kaml.core.source/YamlSource): com.davils.kaml.core/YamlParseResult // com.davils.kaml.core/Yaml.parse|parse(com.davils.kaml.core.source.YamlSource){}[0]
+    final fun parse(kotlin/String): com.davils.kaml.core/YamlParseResult // com.davils.kaml.core/Yaml.parse|parse(kotlin.String){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core/Yaml.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core/Yaml.Companion|null[0]
+        final val Default // com.davils.kaml.core/Yaml.Companion.Default|{}Default[0]
+            final fun <get-Default>(): com.davils.kaml.core/Yaml // com.davils.kaml.core/Yaml.Companion.Default.<get-Default>|<get-Default>(){}[0]
+    }
+}
+
+final class com.davils.kaml.core/YamlBuilder : com.davils.kore.core.dsl/ValidatingBuilder<com.davils.kaml.core/YamlConfiguration> { // com.davils.kaml.core/YamlBuilder|null[0]
+    final var duplicateKeys // com.davils.kaml.core/YamlBuilder.duplicateKeys|{}duplicateKeys[0]
+        final fun <get-duplicateKeys>(): com.davils.kaml.core/YamlDuplicateKeys // com.davils.kaml.core/YamlBuilder.duplicateKeys.<get-duplicateKeys>|<get-duplicateKeys>(){}[0]
+        final fun <set-duplicateKeys>(com.davils.kaml.core/YamlDuplicateKeys) // com.davils.kaml.core/YamlBuilder.duplicateKeys.<set-duplicateKeys>|<set-duplicateKeys>(com.davils.kaml.core.YamlDuplicateKeys){}[0]
+    final var emitter // com.davils.kaml.core/YamlBuilder.emitter|{}emitter[0]
+        final fun <get-emitter>(): com.davils.kaml.core.emit/YamlEmitOptions // com.davils.kaml.core/YamlBuilder.emitter.<get-emitter>|<get-emitter>(){}[0]
+        final fun <set-emitter>(com.davils.kaml.core.emit/YamlEmitOptions) // com.davils.kaml.core/YamlBuilder.emitter.<set-emitter>|<set-emitter>(com.davils.kaml.core.emit.YamlEmitOptions){}[0]
+    final var isSchemaSelectedByVersion // com.davils.kaml.core/YamlBuilder.isSchemaSelectedByVersion|{}isSchemaSelectedByVersion[0]
+        final fun <get-isSchemaSelectedByVersion>(): kotlin/Boolean // com.davils.kaml.core/YamlBuilder.isSchemaSelectedByVersion.<get-isSchemaSelectedByVersion>|<get-isSchemaSelectedByVersion>(){}[0]
+        final fun <set-isSchemaSelectedByVersion>(kotlin/Boolean) // com.davils.kaml.core/YamlBuilder.isSchemaSelectedByVersion.<set-isSchemaSelectedByVersion>|<set-isSchemaSelectedByVersion>(kotlin.Boolean){}[0]
+    final var limits // com.davils.kaml.core/YamlBuilder.limits|{}limits[0]
+        final fun <get-limits>(): com.davils.kaml.core.limit/YamlLimits // com.davils.kaml.core/YamlBuilder.limits.<get-limits>|<get-limits>(){}[0]
+        final fun <set-limits>(com.davils.kaml.core.limit/YamlLimits) // com.davils.kaml.core/YamlBuilder.limits.<set-limits>|<set-limits>(com.davils.kaml.core.limit.YamlLimits){}[0]
+    final var schema // com.davils.kaml.core/YamlBuilder.schema|{}schema[0]
+        final fun <get-schema>(): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core/YamlBuilder.schema.<get-schema>|<get-schema>(){}[0]
+        final fun <set-schema>(com.davils.kaml.core.schema/YamlSchema) // com.davils.kaml.core/YamlBuilder.schema.<set-schema>|<set-schema>(com.davils.kaml.core.schema.YamlSchema){}[0]
+    final var unknownTags // com.davils.kaml.core/YamlBuilder.unknownTags|{}unknownTags[0]
+        final fun <get-unknownTags>(): com.davils.kaml.core/YamlUnknownTags // com.davils.kaml.core/YamlBuilder.unknownTags.<get-unknownTags>|<get-unknownTags>(){}[0]
+        final fun <set-unknownTags>(com.davils.kaml.core/YamlUnknownTags) // com.davils.kaml.core/YamlBuilder.unknownTags.<set-unknownTags>|<set-unknownTags>(com.davils.kaml.core.YamlUnknownTags){}[0]
+
+    final fun emitter(kotlin/Function1<com.davils.kaml.core.emit/YamlEmitOptionsBuilder, kotlin/Unit>) // com.davils.kaml.core/YamlBuilder.emitter|emitter(kotlin.Function1<com.davils.kaml.core.emit.YamlEmitOptionsBuilder,kotlin.Unit>){}[0]
+    final fun limits(kotlin/Function1<com.davils.kaml.core.limit/YamlLimitsBuilder, kotlin/Unit>) // com.davils.kaml.core/YamlBuilder.limits|limits(kotlin.Function1<com.davils.kaml.core.limit.YamlLimitsBuilder,kotlin.Unit>){}[0]
+}
+
+final class com.davils.kaml.core/YamlConfiguration : com.davils.kore.core.validation/Validatable { // com.davils.kaml.core/YamlConfiguration|null[0]
+    final val duplicateKeys // com.davils.kaml.core/YamlConfiguration.duplicateKeys|{}duplicateKeys[0]
+        final fun <get-duplicateKeys>(): com.davils.kaml.core/YamlDuplicateKeys // com.davils.kaml.core/YamlConfiguration.duplicateKeys.<get-duplicateKeys>|<get-duplicateKeys>(){}[0]
+    final val emitter // com.davils.kaml.core/YamlConfiguration.emitter|{}emitter[0]
+        final fun <get-emitter>(): com.davils.kaml.core.emit/YamlEmitOptions // com.davils.kaml.core/YamlConfiguration.emitter.<get-emitter>|<get-emitter>(){}[0]
+    final val isSchemaSelectedByVersion // com.davils.kaml.core/YamlConfiguration.isSchemaSelectedByVersion|{}isSchemaSelectedByVersion[0]
+        final fun <get-isSchemaSelectedByVersion>(): kotlin/Boolean // com.davils.kaml.core/YamlConfiguration.isSchemaSelectedByVersion.<get-isSchemaSelectedByVersion>|<get-isSchemaSelectedByVersion>(){}[0]
+    final val limits // com.davils.kaml.core/YamlConfiguration.limits|{}limits[0]
+        final fun <get-limits>(): com.davils.kaml.core.limit/YamlLimits // com.davils.kaml.core/YamlConfiguration.limits.<get-limits>|<get-limits>(){}[0]
+    final val schema // com.davils.kaml.core/YamlConfiguration.schema|{}schema[0]
+        final fun <get-schema>(): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core/YamlConfiguration.schema.<get-schema>|<get-schema>(){}[0]
+    final val unknownTags // com.davils.kaml.core/YamlConfiguration.unknownTags|{}unknownTags[0]
+        final fun <get-unknownTags>(): com.davils.kaml.core/YamlUnknownTags // com.davils.kaml.core/YamlConfiguration.unknownTags.<get-unknownTags>|<get-unknownTags>(){}[0]
+
+    final fun (com.davils.kore.core.validation/ValidationScope).validate() // com.davils.kaml.core/YamlConfiguration.validate|validate@com.davils.kore.core.validation.ValidationScope(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core/YamlConfiguration.toString|toString(){}[0]
+}
+
 final value class com.davils.kaml.core.model/YamlAnchor { // com.davils.kaml.core.model/YamlAnchor|null[0]
     constructor <init>(kotlin/String) // com.davils.kaml.core.model/YamlAnchor.<init>|<init>(kotlin.String){}[0]
 
@@ -861,3 +1062,4 @@ final fun com.davils.kaml.core.node/yamlSequence(kotlin.collections/List<com.dav
 final fun com.davils.kaml.core.node/yamlSequence(kotlin/Function1<com.davils.kaml.core.node/YamlSequenceBuilder, kotlin/Unit>): com.davils.kaml.core.node/YamlNode.Sequence // com.davils.kaml.core.node/yamlSequence|yamlSequence(kotlin.Function1<com.davils.kaml.core.node.YamlSequenceBuilder,kotlin.Unit>){}[0]
 final fun com.davils.kaml.core.node/yamlTagged(kotlin/String, com.davils.kaml.core.model/YamlTag, com.davils.kaml.core.model/YamlScalarStyle = ...): com.davils.kaml.core.node/YamlNode.Scalar // com.davils.kaml.core.node/yamlTagged|yamlTagged(kotlin.String;com.davils.kaml.core.model.YamlTag;com.davils.kaml.core.model.YamlScalarStyle){}[0]
 final fun com.davils.kaml.core.schema/yamlSchema(com.davils.kaml.core.schema/YamlSchema = ..., kotlin/Function1<com.davils.kaml.core.schema/YamlSchemaBuilder, kotlin/Unit>): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/yamlSchema|yamlSchema(com.davils.kaml.core.schema.YamlSchema;kotlin.Function1<com.davils.kaml.core.schema.YamlSchemaBuilder,kotlin.Unit>){}[0]
+final fun com.davils.kaml.core/yaml(kotlin/Function1<com.davils.kaml.core/YamlBuilder, kotlin/Unit> = ...): com.davils.kaml.core/Yaml // com.davils.kaml.core/yaml|yaml(kotlin.Function1<com.davils.kaml.core.YamlBuilder,kotlin.Unit>){}[0]

@@ -26,6 +26,9 @@ way.
 - **The event stream** of the YAML specification.
 - **The emitter** for nodes and events, with comments, whose output parses back to the same graph and cannot be
   injected, within an output limit.
+- **The `Yaml` facade** that reads YAML 1.2 and 1.1 from strictly decoded UTF-8, UTF-16 or UTF-32 through a
+  lossless, stack-safe parser and a composer that charges every budget while it works, so a billion laughs document
+  fails at its budget.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
