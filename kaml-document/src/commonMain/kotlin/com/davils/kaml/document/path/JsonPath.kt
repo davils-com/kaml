@@ -40,9 +40,10 @@ import com.davils.kore.core.text.SafeText
  * [YamlLimits.maximumQueryLength] and [YamlLimits.maximumQueryNesting], the numbers in it by
  * [YamlLimits.maximumNumberLength], and every evaluation by [YamlLimits.maximumQuerySteps],
  * [YamlLimits.maximumQueryResults] and [YamlLimits.maximumDepth]; a pattern of `match` and `search` by
- * [YamlLimits.maximumRegexpLength] and [YamlLimits.maximumRegexpSize], beyond which it is not a valid I-Regexp. The
- * descendant segment `..` walks the graph iteratively. A pattern is compiled at most once per evaluation and never
- * cached beyond it.
+ * [YamlLimits.maximumRegexpLength] and [YamlLimits.maximumRegexpSize], beyond which it is not a valid I-Regexp, and
+ * so is a pattern whose compiler would emit more than twice as many nodes as that size, such as one that repeats empty
+ * groups. The descendant segment `..` walks the graph iteratively. A pattern is compiled at most once per evaluation
+ * and never cached beyond it.
  *
  * A query is immutable and safe to share between threads; every evaluation keeps its own state.
  *

@@ -33,12 +33,13 @@ internal class IRegexp private constructor(private val program: List<Instruction
     }
 
     companion object {
-        fun compile(pattern: String, limits: YamlLimits): IRegexp? {
+        fun compile(pattern: String, limits: YamlLimits, budget: WorkBudget): IRegexp? {
             val admitted = pattern.takeIf { it.length <= limits.maximumRegexpLength }
             val parser = admitted?.let { text ->
                 RegexpParser(text, maximumDepth = limits.maximumQueryNesting, maximumRepeat = limits.maximumRegexpSize)
             }
-            val program = parser?.parse()?.let { node -> RegexpCompiler(limits.maximumRegexpSize).compile(node) }
+            val compiler = RegexpCompiler(limits.maximumRegexpSize, budget)
+            val program = parser?.parse()?.let(compiler::compile)
             return program?.let(::IRegexp)
         }
     }

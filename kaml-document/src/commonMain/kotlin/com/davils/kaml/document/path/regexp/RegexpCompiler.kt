@@ -16,8 +16,12 @@
 
 package com.davils.kaml.document.path.regexp
 
-internal class RegexpCompiler(private val maximumSize: Int) {
+import com.davils.kaml.document.internal.WorkBudget
+
+internal class RegexpCompiler(private val maximumSize: Int, private val budget: WorkBudget) {
     private val program = ArrayList<Instruction>()
+    private val maximumEmissions = maximumSize.toLong() * EMISSIONS_PER_INSTRUCTION
+    private var emissions = 0L
     private var isTooLarge = false
 
     fun compile(node: RegexpNode): List<Instruction>? {
@@ -28,6 +32,9 @@ internal class RegexpCompiler(private val maximumSize: Int) {
 
     private fun emit(node: RegexpNode) {
         if (isTooLarge) return
+        budget.charge()
+        emissions++
+        if (emissions > maximumEmissions) isTooLarge = true
         when (node) {
             is RegexpNode.Chars -> add(Instruction.Consume(node.set))
             is RegexpNode.Sequence -> node.items.forEach(::emit)
@@ -52,20 +59,28 @@ internal class RegexpCompiler(private val maximumSize: Int) {
     }
 
     private fun repeat(node: RegexpNode.Repeat) {
-        repeat(node.least) { emit(node.node) }
+        copies(node.least) { emit(node.node) }
         val most = node.most
         if (most == null) {
             loop(node.node)
             return
         }
         val splits = ArrayList<Instruction.Split>()
-        repeat(most - node.least) {
+        copies(most - node.least) {
             val split = Instruction.Split(first = program.size + 1, second = 0)
             add(split)
             splits.add(split)
             emit(node.node)
         }
         splits.forEach { split -> split.second = program.size }
+    }
+
+    private fun copies(count: Int, copy: () -> Unit) {
+        var made = 0
+        while (made < count && !isTooLarge) {
+            copy()
+            made++
+        }
     }
 
     private fun loop(body: RegexpNode) {
@@ -83,5 +98,9 @@ internal class RegexpCompiler(private val maximumSize: Int) {
             return
         }
         program.add(instruction)
+    }
+
+    private companion object {
+        const val EMISSIONS_PER_INSTRUCTION: Long = 2L
     }
 }

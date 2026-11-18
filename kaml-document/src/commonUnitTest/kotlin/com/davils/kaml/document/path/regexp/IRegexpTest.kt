@@ -18,7 +18,9 @@ package com.davils.kaml.document.path.regexp
 
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.limit.yamlLimits
+import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.WorkBudget
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.ints.shouldBeLessThan
@@ -72,7 +74,7 @@ private val strangers: List<Pair<String, Int>> = listOf(
 )
 
 private fun compiled(pattern: String, limits: YamlLimits = YamlLimits.Untrusted): IRegexp? =
-    IRegexp.compile(pattern, limits)
+    IRegexp.compile(pattern, limits, WorkBudget(PLENTY, STEPS))
 
 private fun isIn(category: String, codePoint: Int): Boolean {
     val subject = "😀".takeIf { codePoint > LAST_BMP } ?: Char(codePoint).toString()
@@ -195,6 +197,24 @@ class IRegexpTest : FunSpec({
             compiled("a{10}", limits).shouldBeNull()
             compiled("a{99999999999}", limits).shouldBeNull()
             compiled("((a{1000}){1000}){1000}").shouldBeNull()
+        }
+
+        test("refuse a pattern that repeats empty groups more often than the program size allows") {
+            val limits = yamlLimits { maximumRegexpSize = SMALL_PROGRAM }
+
+            compiled("((){4}){3}", limits).shouldNotBeNull()
+            compiled("((){4}){4}", limits).shouldBeNull()
+            compiled("((){1000}){1000}").shouldBeNull()
+            compiled("(((){1000}){1000}){1000}").shouldBeNull()
+            compiled("(ab){4000}").shouldNotBeNull()
+        }
+
+        test("charge every node the compiler emits against the budget") {
+            val exceeded = shouldThrow<YamlDocumentLimitException> {
+                IRegexp.compile("(){9}", YamlLimits.Untrusted, WorkBudget(TINIER_BUDGET, STEPS))
+            }
+
+            exceeded.limit shouldBe STEPS
         }
 
         test("refuse groups nested deeper than the limit") {

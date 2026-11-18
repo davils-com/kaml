@@ -31,7 +31,7 @@ internal class FunctionContext(private val limits: YamlLimits, val budget: WorkB
 
     private fun compiledNew(pattern: String): IRegexp? {
         budget.charge(pattern.length.toLong() + 1L)
-        val regexp = IRegexp.compile(pattern, limits)
+        val regexp = IRegexp.compile(pattern, limits, budget)
         if (regexp == null) {
             refused.add(pattern)
             return null
