@@ -145,3 +145,28 @@ public final synthetic class com/davils/kaml/serialization/annotation/YamlStyle$
 	public final synthetic fun scalar ()Lcom/davils/kaml/core/model/YamlScalarStyle;
 }
 
+public abstract interface class com/davils/kaml/serialization/json/YamlJsonConversion {
+}
+
+public final class com/davils/kaml/serialization/json/YamlJsonConversion$Converted : com/davils/kaml/serialization/json/YamlJsonConversion {
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getElement ()Lkotlinx/serialization/json/JsonElement;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/json/YamlJsonConversion$Refused : com/davils/kaml/serialization/json/YamlJsonConversion {
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNode ()Lcom/davils/kaml/core/node/YamlNode;
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/serialization/json/YamlJsonKt {
+	public static final fun toJsonElement (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/serialization/json/YamlJsonConversion;
+	public static synthetic fun toJsonElement$default (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/serialization/json/YamlJsonConversion;
+	public static final fun toYamlNode (Lkotlinx/serialization/json/JsonElement;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/core/node/YamlNode;
+	public static synthetic fun toYamlNode$default (Lkotlinx/serialization/json/JsonElement;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/core/node/YamlNode;
+}
+

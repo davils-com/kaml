@@ -39,6 +39,8 @@ way.
   `decodeOrFailure` and `decodeAll`. Decoding applies `YamlLimits` to every node graph, also one built in code,
   refuses names that collide and keys given twice, checks every number against the range of its type, and never
   echoes input or the message of a serializer.
+- **Conversion between `YamlNode` and `JsonElement`** of kotlinx.serialization.json, within `YamlLimits`, refusing
+  keys that are not strings or are given twice.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

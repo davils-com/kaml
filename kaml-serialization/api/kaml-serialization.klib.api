@@ -81,6 +81,28 @@ sealed interface <#A: out kotlin/Any?> com.davils.kaml.serialization/YamlDecodin
     }
 }
 
+sealed interface com.davils.kaml.serialization.json/YamlJsonConversion { // com.davils.kaml.serialization.json/YamlJsonConversion|null[0]
+    final class Converted : com.davils.kaml.serialization.json/YamlJsonConversion { // com.davils.kaml.serialization.json/YamlJsonConversion.Converted|null[0]
+        final val element // com.davils.kaml.serialization.json/YamlJsonConversion.Converted.element|{}element[0]
+            final fun <get-element>(): kotlinx.serialization.json/JsonElement // com.davils.kaml.serialization.json/YamlJsonConversion.Converted.element.<get-element>|<get-element>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.serialization.json/YamlJsonConversion.Converted.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.serialization.json/YamlJsonConversion.Converted.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.serialization.json/YamlJsonConversion.Converted.toString|toString(){}[0]
+    }
+
+    final class Refused : com.davils.kaml.serialization.json/YamlJsonConversion { // com.davils.kaml.serialization.json/YamlJsonConversion.Refused|null[0]
+        final val node // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.node.<get-node>|<get-node>(){}[0]
+        final val reason // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.serialization.json/YamlJsonConversion.Refused.toString|toString(){}[0]
+    }
+}
+
 final class com.davils.kaml.serialization/YamlDecodingException : kotlinx.serialization/SerializationException { // com.davils.kaml.serialization/YamlDecodingException|null[0]
     final val diagnostics // com.davils.kaml.serialization/YamlDecodingException.diagnostics|{}diagnostics[0]
         final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.serialization/YamlDecodingException.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
@@ -173,6 +195,8 @@ final object com.davils.kaml.serialization/YamlFormatViolationCodes { // com.dav
         final fun <get-BLANK_DISCRIMINATOR>(): com.davils.kore.core.validation.violation/ViolationCode // com.davils.kaml.serialization/YamlFormatViolationCodes.BLANK_DISCRIMINATOR.<get-BLANK_DISCRIMINATOR>|<get-BLANK_DISCRIMINATOR>(){}[0]
 }
 
+final fun (com.davils.kaml.core.node/YamlNode).com.davils.kaml.serialization.json/toJsonElement(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.serialization.json/YamlJsonConversion // com.davils.kaml.serialization.json/toJsonElement|toJsonElement@com.davils.kaml.core.node.YamlNode(com.davils.kaml.core.limit.YamlLimits){}[0]
+final fun (kotlinx.serialization.json/JsonElement).com.davils.kaml.serialization.json/toYamlNode(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.core.node/YamlNode // com.davils.kaml.serialization.json/toYamlNode|toYamlNode@kotlinx.serialization.json.JsonElement(com.davils.kaml.core.limit.YamlLimits){}[0]
 final fun com.davils.kaml.serialization/yamlFormat(kotlin/Function1<com.davils.kaml.serialization/YamlFormatBuilder, kotlin/Unit> = ...): com.davils.kaml.serialization/YamlFormat // com.davils.kaml.serialization/yamlFormat|yamlFormat(kotlin.Function1<com.davils.kaml.serialization.YamlFormatBuilder,kotlin.Unit>){}[0]
 final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/decodeAll(kotlin/String): com.davils.kaml.serialization/YamlDecoding<kotlin.collections/List<#A>> // com.davils.kaml.serialization/decodeAll|decodeAll@com.davils.kaml.serialization.YamlFormat(kotlin.String){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (com.davils.kaml.serialization/YamlFormat).com.davils.kaml.serialization/decodeFromNode(com.davils.kaml.core.node/YamlNode): #A // com.davils.kaml.serialization/decodeFromNode|decodeFromNode@com.davils.kaml.serialization.YamlFormat(com.davils.kaml.core.node.YamlNode){0§<kotlin.Any?>}[0]

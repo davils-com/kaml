@@ -22,4 +22,5 @@ module com.davils.kaml.serialization {
 
     exports com.davils.kaml.serialization;
     exports com.davils.kaml.serialization.annotation;
+    exports com.davils.kaml.serialization.json;
 }
