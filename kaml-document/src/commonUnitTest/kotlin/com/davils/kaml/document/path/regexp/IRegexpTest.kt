@@ -28,6 +28,9 @@ import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 private const val PLENTY: Long = 1_000_000_000L
 private const val LONG_INPUT: Int = 20_000
@@ -42,6 +45,10 @@ private const val TINY_BUDGET: Long = 10L
 private const val TINIER_BUDGET: Long = 5L
 private const val GROWTH: Long = 3L
 private const val STEPS_PER_CHARACTER: Int = 64
+private const val ALTERNATING: String = "(a|b)*c"
+private const val RUNS: Int = 100_000
+private const val RUN_GROWTH: Int = 10
+private val slack: Duration = 200.milliseconds
 
 private val valid: List<String> = listOf(
     "", "a", "a|b", "|", "(a)", "()", "a*", "a+", "a?", "b{2}", "b{2,}", "b{2,3}", "b{0}", "a{01}", "[abc]",
@@ -91,6 +98,14 @@ private infix fun String.matchesWhole(subject: String): Boolean? {
 private infix fun String.searchesIn(subject: String): Boolean? {
     val regexp = checkNotNull(compiled(this))
     return regexp.containsMatchIn(subject, WorkBudget(PLENTY, STEPS))
+}
+
+private fun plenty(): WorkBudget = WorkBudget(PLENTY, STEPS)
+
+private fun timed(work: () -> Unit): Duration {
+    val mark = TimeSource.Monotonic.markNow()
+    work()
+    return mark.elapsedNow()
 }
 
 private infix fun String.stepsFor(subject: String): Long {
@@ -226,13 +241,35 @@ class IRegexpTest : FunSpec({
         }
 
         test("stop when the budget runs out") {
-            val regexp = checkNotNull(compiled("(a|b)*c"))
+            val regexp = checkNotNull(compiled(ALTERNATING))
 
             val subject = "ab".repeat(REPEATED)
 
             regexp.matches(subject, WorkBudget(TINY_BUDGET, STEPS)).shouldBeNull()
             regexp.containsMatchIn(subject, WorkBudget(TINY_BUDGET, STEPS)).shouldBeNull()
             regexp.matches(subject, WorkBudget(TINIER_BUDGET, STEPS)).shouldBeNull()
+        }
+    }
+
+    context("repeated runs") {
+        test("give the same answers as a fresh program") {
+            val reused = checkNotNull(compiled(ALTERNATING))
+            val subjects = listOf("abc", "", "c", "abab", "x", "bbbc", "ab")
+
+            subjects.forEach { subject ->
+                val fresh = checkNotNull(compiled(ALTERNATING))
+                reused.matches(subject, plenty()) shouldBe fresh.matches(subject, plenty())
+                reused.containsMatchIn(subject, plenty()) shouldBe fresh.containsMatchIn(subject, plenty())
+            }
+        }
+
+        test("cost no more for a large program than for a small one on short subjects") {
+            val small = checkNotNull(compiled("ab"))
+            val large = checkNotNull(compiled("ab{9990}"))
+            val smallTime = timed { repeat(RUNS) { small.matches("", plenty()) } }
+            val largeTime = timed { repeat(RUNS) { large.matches("", plenty()) } }
+
+            (largeTime < smallTime * RUN_GROWTH + slack) shouldBe true
         }
     }
 

@@ -24,12 +24,14 @@ internal class RegexpMachine(private val program: List<Instruction>) {
     private var next = IntArray(size)
     private var currentCount = 0
     private var nextCount = 0
-    private val seenAt = IntArray(size) { -1 }
+    private val seenAt = LongArray(size) { -1L }
     private val stack = IntArray(size * 2 + 1)
-    private var generation = 0
+    private var generation = 0L
     private var steps = 0L
 
     fun run(subject: IntArray, isWhole: Boolean, budget: WorkBudget): Boolean? {
+        generation++
+        steps = 0L
         currentCount = closure(0, current, 0)
         var position = 0
         var isMatched = !isWhole && hasMatch()

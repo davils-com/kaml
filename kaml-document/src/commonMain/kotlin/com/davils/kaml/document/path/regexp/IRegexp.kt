@@ -20,8 +20,10 @@ import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.document.internal.CodePoints
 import com.davils.kaml.document.internal.WorkBudget
 
-internal class IRegexp private constructor(private val program: List<Instruction>) {
-    val size: Int get() = program.size
+internal class IRegexp private constructor(program: List<Instruction>) {
+    val size: Int = program.size
+
+    private val machine = RegexpMachine(program)
 
     fun matches(subject: String, budget: WorkBudget): Boolean? = run(subject, isWhole = true, budget = budget)
 
@@ -29,7 +31,7 @@ internal class IRegexp private constructor(private val program: List<Instruction
 
     private fun run(subject: String, isWhole: Boolean, budget: WorkBudget): Boolean? {
         if (!budget.spend(subject.length.toLong())) return null
-        return RegexpMachine(program).run(CodePoints.of(subject), isWhole, budget)
+        return machine.run(CodePoints.of(subject), isWhole, budget)
     }
 
     companion object {
