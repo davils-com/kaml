@@ -29,7 +29,12 @@ internal class FilterEvaluator(
     private val functions: FunctionContext,
     private val comparison: JsonComparison,
 ) {
-    fun test(expression: FilterExpression, current: YamlNode): Boolean = when (expression) {
+    fun test(expression: FilterExpression, current: YamlNode): Boolean {
+        functions.budget.charge()
+        return tested(expression, current)
+    }
+
+    private fun tested(expression: FilterExpression, current: YamlNode): Boolean = when (expression) {
         is FilterExpression.Or -> expression.operands.any { test(it, current) }
 
         is FilterExpression.And -> expression.operands.all { test(it, current) }
@@ -47,7 +52,12 @@ internal class FilterEvaluator(
         is FilterExpression.Call -> (called(expression.call, current) as ArgumentValue.Logical).isTrue
     }
 
-    private fun value(operand: FilterOperand, current: YamlNode): YamlNode? = when (operand) {
+    private fun value(operand: FilterOperand, current: YamlNode): YamlNode? {
+        functions.budget.charge()
+        return valueOf(operand, current)
+    }
+
+    private fun valueOf(operand: FilterOperand, current: YamlNode): YamlNode? = when (operand) {
         is FilterOperand.Literal -> operand.value
         is FilterOperand.Query -> paths.evaluate(operand.query, current).firstOrNull()?.node
         is FilterOperand.Call -> (called(operand.call, current) as ArgumentValue.Value).node

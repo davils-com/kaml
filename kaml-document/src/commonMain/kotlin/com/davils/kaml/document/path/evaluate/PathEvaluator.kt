@@ -36,6 +36,7 @@ internal class PathEvaluator(private val root: YamlNode, private val limits: Yam
     )
 
     fun evaluate(query: PathQuery, current: YamlNode): List<PathMatch> {
+        budget.charge()
         var matches = listOf(PathMatch(null, current.takeIf { query.isRelative } ?: root))
         query.segments.forEach { segment -> matches = applied(segment, matches) }
         return matches

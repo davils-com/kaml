@@ -58,6 +58,8 @@ private const val TIGHT_BUDGET: Long = 2_000L
 private const val STEPS: String = "maximumQuerySteps"
 private const val DESCENDANTS: String = "$..*"
 private const val SAME_AS_SECOND: String = "$[?@ == $[1]]"
+private const val FEW_OPERANDS: Int = 10
+private const val MANY_OPERANDS: Int = 100
 
 private infix fun String.selectedIn(node: YamlNode): List<JsonPathMatch> = JsonPath.parse(this).query(node)
 
@@ -86,6 +88,8 @@ private fun limits(configure: YamlLimitsBuilder.() -> Unit): YamlLimits = yamlLi
 
 private fun nested(depth: Int): YamlNode =
     (1..depth).fold<Int, YamlNode>(yamlScalar("x")) { node, _ -> yamlSequence(listOf(node)) }
+
+private fun conjunction(operands: Int): String = "$[?" + List(operands) { "@" }.joinToString("&&") + "]"
 
 private fun minimalSteps(expression: String, node: YamlNode): Long {
     var low = 1L
@@ -223,6 +227,14 @@ class JsonPathLimitsTest : FunSpec({
             "$[?match(@, 'a.c')]".selectedIn(subjects, short) shouldHaveSize 1
             "$[?match(@, 'a..d')]".selectedIn(subjects, short).shouldBeEmpty()
             ("$[?search(@, '(')]" selectedIn subjects).shouldBeEmpty()
+        }
+
+        test("charges every operand of a filter") {
+            val items = yamlSequence(List(ITEMS) { yamlScalar("x") })
+            val few = minimalSteps(conjunction(FEW_OPERANDS), items)
+            val many = minimalSteps(conjunction(MANY_OPERANDS), items)
+
+            (many - few >= (MANY_OPERANDS - FEW_OPERANDS).toLong() * ITEMS) shouldBe true
         }
 
         test("reads a pattern from the document") {
