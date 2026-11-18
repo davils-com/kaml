@@ -40,6 +40,9 @@ import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 private const val DEEP: Int = 100_000
 private const val NESTING: Int = 4
@@ -61,6 +64,9 @@ private const val SAME_AS_SECOND: String = "$[?@ == $[1]]"
 private const val FEW_OPERANDS: Int = 10
 private const val MANY_OPERANDS: Int = 100
 private const val LEVELS_DEEP: Int = 50
+private const val INTEGERS: Int = 2_000
+private const val GROWTH: Int = 10
+private val slack: Duration = 200.milliseconds
 
 private infix fun String.selectedIn(node: YamlNode): List<JsonPathMatch> = JsonPath.parse(this).query(node)
 
@@ -91,6 +97,12 @@ private fun nested(depth: Int): YamlNode =
     (1..depth).fold<Int, YamlNode>(yamlScalar("x")) { node, _ -> yamlSequence(listOf(node)) }
 
 private fun conjunction(operands: Int): String = "$[?" + List(operands) { "@" }.joinToString("&&") + "]"
+
+private fun timed(work: () -> Unit): Duration {
+    val mark = TimeSource.Monotonic.markNow()
+    work()
+    return mark.elapsedNow()
+}
 
 private fun minimalSteps(expression: String, node: YamlNode): Long {
     var low = 1L
@@ -243,6 +255,14 @@ class JsonPathLimitsTest : FunSpec({
             val deep = (1..LEVELS_DEEP).fold<Int, YamlNode>(leaf) { node, _ -> yamlSequence(listOf(node)) }
 
             (minimalSteps(DESCENDANTS, deep) >= ITEMS.toLong() * LEVELS_DEEP) shouldBe true
+        }
+
+        test("compares integers with a huge real by magnitude") {
+            val integers = yamlSequence(List(INTEGERS) { yamlScalar(it.toLong()) })
+            val small = timed { "$[?@ < 1.0]".selectedIn(integers) }
+            val huge = timed { "$[?@ < 1e308]".selectedIn(integers) }
+
+            (huge < small * GROWTH + slack) shouldBe true
         }
 
         test("reads a pattern from the document") {

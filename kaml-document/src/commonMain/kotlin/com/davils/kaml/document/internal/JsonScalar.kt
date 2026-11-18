@@ -21,22 +21,24 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.boolean
 
 internal sealed interface JsonScalar {
-    fun isEqualTo(other: JsonScalar): Boolean
+    fun isEqualTo(other: JsonScalar, budget: WorkBudget): Boolean
 
     class Number(val value: NumberValue) : JsonScalar {
-        override fun isEqualTo(other: JsonScalar): Boolean = other is Number && value.compareTo(other.value) == 0
+        override fun isEqualTo(other: JsonScalar, budget: WorkBudget): Boolean =
+            other is Number && value.compareTo(other.value, budget) == 0
     }
 
     class Text(val value: String) : JsonScalar {
-        override fun isEqualTo(other: JsonScalar): Boolean = other is Text && value == other.value
+        override fun isEqualTo(other: JsonScalar, budget: WorkBudget): Boolean = other is Text && value == other.value
     }
 
     class Truth(val isTrue: Boolean) : JsonScalar {
-        override fun isEqualTo(other: JsonScalar): Boolean = other is Truth && isTrue == other.isTrue
+        override fun isEqualTo(other: JsonScalar, budget: WorkBudget): Boolean =
+            other is Truth && isTrue == other.isTrue
     }
 
     object Null : JsonScalar {
-        override fun isEqualTo(other: JsonScalar): Boolean = other === Null
+        override fun isEqualTo(other: JsonScalar, budget: WorkBudget): Boolean = other === Null
     }
 
     companion object {

@@ -17,6 +17,8 @@
 package com.davils.kaml.document.internal
 
 import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.math.log10
 
 private const val MINUS: Char = '-'
 private const val PLUS: Char = '+'
@@ -29,7 +31,9 @@ private const val EXPONENT_MASK: Long = 0x7FFL
 private const val FRACTION_MASK: Long = 0xFFFFFFFFFFFFFL
 private const val IMPLICIT_BIT: Long = 0x10000000000000L
 private const val EXPONENT_BIAS: Int = 1075
-private const val DECIMAL_RADIX: Int = 10
+private const val LIMB: Long = 1_000_000_000L
+private const val LIMB_DIGITS: Int = 9
+private const val LIMB_SHIFT: Int = 30
 
 internal object Decimals {
     fun canonical(text: String): String? {
@@ -52,6 +56,13 @@ internal object Decimals {
         return negated ?: magnitudes
     }
 
+    fun compareIntegral(decimal: String, whole: Double, budget: WorkBudget): Int {
+        val byMagnitude = magnitudeOrder(decimal, whole)
+        if (byMagnitude != null) return byMagnitude
+        budget.charge(expansionCost(whole))
+        return compare(left = decimal, right = ofIntegral(whole))
+    }
+
     fun ofIntegral(value: Double): String {
         if (abs(value) < LONG_RANGE) return value.toLong().toString()
         val bits = value.toRawBits()
@@ -60,7 +71,35 @@ internal object Decimals {
         val fraction = bits and FRACTION_MASK
         val mantissa = fraction or IMPLICIT_BIT
         val sign = MINUS_TEXT.takeIf { value < 0 }.orEmpty()
-        return sign + doubled(mantissa.toString(), exponent)
+        return sign + doubled(mantissa, exponent)
+    }
+
+    private fun magnitudeOrder(decimal: String, whole: Double): Int? {
+        if (abs(whole) < LONG_RANGE) return null
+        val isNegative = decimal.startsWith(MINUS)
+        val bySign = signOrder(isNegative = isNegative, isWholeNegative = whole < 0)
+        return bySign ?: lengthOrder(decimal, whole, isNegative)
+    }
+
+    private fun signOrder(isNegative: Boolean, isWholeNegative: Boolean): Int? {
+        if (isNegative == isWholeNegative) return null
+        return (-1).takeIf { isNegative } ?: 1
+    }
+
+    private fun lengthOrder(decimal: String, whole: Double, isNegative: Boolean): Int? {
+        val digits = decimal.length - (1.takeIf { isNegative } ?: 0)
+        val wholeDigits = digitsOf(whole)
+        val shorter = (-1).takeIf { digits < wholeDigits - 1 }
+        val magnitudes = shorter ?: 1.takeIf { digits > wholeDigits + 1 }
+        return magnitudes?.let { order -> (-order).takeIf { isNegative } ?: order }
+    }
+
+    private fun digitsOf(whole: Double): Int = floor(log10(abs(whole))).toInt() + 1
+
+    private fun expansionCost(whole: Double): Long {
+        if (abs(whole) < LONG_RANGE) return 0L
+        val limbs = digitsOf(whole).toLong() / LIMB_DIGITS + 1L
+        return limbs * limbs
     }
 
     private fun compareMagnitudes(left: String, right: String): Int {
@@ -68,18 +107,39 @@ internal object Decimals {
         return byLength.takeIf { it != 0 } ?: left.compareTo(right).coerceIn(minimumValue = -1, maximumValue = 1)
     }
 
-    private fun doubled(start: String, times: Int): String {
-        val reversed = start.reversed()
-        val digits = reversed.mapTo(ArrayList()) { it - '0' }
-        repeat(times) {
-            var carry = 0
-            for (index in digits.indices) {
-                val value = digits[index] * 2 + carry
-                digits[index] = value % DECIMAL_RADIX
-                carry = value / DECIMAL_RADIX
-            }
-            if (carry > 0) digits.add(carry)
+    private fun doubled(start: Long, times: Int): String {
+        val limbs = limbsOf(start)
+        var remaining = times
+        while (remaining > 0) {
+            val shift = minOf(a = remaining, b = LIMB_SHIFT)
+            shifted(limbs, shift)
+            remaining -= shift
         }
-        return digits.reversed().joinToString("")
+        val highest = limbs.last().toString()
+        val lower = limbs.subList(fromIndex = 0, toIndex = limbs.lastIndex).asReversed()
+        return highest + lower.joinToString("") { limb -> limb.toString().padStart(LIMB_DIGITS, '0') }
+    }
+
+    private fun limbsOf(value: Long): MutableList<Long> {
+        val limbs = ArrayList<Long>()
+        var rest = value
+        while (rest > 0) {
+            limbs.add(rest % LIMB)
+            rest /= LIMB
+        }
+        return limbs
+    }
+
+    private fun shifted(limbs: MutableList<Long>, shift: Int) {
+        var carry = 0L
+        for (index in limbs.indices) {
+            val value = (limbs[index] shl shift) + carry
+            limbs[index] = value % LIMB
+            carry = value / LIMB
+        }
+        while (carry > 0) {
+            limbs.add(carry % LIMB)
+            carry /= LIMB
+        }
     }
 }

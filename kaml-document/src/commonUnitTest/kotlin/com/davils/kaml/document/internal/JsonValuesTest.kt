@@ -43,12 +43,19 @@ private const val ZEROS: Int = 30
 private const val MANY_ZEROS: Int = 400
 private const val LONE_HIGH: Int = 0xD800
 private const val TEN_TO_THE_30: String = "1000000000000000019884624838656"
+private const val THIRTY_DIGITS: String = "123456789012345678901234567890"
+private const val HUGE: Double = 1.0E308
+private const val HUGE_EXPONENT: Int = 308
+private const val LEADING_DIGITS: Int = 17
+private const val TRAILING_DIGITS: Int = 7
 
 private fun number(text: String): NumberValue = checkNotNull(NumberValue.of(yamlTagged(text, YamlTag.INTEGER)))
 
 private fun real(text: String): NumberValue = real(text.toDouble())
 
 private fun real(value: Double): NumberValue = checkNotNull(NumberValue.of(yamlScalar(value)))
+
+private fun steps(): WorkBudget = WorkBudget(LARGE, STEPS)
 
 private fun equality(steps: Long = LARGE, depth: Int = SHALLOW): JsonEquality =
     JsonEquality(WorkBudget(steps, STEPS), depth)
@@ -73,44 +80,65 @@ private fun empties(): YamlNode = yamlSequence(List(ITEMS) { yamlScalar("") })
 class JsonValuesTest : FunSpec({
     context("exact numbers") {
         test("compare integers by their canonical decimal, not as doubles") {
-            number(PAST_TWO_TO_THE_53).compareTo(number(TWO_TO_THE_53)) shouldBe 1
-            number("-$PAST_TWO_TO_THE_53").compareTo(number("-$TWO_TO_THE_53")) shouldBe -1
-            number("123456789012345678901234567890").compareTo(number("123456789012345678901234567890")) shouldBe 0
-            number("+01").compareTo(number(ONE)) shouldBe 0
-            number("-0").compareTo(number("0")) shouldBe 0
+            number(PAST_TWO_TO_THE_53).compareTo(number(TWO_TO_THE_53), steps()) shouldBe 1
+            number("-$PAST_TWO_TO_THE_53").compareTo(number("-$TWO_TO_THE_53"), steps()) shouldBe -1
+            number(THIRTY_DIGITS).compareTo(number(THIRTY_DIGITS), steps()) shouldBe 0
+            number("+01").compareTo(number(ONE), steps()) shouldBe 0
+            number("-0").compareTo(number("0"), steps()) shouldBe 0
         }
 
         test("compare an integer with a real exactly") {
-            number(PAST_TWO_TO_THE_53).compareTo(real("9.007199254740992E15")) shouldBe 1
-            real("9.007199254740992E15").compareTo(number(PAST_TWO_TO_THE_53)) shouldBe -1
-            number(ONE).compareTo(real("1.0")) shouldBe 0
-            number(ONE).compareTo(real("1.5")) shouldBe -1
-            number("2").compareTo(real("1.5")) shouldBe 1
-            number("-2").compareTo(real("-1.5")) shouldBe -1
-            number(ONE).compareTo(real(Double.POSITIVE_INFINITY)) shouldBe -1
-            number(ONE).compareTo(real(Double.NEGATIVE_INFINITY)) shouldBe 1
-            number(ONE).compareTo(real(Double.NaN)) shouldBe null
+            number(PAST_TWO_TO_THE_53).compareTo(real("9.007199254740992E15"), steps()) shouldBe 1
+            real("9.007199254740992E15").compareTo(number(PAST_TWO_TO_THE_53), steps()) shouldBe -1
+            number(ONE).compareTo(real("1.0"), steps()) shouldBe 0
+            number(ONE).compareTo(real("1.5"), steps()) shouldBe -1
+            number("2").compareTo(real("1.5"), steps()) shouldBe 1
+            number("-2").compareTo(real("-1.5"), steps()) shouldBe -1
+            number(ONE).compareTo(real(Double.POSITIVE_INFINITY), steps()) shouldBe -1
+            number(ONE).compareTo(real(Double.NEGATIVE_INFINITY), steps()) shouldBe 1
+            number(ONE).compareTo(real(Double.NaN), steps()) shouldBe null
         }
 
         test("compare integers beyond the range of a long with large reals") {
-            number("1" + "0".repeat(ZEROS)).compareTo(real("1.0E30")) shouldBe -1
-            number(TEN_TO_THE_30).compareTo(real("1.0E30")) shouldBe 0
-            number("-$TEN_TO_THE_30").compareTo(real("-1.0E30")) shouldBe 0
-            number("1" + "0".repeat(MANY_ZEROS)).compareTo(real(Double.MAX_VALUE)) shouldBe 1
+            number("1" + "0".repeat(ZEROS)).compareTo(real("1.0E30"), steps()) shouldBe -1
+            number(TEN_TO_THE_30).compareTo(real("1.0E30"), steps()) shouldBe 0
+            number("-$TEN_TO_THE_30").compareTo(real("-1.0E30"), steps()) shouldBe 0
+            number("1" + "0".repeat(MANY_ZEROS)).compareTo(real(Double.MAX_VALUE), steps()) shouldBe 1
+            number("1" + "0".repeat(HUGE_EXPONENT)).compareTo(real(HUGE), steps()) shouldBe -1
+            number("2" + "0".repeat(HUGE_EXPONENT)).compareTo(real(HUGE), steps()) shouldBe 1
+            number("-" + "1" + "0".repeat(HUGE_EXPONENT)).compareTo(real(-HUGE), steps()) shouldBe 1
+        }
+
+        test("compare an integer with a real of another magnitude without expanding the real") {
+            val oneStep = WorkBudget(1L, STEPS)
+
+            number("1999").compareTo(real(HUGE), oneStep) shouldBe -1
+            number("-1999").compareTo(real(-HUGE), oneStep) shouldBe 1
+            number("-1999").compareTo(real(HUGE), oneStep) shouldBe -1
+            number("1" + "0".repeat(MANY_ZEROS)).compareTo(real(HUGE), oneStep) shouldBe 1
+            oneStep.spent shouldBe 0L
+        }
+
+        test("charge the expansion of a real of the same magnitude") {
+            val exceeded = shouldThrow<YamlDocumentLimitException> {
+                number("1" + "0".repeat(HUGE_EXPONENT)).compareTo(real(HUGE), WorkBudget(1L, STEPS))
+            }
+
+            exceeded.limit shouldBe STEPS
         }
 
         test("compare reals as IEEE numbers") {
-            real("-0.0").compareTo(real("0.0")) shouldBe 0
-            real("1.0").compareTo(real("2.0")) shouldBe -1
-            real("2.0").compareTo(real("1.0")) shouldBe 1
-            real(Double.NaN).compareTo(real(Double.NaN)) shouldBe null
-            real(Double.NaN).compareTo(number(ONE)) shouldBe null
-            real("1.0").compareTo(real(Double.NaN)) shouldBe null
-            NumberValue.of(yamlScalar(2L))?.compareTo(number("2")) shouldBe 0
+            real("-0.0").compareTo(real("0.0"), steps()) shouldBe 0
+            real("1.0").compareTo(real("2.0"), steps()) shouldBe -1
+            real("2.0").compareTo(real("1.0"), steps()) shouldBe 1
+            real(Double.NaN).compareTo(real(Double.NaN), steps()) shouldBe null
+            real(Double.NaN).compareTo(number(ONE), steps()) shouldBe null
+            real("1.0").compareTo(real(Double.NaN), steps()) shouldBe null
+            NumberValue.of(yamlScalar(2L))?.compareTo(number("2"), steps()) shouldBe 0
         }
 
         test("fall back to the double of an integer it cannot read as a decimal") {
-            number("0x10").compareTo(real(Double.NaN)) shouldBe null
+            number("0x10").compareTo(real(Double.NaN), steps()) shouldBe null
             NumberValue.of(yamlScalar(ONE)) shouldBe null
         }
     }
@@ -129,6 +157,11 @@ class JsonValuesTest : FunSpec({
             Decimals.ofIntegral("-3".toDouble()) shouldBe "-3"
             Decimals.ofIntegral("1.0E19".toDouble()) shouldBe "10000000000000000000"
             Decimals.ofIntegral("-1.0E19".toDouble()) shouldBe "-10000000000000000000"
+            Decimals.ofIntegral("9.223372036854775808E18".toDouble()) shouldBe "9223372036854775808"
+            val largest = Decimals.ofIntegral(Double.MAX_VALUE)
+            largest.length shouldBe HUGE_EXPONENT + 1
+            largest.take(LEADING_DIGITS) shouldBe "17976931348623157"
+            largest.takeLast(TRAILING_DIGITS) shouldBe "4858368"
         }
     }
 

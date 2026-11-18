@@ -44,6 +44,7 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
     }
 
     private fun isScalarLess(left: YamlNode.Scalar, right: YamlNode.Scalar): Boolean {
+        budget.charge(minOf(a = left.value.length, b = right.value.length).toLong())
         val leftValue = JsonScalar.of(left)
         val rightValue = JsonScalar.of(right)
         val numbers = numberOrder(left = leftValue, right = rightValue)
@@ -54,18 +55,13 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
     private fun numberOrder(left: JsonScalar, right: JsonScalar): Int? {
         val leftNumber = (left as? JsonScalar.Number)?.value ?: return null
         val rightNumber = (right as? JsonScalar.Number)?.value
-        return rightNumber?.let(leftNumber::compareTo)
+        return rightNumber?.let { number -> leftNumber.compareTo(number, budget) }
     }
 
     private fun textOrder(left: JsonScalar, right: JsonScalar): Int? {
         val leftText = (left as? JsonScalar.Text)?.value ?: return null
         val rightText = (right as? JsonScalar.Text)?.value
-        return rightText?.let { text -> charged(left = leftText, right = text) }
-    }
-
-    private fun charged(left: String, right: String): Int {
-        budget.charge(minOf(a = left.length, b = right.length).toLong())
-        return CodePoints.compare(left = left, right = right)
+        return rightText?.let { text -> CodePoints.compare(left = leftText, right = text) }
     }
 
     private fun isShallowEqual(pair: Pending, pending: ArrayDeque<Pending>): Boolean = when (val left = pair.left) {
@@ -82,7 +78,7 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
 
     private fun isScalarEqual(left: YamlNode.Scalar, right: YamlNode.Scalar): Boolean {
         budget.charge(minOf(a = left.value.length, b = right.value.length).toLong())
-        return JsonScalar.of(left).isEqualTo(JsonScalar.of(right))
+        return JsonScalar.of(left).isEqualTo(JsonScalar.of(right), budget)
     }
 
     private fun itemsQueued(

@@ -23,12 +23,12 @@ import com.davils.kaml.core.node.long
 import kotlin.math.floor
 
 internal class NumberValue private constructor(private val integer: String?, private val real: Double) {
-    fun compareTo(other: NumberValue): Int? {
+    fun compareTo(other: NumberValue, budget: WorkBudget): Int? {
         val left = integer
         val right = other.integer
         if (left != null && right != null) return Decimals.compare(left, right)
-        val leftFirst = left?.let { decimal -> withReal(decimal, other.real) }
-        val rightFirst = right?.let { decimal -> withReal(decimal, real) }?.let { order -> -order }
+        val leftFirst = left?.let { decimal -> withReal(decimal, other.real, budget) }
+        val rightFirst = right?.let { decimal -> withReal(decimal, real, budget) }?.let { order -> -order }
         return leftFirst ?: rightFirst ?: reals(other.real)
     }
 
@@ -39,16 +39,16 @@ internal class NumberValue private constructor(private val integer: String?, pri
         return (-1).takeIf { isLess } ?: 1.takeIf { isGreater } ?: 0
     }
 
-    private fun withReal(decimal: String, value: Double): Int? {
+    private fun withReal(decimal: String, value: Double, budget: WorkBudget): Int? {
         if (value.isNaN()) return null
         val above = (-1).takeIf { value == Double.POSITIVE_INFINITY }
         val below = 1.takeIf { value == Double.NEGATIVE_INFINITY }
-        return above ?: below ?: withFinite(decimal, value)
+        return above ?: below ?: withFinite(decimal, value, budget)
     }
 
-    private fun withFinite(decimal: String, value: Double): Int {
+    private fun withFinite(decimal: String, value: Double, budget: WorkBudget): Int {
         val whole = floor(value)
-        val order = Decimals.compare(left = decimal, right = Decimals.ofIntegral(whole))
+        val order = Decimals.compareIntegral(decimal = decimal, whole = whole, budget = budget)
         val isFraction = whole != value
         return (-1).takeIf { order == 0 && isFraction } ?: order
     }
