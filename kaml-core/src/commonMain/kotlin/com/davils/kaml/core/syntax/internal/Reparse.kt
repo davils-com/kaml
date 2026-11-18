@@ -26,22 +26,24 @@ import com.davils.kore.core.text.edited
 
 internal class Reparse(private val tree: YamlSyntaxTree) {
     private val limits = tree.yaml.configuration.limits
+    private val budgets = StreamBudgets(limits)
 
     fun apply(edits: List<TextEdit>): YamlSyntaxTree {
         val text = tree.text.edited(edits)
+        val delta = edits.sumOf(TextEdit::delta)
         val isWithinLength = text.length <= limits.maximumInputLength
-        val region = edits.takeIf { isWithinLength }?.let(::regionOf) ?: return YamlSyntaxTree.parse(text, tree.yaml)
-        return spliced(region, text, edits.sumOf(TextEdit::delta))
+        val region = edits.takeIf { isWithinLength }?.let { regionOf(it, Shifted(text, delta)) }
+        return region?.let { spliced(it, text, delta) } ?: YamlSyntaxTree.parse(text, tree.yaml)
     }
 
-    private fun regionOf(edits: List<TextEdit>): Region? {
+    private fun regionOf(edits: List<TextEdit>, shifted: Shifted): Region? {
         val starts = edits.map { it.range.start }
         val start = starts.minOrNull() ?: return null
         val end = edits.map { it.range.end }.max()
         val children = positioned()
         val first = children.indexOfFirst { child -> isDocumentInside(child, start, end = child.end - 1) }
         val touched = children.indexOfFirst { child -> isDocumentInside(child, end, end = child.end) }
-        val last = extended(children, touched)
+        val last = keptAfter(children, extended(children, touched), shifted)
         val isOrdered = first >= 0 && touched >= first
         val isAligned = isOrdered && isSafeStart(children, first)
         val boundary = boundaryOf(children, first, last)
@@ -53,6 +55,14 @@ internal class Reparse(private val tree: YamlSyntaxTree) {
         val after = children.subList(fromIndex = last + 1, toIndex = children.size)
         val next = after.indexOfFirst { it.element.kind == YamlSyntaxKind.DOCUMENT }
         return children.lastIndex.takeIf { next < 0 } ?: last + next
+    }
+
+    private fun keptAfter(children: List<Positioned>, last: Int, shifted: Shifted): Int {
+        var kept = last
+        while (kept < children.lastIndex && !shifted.isLineStart(children[kept + 1].start)) {
+            kept = extended(children, kept + 1)
+        }
+        return kept
     }
 
     private fun isSafeStart(children: List<Positioned>, first: Int): Boolean =
@@ -93,19 +103,23 @@ internal class Reparse(private val tree: YamlSyntaxTree) {
         return startsExplicitly(next.element)
     }
 
-    private fun spliced(region: Region, text: String, delta: Int): YamlSyntaxTree {
+    private fun spliced(region: Region, text: String, delta: Int): YamlSyntaxTree? {
         val start = region.children[region.first].start
         val oldEnd = region.children[region.last].end
         val parsed = YamlSyntaxSupport.parse(text.substring(startIndex = start, endIndex = oldEnd + delta), tree.yaml)
         val diagnostics = splicedDiagnostics(parsed, Span(start = start, end = oldEnd, delta = delta))
         val isFitting = isBounded(parsed) && isSeparated(parsed, region)
         val isReusable = isFitting && !isAmbiguous(start, oldEnd) && isWithinLimits(diagnostics)
-        if (!isReusable) return YamlSyntaxTree.parse(text, tree.yaml)
+        val root = rootOf(region, parsed).takeIf { isReusable } ?: return null
+        val spliced = YamlSyntaxTree(text = text, parsed = YamlSyntaxParse(root, diagnostics), yaml = tree.yaml)
+        return spliced.takeIf { budgets.admits(root, text) }
+    }
+
+    private fun rootOf(region: Region, parsed: YamlSyntaxParse): GreenNode {
         val leading = region.children.subList(fromIndex = 0, toIndex = region.first)
         val trailing = region.children.subList(fromIndex = region.last + 1, toIndex = region.children.size)
         val elements = leading.map { it.element } + parsed.root.children + trailing.map { it.element }
-        val root = GreenNode(YamlSyntaxKind.STREAM, elements)
-        return YamlSyntaxTree(text = text, parsed = YamlSyntaxParse(root, diagnostics), yaml = tree.yaml)
+        return GreenNode(YamlSyntaxKind.STREAM, elements)
     }
 
     private fun splicedDiagnostics(parsed: YamlSyntaxParse, span: Span): List<YamlDiagnostic> {
@@ -182,6 +196,13 @@ internal class Reparse(private val tree: YamlSyntaxTree) {
     }
 
     private data class Positioned(val element: GreenElement, val start: Int, val end: Int)
+
+    private class Shifted(private val text: String, private val delta: Int) {
+        fun isLineStart(oldOffset: Int): Boolean {
+            val previous = text.getOrNull(oldOffset + delta - 1) ?: return true
+            return previous == '\n' || previous == '\r'
+        }
+    }
 
     private data class Region(val children: List<Positioned>, val first: Int, val last: Int, val boundary: Boundary)
 

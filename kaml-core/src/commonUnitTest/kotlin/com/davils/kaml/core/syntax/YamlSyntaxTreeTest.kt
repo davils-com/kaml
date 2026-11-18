@@ -27,6 +27,8 @@ import com.davils.kaml.core.syntax.fixture.deepMappings
 import com.davils.kaml.core.syntax.fixture.deepSequences
 import com.davils.kaml.core.syntax.fixture.hostileTexts
 import com.davils.kaml.core.syntax.fixture.strayNodeTree
+import com.davils.kaml.core.syntax.fixture.streamPieces
+import com.davils.kaml.core.syntax.fixture.streamTexts
 import com.davils.kaml.core.yaml
 import com.davils.kore.core.text.TextEdit
 import com.davils.kore.core.text.TextRange
@@ -38,6 +40,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.int
 import io.kotest.property.checkAll
 
 private const val CASES: Int = 100
@@ -49,6 +54,14 @@ private const val TOKENS_PER_LEVEL: Int = 4
 private const val NODES_PER_LEVEL: Int = 5
 private const val ANCESTORS_PER_LEVEL: Int = 3
 private const val DEEPER: Int = 10
+private const val EDIT_CASES: Int = 5_000
+private const val MOST_OFFSET: Int = 400
+private const val WIDEST_EDIT: Int = 6
+private const val THREE_DOCUMENTS: Int = 3
+private const val NINE_NODES: Long = 9L
+private const val B_ENTRY: Int = 4
+
+private val replacements: Arb<String> = Arb.element(streamPieces + "")
 
 private fun scalarsOf(value: YamlValueSyntax): List<String> = when (value) {
     is YamlValueSyntax.Scalar -> listOf(value.value)
@@ -129,6 +142,36 @@ class YamlSyntaxTreeTest : FunSpec({
 
             edited.text shouldBe "a: 1\r---\rb: 3\r"
             edited.documents.size shouldBe 2
+        }
+
+        test("parses the next document again when an edit joins its marker to the line before it") {
+            val joined = YamlSyntaxTree.parse("|\n--- b\n").edit(listOf(TextEdit(TextRange(start = 1, end = 2), " # ")))
+            val refused = YamlSyntaxTree.parse("|\n--- |\n").edit(listOf(TextEdit(TextRange(start = 1, end = 2), "  ")))
+
+            joined.text shouldBe "| # --- b\n"
+            joined.green shouldBe YamlSyntaxTree.parse(joined.text).green
+            joined.documents.size shouldBe 1
+            refused.compose().shouldBeInstanceOf<YamlParseResult.Failed>()
+            refused.diagnostics shouldBe YamlSyntaxTree.parse(refused.text).diagnostics
+        }
+
+        test("gives the tree and the diagnostics of a full parse for any edit") {
+            checkAll(
+                iterations = EDIT_CASES,
+                genA = streamTexts,
+                genB = Arb.int(0..MOST_OFFSET),
+                genC = Arb.int(0..WIDEST_EDIT),
+                genD = replacements,
+            ) { text, position, width, replacement ->
+                val start = position % (text.length + 1)
+                val end = minOf(a = text.length, b = start + width)
+                val edited = YamlSyntaxTree.parse(text).edit(listOf(TextEdit(TextRange(start, end), replacement)))
+                val full = YamlSyntaxTree.parse(edited.text)
+
+                edited.green shouldBe full.green
+                edited.diagnostics.map { it.code to it.range } shouldBe full.diagnostics.map { it.code to it.range }
+                edited.compose() shouldBe full.compose()
+            }
         }
 
         test("keeps tokens between documents") {
@@ -401,6 +444,32 @@ class YamlSyntaxTreeTest : FunSpec({
 
             edited.diagnostics.map { it.code to it.range } shouldBe full.diagnostics.map { it.code to it.range }
             edited.documents[0].node shouldNotBe tree.documents[0].node
+        }
+
+        test("charge the document limit over the whole stream") {
+            val limited = yaml { limits { maximumDocuments = THREE_DOCUMENTS } }
+            val text = lines("a: 1", "---", "b: 2", "---", "c: 3", "")
+            val at = text.indexOf("b: 2")
+            val tree = YamlSyntaxTree.parse(text, limited)
+            val edited = tree.edit(listOf(TextEdit(TextRange(start = at, end = at + B_ENTRY), "b: 2\n---\nd: 4")))
+            val full = YamlSyntaxTree.parse(edited.text, limited)
+
+            tree.diagnostics.shouldBeEmpty()
+            edited.diagnostics.map { it.code to it.range } shouldBe full.diagnostics.map { it.code to it.range }
+            edited.diagnostics.map { it.code } shouldContainCode YamlDiagnosticCode.TooManyDocuments
+        }
+
+        test("charge the node limit over the whole stream") {
+            val limited = yaml { limits { maximumNodes = NINE_NODES } }
+            val text = lines("a: 1", "---", "b: 2", "---", "c: 3", "")
+            val at = text.indexOf("b: 2")
+            val tree = YamlSyntaxTree.parse(text, limited)
+            val edited = tree.edit(listOf(TextEdit(TextRange(start = at, end = at + B_ENTRY), "b: [1, 2, 3]")))
+            val full = YamlSyntaxTree.parse(edited.text, limited)
+
+            tree.diagnostics.shouldBeEmpty()
+            edited.diagnostics.map { it.code to it.range } shouldBe full.diagnostics.map { it.code to it.range }
+            edited.diagnostics.map { it.code } shouldContainCode YamlDiagnosticCode.TooManyNodes
         }
 
         test("refuses edits that overlap or reach beyond the text") {

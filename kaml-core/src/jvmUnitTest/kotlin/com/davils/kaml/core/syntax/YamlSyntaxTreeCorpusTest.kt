@@ -82,6 +82,7 @@ class YamlSyntaxTreeCorpusTest : FunSpec({
                 val full = YamlSyntaxTree.parse(incremental.text)
 
                 incremental.root.text shouldBe full.text
+                incremental.green shouldBe full.green
                 incremental.diagnostics.map { it.code to it.range } shouldBe
                     full.diagnostics.map { it.code to it.range }
                 incremental.documents.size shouldBe full.documents.size

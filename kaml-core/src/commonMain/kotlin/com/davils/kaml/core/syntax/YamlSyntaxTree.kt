@@ -94,9 +94,11 @@ public class YamlSyntaxTree internal constructor(
      *
      * Only the documents the edits touch are parsed again; the documents before and after them are shared with this
      * tree. The result has the same text, tokens and diagnostics as a [parse] of the edited text, and when a shared
-     * document could be read differently, such as after an edit that opens a quoted scalar, everything is parsed
-     * again. An edited text longer than `YamlLimits.maximumInputLength` is not parsed at all: the result holds a
-     * single `InputTooLong` diagnostic, like [parse].
+     * document could be read differently, such as after an edit that opens a quoted scalar or joins the marker of the
+     * next document to the line before it, that document or everything is parsed again. The limits of the whole
+     * stream, such as `YamlLimits.maximumDocuments` and `YamlLimits.maximumNodes`, are charged over the whole edited
+     * tree, not only over the documents parsed again. An edited text longer than `YamlLimits.maximumInputLength` is
+     * not parsed at all: the result holds a single `InputTooLong` diagnostic, like [parse].
      *
      * @param edits the edits to apply, in any order, with ranges into [text] that do not overlap.
      * @return the tree of the edited text, parsed with [yaml].
