@@ -21,11 +21,14 @@ import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.fixture.problems
 import com.davils.kaml.core.fixture.root
 import com.davils.kaml.core.fixture.text
+import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.string
+import com.davils.kaml.core.node.yamlNull
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 private const val KEY_LENGTH: Int = 1030
 private const val SUPPLEMENTARY: String = "\uD83D\uDE00"
@@ -151,7 +154,8 @@ class YamlSyntaxDiagnosticsTest : FunSpec({
         }
 
         test("reads an empty key in a flow sequence") {
-            yaml.root("[: b]")[0][""].string() shouldBe "b"
+            val pair = yaml.root("[: b]")[0].shouldBeInstanceOf<YamlNode.Mapping>()
+            pair[yamlNull()].string() shouldBe "b"
         }
 
         test("reads a quoted scalar that continues on a line with tabs") {

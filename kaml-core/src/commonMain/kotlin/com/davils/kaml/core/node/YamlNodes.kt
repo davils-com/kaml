@@ -19,11 +19,12 @@ import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.internal.ScalarValue
 
 /**
- * Returns the value of the first entry of this mapping whose key is a scalar with the text [key], whatever the tag
- * of that key, so `["1"]` finds both the key `"1"` and the key `1`.
+ * Returns the value of the entry of this mapping whose key is the string [key], tagged [YamlTag.STRING], the same
+ * entry [YamlNode.Mapping.get] finds for `yamlScalar(key)`, so `["1"]` finds the key `"1"` but not the integer key
+ * `1`, and `["role"]` does not find a key `!x role` with a tag of its own.
  *
  * It is meant for reading a document step by step, such as `node["server"]["port"].int()`: every step on a node that
- * is no mapping, or on `null`, returns `null`. [YamlNode.Mapping.get] finds a key by its node instead.
+ * is no mapping, or on `null`, returns `null`. [YamlNode.Mapping.get] finds a key of any tag by its node.
  *
  * @param key the text of the key to look for.
  * @return the value, or `null` if this is no mapping or has no such key.
@@ -31,8 +32,7 @@ import com.davils.kaml.core.node.internal.ScalarValue
  */
 public operator fun YamlNode?.get(key: String): YamlNode? {
     val mapping = this as? YamlNode.Mapping ?: return null
-    val entry = mapping.entries.firstOrNull { candidate -> (candidate.key as? YamlNode.Scalar)?.value == key }
-    return entry?.value
+    return mapping[yamlScalar(key)]
 }
 
 /**
