@@ -39,9 +39,11 @@ import com.davils.kore.core.validation.ValidationScope
  * A schema is immutable and safe to share between threads, as far as the matchers of its custom tags are. Those
  * matchers are caller code: kaml calls them for every plain scalar and every tagged scalar of every document it
  * reads, and documents may come from an attacker. A matcher must therefore be pure, run in time linear in the length
- * of the scalar, which the scalar limit of the configuration bounds, and must not throw; an exception it throws
- * propagates unchanged and must not carry the scalar. Tags never construct types: a tag only selects a definition of
- * the schema, and kaml never instantiates a class by a name read from a document.
+ * of the scalar, which the scalar limit of the configuration bounds, and should not throw. An [Exception] it throws
+ * is caught and reported as an invalid tagged value whose message names the tag and shows the scalar only as
+ * [SafeText.REDACTED], never the message of the exception, so the document fails to compose; an [Error] is not
+ * caught. Tags never construct types: a tag only selects a definition of the schema, and kaml never instantiates a
+ * class by a name read from a document.
  *
  * @since 1.0.0
  */
@@ -114,19 +116,38 @@ public class YamlSchema internal constructor(
 
     internal fun refusesPlain(text: String): Boolean = isJson && plainTagOf(text) == null
 
-    private fun plainTagOf(text: String): YamlTag? {
-        val custom = implicitScalars.firstOrNull { (_, matches) -> matches(text) }?.first
+    internal fun plainTagOf(text: String, failed: (YamlTag) -> Unit = {}): YamlTag? {
+        val matched = implicitScalars.firstOrNull { (tag, matches) ->
+            isAccepted(tag = tag, predicate = matches, text = text, failed = failed)
+        }
+        val custom = matched?.first
         val mergeTag = YamlTag.MERGE.takeIf { hasMergeKeys } ?: YamlTag.STRING
         val merge = mergeTag.takeIf { text == MERGE_KEY }
         return custom ?: merge ?: resolution.resolve(text)
     }
 
-    internal fun valueOf(tag: YamlTag, text: String): ScalarValue? {
+    internal fun valueOf(tag: YamlTag, text: String, failed: (YamlTag) -> Unit = {}): ScalarValue? {
         val custom = byTag[tag]
-        if (custom != null && !custom.accepts(text)) return null
+        val predicate = custom?.accepts ?: return valueOrText(tag = tag, text = text, isText = false)
+        val isValid = isAccepted(tag = tag, predicate = predicate, text = text, failed = failed)
+        return valueOrText(tag = tag, text = text, isText = true).takeIf { isValid }
+    }
+
+    private fun valueOrText(tag: YamlTag, text: String, isText: Boolean): ScalarValue? {
         val isMergeKey = tag == YamlTag.MERGE && text == MERGE_KEY
-        val isText = custom != null || isMergeKey
-        return resolution.valueOf(tag, text) ?: ScalarValue.Text(text).takeIf { isText }
+        return resolution.valueOf(tag, text) ?: ScalarValue.Text(text).takeIf { isText || isMergeKey }
+    }
+
+    private fun isAccepted(
+        tag: YamlTag,
+        predicate: (String) -> Boolean,
+        text: String,
+        failed: (YamlTag) -> Unit,
+    ): Boolean = try {
+        predicate(text)
+    } catch (expected: Exception) {
+        failed(tag)
+        false
     }
 
     internal fun isKnown(tag: YamlTag, kind: YamlNodeKind): Boolean {

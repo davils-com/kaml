@@ -21,7 +21,8 @@ import com.davils.kore.core.annotation.DavilsDsl
  * Configures a scalar tag in the block of [YamlSchemaBuilder.scalar].
  *
  * Both functions take caller code that kaml runs on scalars of documents that may come from an attacker: it must be
- * pure, linear in the length of the scalar and must not throw, as [YamlSchema] describes. A later call replaces an
+ * pure, linear in the length of the scalar and should not throw, as [YamlSchema] describes; an exception it throws
+ * fails the document with a redacted diagnostic. A later call replaces an
  * earlier one. The builder is not thread-safe and is read once, when the block of [YamlSchemaBuilder.scalar] returns.
  *
  * @since 1.0.0

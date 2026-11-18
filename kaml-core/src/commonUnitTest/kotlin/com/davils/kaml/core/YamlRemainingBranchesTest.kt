@@ -71,7 +71,7 @@ class YamlRemainingBranchesTest : FunSpec({
         jsonForms.forEach { (text, tag) ->
             test("the JSON schema resolves \"$text\" to ${tag?.uri ?: "nothing"}") {
                 YamlSchema.Json.resolvePlain(text) shouldBe (tag ?: YamlTag.STRING)
-                YamlSchema.Json.refusesPlain(text) shouldBe (tag == null)
+                YamlSchema.Json.plainTagOf(text) shouldBe tag
             }
         }
     }

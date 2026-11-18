@@ -110,7 +110,7 @@ class YamlSchemaTest : FunSpec({
         jsonTags.forEach { (text, tag) ->
             test(resolution(text, tag)) {
                 YamlSchema.Json.resolvePlain(text) shouldBe (tag ?: YamlTag.STRING)
-                YamlSchema.Json.refusesPlain(text) shouldBe (tag == null)
+                YamlSchema.Json.plainTagOf(text) shouldBe tag
             }
         }
 
@@ -119,7 +119,7 @@ class YamlSchemaTest : FunSpec({
         }
 
         test("refuses no plain scalar in the other schemas") {
-            YamlSchema.Core.refusesPlain("01") shouldBe false
+            YamlSchema.Core.plainTagOf("no JSON") shouldBe YamlTag.STRING
         }
 
         test("knows that it is the JSON schema") {

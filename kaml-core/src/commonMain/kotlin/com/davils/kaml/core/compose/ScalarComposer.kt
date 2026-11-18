@@ -68,14 +68,20 @@ internal class ScalarComposer(
 
     private fun implicitTag(event: YamlEvent.Scalar): YamlTag {
         if (event.style != YamlScalarStyle.Plain) return YamlTag.STRING
-        if (schema.refusesPlain(event.value)) {
+        val resolved = schema.plainTagOf(event.value) { tag -> reportFailure(tag, event.range) }
+        if (resolved == null && schema.isJson) {
             report(
                 YamlDiagnosticCode.NotJson,
                 event.range,
                 "${SafeText.quoted(event.value)} is no JSON value; quote it to make it a string",
             )
         }
-        return schema.resolvePlain(event.value)
+        return resolved ?: YamlTag.STRING
+    }
+
+    private fun reportFailure(tag: YamlTag, range: TextRange?) {
+        val message = "The check of the tag ${SafeText.quoted(tag.uri)} failed on the value ${SafeText.REDACTED}"
+        report(YamlDiagnosticCode.InvalidTaggedValue, range, message)
     }
 
     private fun canonicalOf(tag: YamlTag, event: YamlEvent.Scalar): ScalarValue {
@@ -86,8 +92,12 @@ internal class ScalarComposer(
             report(YamlDiagnosticCode.NumberTooLong, event.range, message)
             return ScalarValue.Text(event.value)
         }
-        val value = schema.valueOf(tag, event.value)
-        if (value == null && isKnown) {
+        var hasFailed = false
+        val value = schema.valueOf(tag, event.value) { failedTag ->
+            hasFailed = true
+            reportFailure(failedTag, event.range)
+        }
+        if (value == null && isKnown && !hasFailed) {
             val shownTag = SafeText.quoted(tag.uri)
             val message = "${SafeText.quoted(event.value)} is no valid value of the tag $shownTag"
             report(YamlDiagnosticCode.InvalidTaggedValue, event.range, message)
