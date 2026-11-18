@@ -154,9 +154,9 @@ a caller fails closed.
   example `com.davils.kaml.core.syntax.internal`, and `module-info.java` never exports an `internal` package.
 - **No randomness.** Reading and writing YAML needs none. No `java.util.Random`, `kotlin.random.Random` or
   `ThreadLocalRandom`; if randomness is ever needed, it comes from Kore.
-- **Every sink has an injection test.** A renderer is tested with `hostileText` and `shouldBeSafeToShow` of
-  `kore-testing`; a sensitive value has a property test that it appears nowhere; every limit and budget has a test
-  at the limit and one past it.
+- **Every sink has an injection test.** A renderer is tested with text built from `HostileFragments` of
+  `kore-testing`, combined by a Kotest generator, and its output must leave `unsafeCodePointsIn` empty; a sensitive
+  value has a property test that it appears nowhere; every limit and budget has a test at the limit and one past it.
 
 ## Tests
 
