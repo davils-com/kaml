@@ -66,6 +66,8 @@ private const val FLOW_ENTRY: String = "{a: 1}"
 private const val LEGACY: String = "%YAML 1.1"
 private const val YES: String = "yes"
 private const val ADMIN: String = "admin"
+private const val KEEP_A: String = "a: |+"
+private const val FLOW_PAIR: String = "s: [a: 1, x]"
 private const val SLOT: String = "slot"
 private const val SLOT_LINE: String = "slot: 0"
 private const val ROLE_LINE: String = "  role: user"
@@ -366,6 +368,40 @@ class YamlEditorTest : FunSpec({
                 yamlMapping { "items" to yamlSequence { add(value) } }
             composed(lines("a: # note", "  b")) { set(root.key("a"), value) } shouldBe
                 yamlMapping { "a" to value }
+        }
+
+        test("keep the trailing lines of a block scalar before an entry that is removed") {
+            val text = lines(KEEP_A, "  x", "b: |+", "  y", "", "", "c: 1", "")
+
+            edited(text) { remove(root.key("b")) } shouldBe lines(KEEP_A, "  x", "c: 1", "")
+            composed(text) { remove(root.key("b")) }["a"] shouldBe yamlScalar("x\n")
+        }
+
+        test("keep the trailing lines of a block scalar before an entry or an item that is added") {
+            val entry = lines(KEEP_A, "  x", "", "", "")
+            val item = lines("s:", "  - |+", "    x", "", "", "")
+
+            edited(entry) { set(root.key("b"), yamlScalar(1)) } shouldBe lines(KEEP_A, "  x", "", "", "b: 1", "")
+            composed(entry) { set(root.key("b"), yamlScalar(1)) }["a"] shouldBe yamlScalar(lines("x", "", "", ""))
+            composed(item) { append(root.key("s"), yamlScalar(1)) }["s"] shouldBe yamlSequence {
+                add(yamlScalar(lines("x", "", "", "")))
+                add(yamlScalar(1))
+            }
+        }
+
+        test("rename a block scalar key without joining the line of its value") {
+            val text = lines("? |", "  k", ": v", "")
+
+            edited(text) { rename(root.key("k\n"), "new") } shouldBe lines("? new", ": v", "")
+            composed(text) { rename(root.key("k\n"), "new") } shouldBe yamlMapping { "new" to "v" }
+        }
+
+        test("refuse to add or remove a key of a single pair in a flow sequence") {
+            val pair = root.key("s").index(0)
+
+            refusal(FLOW_PAIR) { set(pair.key("b"), yamlScalar("2")) } shouldBe YamlEditRefusal.Unsupported
+            refusal(FLOW_PAIR) { remove(pair.key("a")) } shouldBe YamlEditRefusal.Unsupported
+            edited(FLOW_PAIR) { set(pair.key("a"), yamlScalar(2)) } shouldBe "s: [a: 2, x]"
         }
 
         test("refuse to move text behind the old value that is no comment") {

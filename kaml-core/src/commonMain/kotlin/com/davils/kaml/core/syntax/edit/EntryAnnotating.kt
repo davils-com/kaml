@@ -25,10 +25,13 @@ import com.davils.kore.core.text.TextEdit
 import com.davils.kore.core.text.TextRange
 
 internal class EntryAnnotating(private val tree: YamlSyntaxTree, private val writer: EditWriter) {
+    private val layout = writer.layout
+
     fun rename(parent: YamlValueSyntax, segment: Segment, key: String): EditStep {
         val written = writer.text.key(key)
         val entry = EditPaths.entryOf(parent, segment) ?: return EditStep.Refused(YamlEditRefusal.MissingPath)
-        val edit = written?.let { TextEdit(entry.key.node.range, it) }
+        val node = entry.key.node
+        val edit = written?.let { TextEdit(TextRange(start = node.range.start, end = layout.contentEnd(node)), it) }
         return edit?.let { EditStep.Edits(it) } ?: EditStep.Refused(YamlEditRefusal.Unsupported)
     }
 

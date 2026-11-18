@@ -16,6 +16,7 @@
 
 package com.davils.kaml.core.syntax.edit
 
+import com.davils.kaml.core.syntax.YamlSyntaxKind
 import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
@@ -37,7 +38,12 @@ internal class ValueRemoving(private val tree: YamlSyntaxTree, private val layou
 
     private fun removedEntry(mapping: YamlValueSyntax.Mapping, name: String): EditStep {
         val entry = mapping.entry(name) ?: return EditStep.Refused(YamlEditRefusal.MissingPath)
-        return removal(mapping.isFlow, mapping.entries.map(YamlEntrySyntax::node), entry.node)
+        return pairRemoval(mapping) ?: removal(mapping.isFlow, mapping.entries.map(YamlEntrySyntax::node), entry.node)
+    }
+
+    private fun pairRemoval(mapping: YamlValueSyntax.Mapping): EditStep? {
+        val isPair = mapping.node.kind == YamlSyntaxKind.FLOW_PAIR
+        return EditStep.Refused(YamlEditRefusal.Unsupported).takeIf { isPair }
     }
 
     private fun removedItem(parent: YamlValueSyntax, index: Int): EditStep {
@@ -64,7 +70,6 @@ internal class ValueRemoving(private val tree: YamlSyntaxTree, private val layou
         val firstLine = lines.lineRange(lines.lineOf(target.range.start))
         val isLineOwned = tree.text.substring(startIndex = firstLine.start, endIndex = target.range.start).isBlank()
         if (!isLineOwned) return EditStep.Refused(YamlEditRefusal.Unsupported)
-        val end = layout.afterLineBreak(layout.lineEndAfter(target))
-        return EditStep.Edits(TextEdit(TextRange(firstLine.start, end), ""))
+        return EditStep.Edits(TextEdit(TextRange(start = firstLine.start, end = layout.endAfter(target)), ""))
     }
 }

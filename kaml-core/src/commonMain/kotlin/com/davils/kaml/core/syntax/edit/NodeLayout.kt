@@ -52,12 +52,27 @@ internal class NodeLayout(private val text: String, private val lines: LineMap) 
         return lines.lineRange(lines.lineOf(last)).end
     }
 
+    fun endAfter(node: YamlSyntaxNode): Int = maxOf(a = afterLineBreak(lineEndAfter(node)), b = node.range.end)
+
+    fun lineAfter(node: YamlSyntaxNode, line: String, lineBreak: String): TextEdit {
+        val lineEnd = lineEndAfter(node)
+        val end = node.range.end
+        val isBlockScalarEnd = end > lineEnd && isLineStart(end)
+        if (isBlockScalarEnd) return TextEdit(TextRange.at(end), line + lineBreak)
+        return TextEdit(TextRange.at(lineEnd), lineBreak + line)
+    }
+
+    private fun isLineStart(offset: Int): Boolean {
+        val previous = text.getOrNull(offset - 1)
+        return previous == '\n' || previous == '\r'
+    }
+
     fun lineStartOf(node: YamlSyntaxNode): Int? {
         val start = lines.lineRange(lines.lineOf(node.range.start)).start
         return start.takeIf { text.substring(startIndex = start, endIndex = node.range.start).isBlank() }
     }
 
-    fun afterLineBreak(offset: Int): Int {
+    private fun afterLineBreak(offset: Int): Int {
         val lineBreak = lineBreaks.firstOrNull { text.startsWith(it, offset) }.orEmpty()
         return offset + lineBreak.length
     }

@@ -17,6 +17,7 @@
 package com.davils.kaml.core.syntax.edit
 
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.syntax.YamlSyntaxKind
 import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlDocumentSyntax
@@ -46,7 +47,7 @@ internal class EditWriter(tree: YamlSyntaxTree, document: YamlDocumentSyntax?) {
     }
 
     fun inserted(mapping: YamlValueSyntax.Mapping, name: String, value: YamlNode): EditStep {
-        val key = text.key(name) ?: return unsupported()
+        val key = text.key(name)?.takeIf { mapping.node.kind != YamlSyntaxKind.FLOW_PAIR } ?: return unsupported()
         val entries = mapping.entries
         return when (mapping.isFlow) {
             true -> written(text.flow(value)) { flow ->
@@ -111,15 +112,15 @@ internal class EditWriter(tree: YamlSyntaxTree, document: YamlDocumentSyntax?) {
 
     private fun blockInsertion(last: YamlEntrySyntax, key: String, value: YamlNode): TextEdit {
         val rendering = text.afterIndicator(value, last.column)
-        val inserted = lineBreak + " ".repeat(last.column) + key + ":" + rendering.head + rendering.tail
-        return TextEdit(TextRange.at(layout.lineEndAfter(last.node)), inserted)
+        val line = " ".repeat(last.column) + key + ":" + rendering.head + rendering.tail
+        return layout.lineAfter(last.node, line, lineBreak)
     }
 
     private fun blockAppend(entry: YamlSyntaxNode, value: YamlNode): TextEdit {
         val column = layout.columnOf(entry)
         val rendering = text.item(value, column)
-        val inserted = lineBreak + " ".repeat(column) + "-" + rendering.head + rendering.tail
-        return TextEdit(TextRange.at(layout.lineEndAfter(entry)), inserted)
+        val line = " ".repeat(column) + "-" + rendering.head + rendering.tail
+        return layout.lineAfter(entry, line, lineBreak)
     }
 
     private fun unsupported(): EditStep = EditStep.Refused(YamlEditRefusal.Unsupported)
