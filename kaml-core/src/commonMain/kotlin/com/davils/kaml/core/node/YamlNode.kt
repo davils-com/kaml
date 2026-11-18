@@ -264,12 +264,14 @@ public sealed interface YamlNode {
         override val anchor: YamlAnchor?,
         override val range: TextRange?,
     ) : YamlNode {
+        private val index: KeyIndex = UniqueKeys.indexOf(entries)
+
         /**
          * The entries of the mapping, in order, each with a key no other entry has.
          *
          * @since 1.0.0
          */
-        public val entries: List<YamlEntry> = UniqueKeys.firstOf(entries)
+        public val entries: List<YamlEntry> = index.entries
 
         /**
          * One more than the deepest key or value, at most [YamlLimits.HARD_DEPTH].
@@ -279,8 +281,6 @@ public sealed interface YamlNode {
         override val depth: Int = NodeDepth.ofEntries(this.entries)
 
         private val hash: Int = HASH_FACTOR * tag.hashCode() + this.entries.sumOf { entry -> entry.hashCode() }
-
-        private val byKeyHash: Map<Int, List<YamlEntry>> by lazy { this.entries.groupBy { it.key.hashCode() } }
 
         /**
          * [YamlNodeKind.Mapping].
@@ -300,18 +300,16 @@ public sealed interface YamlNode {
 
         /**
          * Returns the value of the entry whose key equals [key], compared as nodes are compared, so `16` finds the key
-         * `0x10`.
+         * `0x10`. The entries are ordered by their keys when the mapping is built, so a lookup takes time logarithmic
+         * in the number of entries, whatever the hash codes of the keys.
          *
          * @param key the key to look for.
          * @return the value of [key], or `null` if the mapping has no such key.
          * @since 1.0.0
          */
-        public operator fun get(key: YamlNode): YamlNode? {
-            val entry = entriesWithKeyHash(key.hashCode()).firstOrNull { candidate -> candidate.key == key }
-            return entry?.value
-        }
+        public operator fun get(key: YamlNode): YamlNode? = entries.getOrNull(index.positionOf(key))?.value
 
-        internal fun entriesWithKeyHash(hash: Int): List<YamlEntry> = byKeyHash[hash].orEmpty()
+        internal fun entryOfKeyRank(rank: Int): YamlEntry = index.entryOfRank(rank)
 
         /**
          * Returns whether [other] is a mapping with an equal tag and equal keys with equal values, in any order.

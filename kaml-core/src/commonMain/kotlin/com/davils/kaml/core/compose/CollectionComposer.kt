@@ -22,6 +22,7 @@ import com.davils.kaml.core.YamlDuplicateKeys
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.model.YamlNodeKind
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.UniqueKeys
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.schema.YamlSchema
@@ -67,22 +68,21 @@ internal class CollectionComposer(
     private fun resolved(tag: YamlTag?, fallback: YamlTag): YamlTag = tag?.takeIf { !it.isNonSpecific } ?: fallback
 
     private fun deduplicated(entries: List<YamlEntry>): List<YamlEntry> {
-        val chosen = HashMap<YamlNode, Int>()
-        entries.forEachIndexed { index, entry -> choose(chosen, index, entry) }
-        return entries.filterIndexed { index, entry ->
-            MergeKeys.isMergeKey(
-                entry.key,
-            ) ||
-                chosen.getValue(entry.key) == index
+        val plain = entries.indices.filterNot { position -> MergeKeys.isMergeKey(entries[position].key) }
+        val firsts = UniqueKeys.firstPositions(plain.map { position -> entries[position].key })
+        val lasts = IntArray(plain.size)
+        firsts.forEachIndexed { rank, first -> lasts[first] = rank }
+        val kept = BooleanArray(entries.size) { position -> MergeKeys.isMergeKey(entries[position].key) }
+        plain.forEachIndexed { rank, position ->
+            val isRepeated = firsts[rank] != rank
+            if (isRepeated) reportDuplicate(entries[position])
+            kept[position] = rank == chosenOf(first = firsts[rank], last = lasts[firsts[rank]])
         }
+        return entries.filterIndexed { position, _ -> kept[position] }
     }
 
-    private fun choose(chosen: MutableMap<YamlNode, Int>, index: Int, entry: YamlEntry) {
-        if (MergeKeys.isMergeKey(entry.key)) return
-        val isRepeated = entry.key in chosen
-        if (isRepeated) reportDuplicate(entry)
-        if (!isRepeated || settings.duplicateKeys == YamlDuplicateKeys.KeepLast) chosen[entry.key] = index
-    }
+    private fun chosenOf(first: Int, last: Int): Int =
+        last.takeIf { settings.duplicateKeys == YamlDuplicateKeys.KeepLast } ?: first
 
     private fun reportDuplicate(entry: YamlEntry) {
         if (settings.duplicateKeys != YamlDuplicateKeys.Refuse) return

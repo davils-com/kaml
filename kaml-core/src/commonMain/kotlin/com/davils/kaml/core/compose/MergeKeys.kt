@@ -17,6 +17,7 @@ package com.davils.kaml.core.compose
 
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kaml.core.node.NodeKeySet
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kore.core.text.TextRange
@@ -53,7 +54,7 @@ internal class MergeKeys(
 
     private inner class Merge(entries: List<YamlEntry>, private val range: TextRange?) {
         private val plain = entries.filterNot { entry -> isMergeKey(entry.key) }
-        private val seen = plain.mapTo(HashSet(), YamlEntry::key)
+        private val seen = NodeKeySet().also { keys -> plain.forEach { entry -> keys.add(entry.key) } }
         private var admitted = 0
 
         val result: MutableList<YamlEntry> = ArrayList(entries.size)

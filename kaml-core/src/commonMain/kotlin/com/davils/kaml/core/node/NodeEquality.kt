@@ -62,16 +62,15 @@ internal class NodeEquality {
         second: YamlNode.Mapping,
     ): Boolean {
         val isSameSize = first.entries.size == second.entries.size
-        return isSameSize && first.entries.all { entry -> hasCounterpart(entry = entry, other = second) }
+        val ranks = first.entries.indices
+        return isSameSize && ranks.all { rank -> isSameRank(first = first, second = second, rank = rank) }
     }
 
-    private suspend fun DeepRecursiveScope<NodePair, Boolean>.hasCounterpart(
-        entry: YamlEntry,
-        other: YamlNode.Mapping,
-    ): Boolean {
-        val candidates = other.entriesWithKeyHash(entry.key.hashCode())
-        return candidates.any { candidate -> isSameEntry(entry = entry, candidate = candidate) }
-    }
+    private suspend fun DeepRecursiveScope<NodePair, Boolean>.isSameRank(
+        first: YamlNode.Mapping,
+        second: YamlNode.Mapping,
+        rank: Int,
+    ): Boolean = isSameEntry(entry = first.entryOfKeyRank(rank), candidate = second.entryOfKeyRank(rank))
 
     private suspend fun DeepRecursiveScope<NodePair, Boolean>.isSameEntry(
         entry: YamlEntry,
@@ -81,6 +80,9 @@ internal class NodeEquality {
         return isSameKey && isSamePair(first = entry.value, second = candidate.value)
     }
 
-    private suspend fun DeepRecursiveScope<NodePair, Boolean>.isSamePair(first: YamlNode, second: YamlNode): Boolean =
-        callRecursive(NodePair(first = first, second = second))
+    private suspend fun DeepRecursiveScope<NodePair, Boolean>.isSamePair(first: YamlNode, second: YamlNode): Boolean {
+        val isLeaf = first is YamlNode.Scalar || second is YamlNode.Scalar
+        if (isLeaf) return first is YamlNode.Scalar && first == second
+        return callRecursive(NodePair(first = first, second = second))
+    }
 }

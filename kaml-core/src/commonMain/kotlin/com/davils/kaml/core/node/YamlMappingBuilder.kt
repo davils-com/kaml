@@ -30,7 +30,7 @@ import com.davils.kore.core.annotation.DavilsDsl
 @DavilsDsl
 public class YamlMappingBuilder internal constructor() {
     private val collected = ArrayList<YamlEntry>()
-    private val keys = HashSet<YamlNode>()
+    private val keys = NodeKeySet()
 
     internal val entries: List<YamlEntry> get() = buildList { addAll(collected) }
 
