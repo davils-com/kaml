@@ -25,6 +25,7 @@ import com.davils.kaml.core.syntax.internal.GreenNode
 import com.davils.kaml.core.syntax.internal.Reparse
 import com.davils.kaml.core.syntax.internal.YamlSyntaxParse
 import com.davils.kaml.core.syntax.internal.YamlSyntaxSupport
+import com.davils.kore.core.Limits
 import com.davils.kore.core.text.LineMap
 import com.davils.kore.core.text.TextEdit
 
@@ -74,9 +75,12 @@ public class YamlSyntaxTree internal constructor(
     /**
      * The lines of [text], which turn offsets into lines and columns.
      *
+     * A text longer than [Limits.MAX_LINE_MAP_LENGTH], which no limits let the parser read, has no lines: its map
+     * indexes the empty text instead of throwing.
+     *
      * @since 1.0.0
      */
-    public val lines: LineMap by lazy { LineMap.of(text) }
+    public val lines: LineMap by lazy { LineMap.of(text.takeIf { it.length <= Limits.MAX_LINE_MAP_LENGTH }.orEmpty()) }
 
     /**
      * The typed view of each document of the stream, in the order of the text.
@@ -84,8 +88,8 @@ public class YamlSyntaxTree internal constructor(
      * @since 1.0.0
      */
     public val documents: List<YamlDocumentSyntax> by lazy {
-        val index = CommentIndex(root, lines, text)
         val nodes = root.childNodes.filter { it.kind == YamlSyntaxKind.DOCUMENT }
+        val index by lazy { CommentIndex(root, lines, text) }
         buildList { nodes.forEach { node -> add(YamlDocumentSyntax(node, index)) } }
     }
 

@@ -16,6 +16,7 @@
 package com.davils.kaml.core.limit
 
 import com.davils.kaml.core.YamlViolationCodes
+import com.davils.kore.core.Limits
 import com.davils.kore.core.validation.report.ValidationException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -72,6 +73,11 @@ class YamlLimitsTest : FunSpec({
             YamlLimits.Untrusted.maximumNumberLength shouldBe YamlLimitsBuilder.DEFAULT_NUMBER_LENGTH
             YamlLimits.Untrusted.maximumDiagnostics shouldBe YamlLimitsBuilder.DEFAULT_DIAGNOSTICS
             YamlLimits.Untrusted.maximumOutputLength shouldBe YamlLimitsBuilder.DEFAULT_OUTPUT_LENGTH
+        }
+
+        test("admit no source longer than a line map of Kore indexes") {
+            YamlLimits.HARD_INPUT_LENGTH shouldBe Limits.MAX_LINE_MAP_LENGTH
+            YamlLimits.Relaxed.maximumInputLength shouldBe Limits.MAX_LINE_MAP_LENGTH
         }
 
         test("relax the depth to its hard ceiling") {

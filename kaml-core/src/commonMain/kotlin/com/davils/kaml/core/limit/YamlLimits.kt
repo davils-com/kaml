@@ -382,12 +382,13 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
      */
     public companion object {
         /**
-         * The ceiling of [maximumInputLength], [maximumScalarLength] and [maximumOutputLength]: 1 Gi (1,073,741,824)
-         * UTF-16 code units.
+         * The ceiling of [maximumInputLength], [maximumScalarLength] and [maximumOutputLength]: 64 Mi (67,108,864)
+         * UTF-16 code units, the longest text the line map of Kore, [Limits.MAX_LINE_MAP_LENGTH], indexes, so every
+         * source a limit admits can be given lines and columns.
          *
          * @since 1.0.0
          */
-        public const val HARD_INPUT_LENGTH: Int = 1 shl 30
+        public const val HARD_INPUT_LENGTH: Int = Limits.MAX_LINE_MAP_LENGTH
 
         /**
          * The ceiling of [maximumDepth] and the depth no [com.davils.kaml.core.node.YamlNode] may exceed, however it is
@@ -503,7 +504,6 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
          */
         public const val HARD_PATTERN_INPUT_LENGTH: Int = 16 * 1024 * 1024
 
-        private const val RELAXED_INPUT_LENGTH: Int = 512 * 1024 * 1024
         private const val RELAXED_NODES: Long = 50_000_000L
         private const val RELAXED_ALIAS_EXPANSION: Long = 10_000_000L
         private const val RELAXED_ANCHORS: Int = 1_000_000
@@ -527,14 +527,14 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
         public val Untrusted: YamlLimits = YamlLimitsBuilder().build()
 
         /**
-         * Raised limits for large documents from trusted sources: 512 Mi code units of input, of a scalar and of
-         * output, [HARD_DEPTH] levels, 50,000,000 nodes, 10,000,000 nodes of alias expansion, 1,000,000 anchors,
+         * Raised limits for large documents from trusted sources: [HARD_INPUT_LENGTH] code units of input, of a scalar
+         * and of output, [HARD_DEPTH] levels, 50,000,000 nodes, 10,000,000 nodes of alias expansion, 1,000,000 anchors,
          * 50,000,000 entries of a collection, 1,000,000 documents, [HARD_NUMBER_LENGTH] characters of a number and
          * 10,000 diagnostics; for kaml-document [HARD_QUERY_LENGTH] characters and [HARD_QUERY_NESTING] levels of a
          * query, 1,000,000,000 steps and 50,000,000 results of a query, 65,536 characters and 100,000 instructions of
          * an I-Regexp, 1,000,000 operations of a patch and 1 Mi characters of input for a pattern of a redaction.
          *
-         * Every limit stays finite and below its hard ceiling, so even a trusted source cannot exhaust the memory
+         * Every limit stays finite and at most its hard ceiling, so even a trusted source cannot exhaust the memory
          * without bound.
          *
          * @since 1.0.0
@@ -543,17 +543,17 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
 
         private fun relaxed(): YamlLimits {
             val builder = YamlLimitsBuilder()
-            builder.maximumInputLength = RELAXED_INPUT_LENGTH
+            builder.maximumInputLength = HARD_INPUT_LENGTH
             builder.maximumDepth = HARD_DEPTH
             builder.maximumNodes = RELAXED_NODES
             builder.maximumAliasExpansion = RELAXED_ALIAS_EXPANSION
             builder.maximumAnchors = RELAXED_ANCHORS
-            builder.maximumScalarLength = RELAXED_INPUT_LENGTH
+            builder.maximumScalarLength = HARD_INPUT_LENGTH
             builder.maximumCollectionSize = RELAXED_COLLECTION_SIZE
             builder.maximumDocuments = RELAXED_DOCUMENTS
             builder.maximumNumberLength = HARD_NUMBER_LENGTH
             builder.maximumDiagnostics = RELAXED_DIAGNOSTICS
-            builder.maximumOutputLength = RELAXED_INPUT_LENGTH
+            builder.maximumOutputLength = HARD_INPUT_LENGTH
             builder.maximumQueryLength = HARD_QUERY_LENGTH
             builder.maximumQueryNesting = HARD_QUERY_NESTING
             builder.maximumQuerySteps = RELAXED_QUERY_STEPS
