@@ -30,10 +30,10 @@ internal class CommentIndex(val root: YamlSyntaxNode, val lines: LineMap, privat
         val collected = ArrayList<String>()
         var current = line - 1
         while (current >= 0 && isCommentLine(current)) {
-            collected.add(0, textOf(comments.getValue(current)))
+            collected.add(textOf(comments.getValue(current)))
             current--
         }
-        return collected
+        return buildList(collected.size) { addAll(collected.asReversed()) }
     }
 
     private fun commentsOf(root: YamlSyntaxNode): Map<Int, YamlSyntaxToken> {
