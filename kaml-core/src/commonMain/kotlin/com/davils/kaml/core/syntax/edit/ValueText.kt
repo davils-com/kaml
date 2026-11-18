@@ -56,7 +56,8 @@ internal class ValueText(private val yaml: Yaml, private val lineBreak: String) 
     fun key(name: String): String? {
         EditInput.requireWritable(name)
         val isPlainWritten = lines(yamlScalar(name)) == listOf(name)
-        val isPlain = isPlainWritten && name.none { it in FLOW_INDICATORS } && QuotedText.isShownAsIs(name)
+        val isFlowSafe = name.none { it in FLOW_INDICATORS } && FLOW_KEY_LEADS.none { name.startsWith(it) }
+        val isPlain = isPlainWritten && isFlowSafe && QuotedText.isShownAsIs(name)
         val written = name.takeIf { isPlain } ?: QuotedText.of(name)
         return written.takeIf { it.length <= MAXIMUM_KEY_LENGTH }
     }
@@ -94,5 +95,6 @@ internal class ValueText(private val yaml: Yaml, private val lineBreak: String) 
         const val MAXIMUM_KEY_LENGTH: Int = 1024
         const val DOCUMENT_START: String = "---"
         const val FLOW_INDICATORS: String = ",[]{}"
+        const val FLOW_KEY_LEADS: String = "?:"
     }
 }

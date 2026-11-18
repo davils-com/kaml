@@ -20,6 +20,7 @@ internal object ScalarTexts {
     private const val INDICATORS: String = "-?:,[]{}#&*!|>'\"%@`"
     private const val FLOW_INDICATORS: String = ",[]{}"
     private const val LEADS: String = "-?:"
+    private const val FLOW_KEY_LEADS: String = "?:"
     private const val BLANKS: String = " \t"
     private const val LINE_FEED: Char = '\n'
     private const val HEX_RADIX: Int = 16
@@ -57,7 +58,7 @@ internal object ScalarTexts {
     fun isPlainSafe(value: String, context: ScalarContext): Boolean {
         val isTrimmed = value.isNotEmpty() && value.first() !in BLANKS && value.last() !in BLANKS
         val isShaped = isTrimmed && isVisibleLine(value)
-        val isFlowFit = !context.isInFlow || value.none { it in FLOW_INDICATORS }
+        val isFlowFit = !context.isInFlow || isFlowSafe(value)
         return isShaped && isFlowFit && hasPlainStart(value) && hasPlainBody(value)
     }
 
@@ -114,6 +115,11 @@ internal object ScalarTexts {
     private fun chompingOf(trailing: Int): String {
         if (trailing == 0) return STRIP
         return KEEP.takeIf { trailing > 1 }.orEmpty()
+    }
+
+    private fun isFlowSafe(value: String): Boolean {
+        val isKeyLead = FLOW_KEY_LEADS.any { lead -> value.startsWith(lead) }
+        return !isKeyLead && value.none { it in FLOW_INDICATORS }
     }
 
     private fun isVisibleLine(value: String): Boolean =

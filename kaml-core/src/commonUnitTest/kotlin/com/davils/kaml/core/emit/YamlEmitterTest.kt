@@ -176,6 +176,23 @@ class YamlEmitterTest : FunSpec({
             yaml.root(yaml.emit(node)) shouldBe node
         }
 
+        test("quotes a flow scalar that starts with a question mark or a colon, which reads as a key elsewhere") {
+            val leads = listOf(yamlScalar("?x"), yamlScalar(":y"), yamlScalar("b"))
+            val items = yamlSequence(leads, style = YamlCollectionStyle.Flow)
+            val entries = listOf(
+                YamlEntry(key = yamlScalar("admin"), value = yamlScalar(false)),
+                YamlEntry(key = yamlScalar("?admin"), value = yamlScalar(true)),
+            )
+            val keys = yamlMapping(entries, style = YamlCollectionStyle.Flow)
+            val legacy = yaml { emitter { compatibility = YamlVersion.V1_1 } }
+
+            yaml.emit(items) shouldBe text("""["?x", ":y", b]""", "")
+            legacy.emit(items) shouldBe text("""["?x", ":y", b]""", "")
+            yaml.emit(keys) shouldBe text("""{admin: false, "?admin": true}""", "")
+            yaml.root(yaml.emit(keys)) shouldBe keys
+            yaml.emit(yamlSequence { add("?x") }) shouldBe text("- ?x", "")
+        }
+
         test("prefers single quotes when asked to") {
             val single = yaml { emitter { quoteStyle = YamlQuoteStyle.Single } }
 

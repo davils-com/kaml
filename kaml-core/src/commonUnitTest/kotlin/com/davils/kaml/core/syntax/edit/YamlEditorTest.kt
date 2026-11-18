@@ -58,6 +58,7 @@ private const val CASES: Int = 100
 private const val ENTRY_LINE: String = "a: 1\n"
 private const val TWO_LINES: String = "x\ny"
 private const val BLOCK_TWO_LINES: String = "a: |-"
+private const val FLOW_ENTRY: String = "{a: 1}"
 
 class YamlEditorTest : FunSpec({
     val root = YamlPath.ROOT
@@ -299,7 +300,7 @@ class YamlEditorTest : FunSpec({
             refusal(
                 lines("- a: 1", NESTED_B),
             ) { remove(root.index(0).key("a")) } shouldBe YamlEditRefusal.Unsupported
-            refusal("{a: 1}") { comment(root.key("a"), listOf("c")) } shouldBe YamlEditRefusal.Unsupported
+            refusal(FLOW_ENTRY) { comment(root.key("a"), listOf("c")) } shouldBe YamlEditRefusal.Unsupported
             refusal("? a") { set(root.key("a"), yamlScalar(1)) } shouldBe YamlEditRefusal.Unsupported
         }
 
@@ -421,7 +422,9 @@ class YamlEditorTest : FunSpec({
         test("are quoted when they hold a document marker or an indicator") {
             edited("a: 1") { rename(root.key("a"), "---") } shouldBe "\"---\": 1"
             edited("a: 1") { rename(root.key("a"), "a: b") } shouldBe "\"a: b\": 1"
-            edited("{a: 1}") { rename(root.key("a"), "a,b") } shouldBe "{\"a,b\": 1}"
+            edited(FLOW_ENTRY) { rename(root.key("a"), "a,b") } shouldBe "{\"a,b\": 1}"
+            edited(FLOW_ENTRY) { rename(root.key("a"), "?a") } shouldBe "{\"?a\": 1}"
+            edited(FLOW_ENTRY) { set(root.key(":b"), yamlScalar("?c")) } shouldBe """{a: 1, ":b": "?c"}"""
         }
     }
 
