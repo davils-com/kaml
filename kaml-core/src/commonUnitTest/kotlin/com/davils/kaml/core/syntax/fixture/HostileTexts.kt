@@ -1,0 +1,73 @@
+/*
+ * Copyright 2026 Davils
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.davils.kaml.core.syntax.fixture
+
+import com.davils.kore.testing.HostileFragments
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.element
+import io.kotest.property.arbitrary.list
+import io.kotest.property.arbitrary.map
+
+private const val MOST_PIECES: Int = 8
+
+private val yamlPieces: List<String> = listOf(
+    "\n---\n",
+    "\n...\n",
+    "# ",
+    " #",
+    ": ",
+    ":",
+    "- ",
+    "? ",
+    "&a",
+    "*a",
+    "!t",
+    "!!str ",
+    "%YAML 1.2",
+    "%TAG ! x",
+    " ",
+    "\t",
+    "\n",
+    "\r",
+    "\r\n",
+    "\u0085",
+    "\u2028",
+    "\u2029",
+    "'",
+    "\"",
+    "\\",
+    "|",
+    ">",
+    "[",
+    "]",
+    "{",
+    "}",
+    ",",
+    "@",
+    "`",
+    "<<",
+    "~",
+    "null",
+    "true",
+    "0x1F",
+    ".inf",
+    "a",
+    "😀",
+)
+
+internal val hostileTexts: Arb<String> =
+    Arb.list(Arb.element(HostileFragments.all + yamlPieces), 0..MOST_PIECES).map { it.joinToString("") }

@@ -28,4 +28,5 @@ module com.davils.kaml.core {
     exports com.davils.kaml.core.schema;
     exports com.davils.kaml.core.source;
     exports com.davils.kaml.core.syntax;
+    exports com.davils.kaml.core.syntax.ast;
 }

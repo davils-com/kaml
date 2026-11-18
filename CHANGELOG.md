@@ -29,6 +29,7 @@ way.
 - **The `Yaml` facade** that reads YAML 1.2 and 1.1 from strictly decoded UTF-8, UTF-16 or UTF-32 through a
   lossless, stack-safe parser and a composer that charges every budget while it works, so a billion laughs document
   fails at its budget.
+- **The lossless syntax tree** with incremental reparsing and a typed view, which no limit can be bypassed through.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

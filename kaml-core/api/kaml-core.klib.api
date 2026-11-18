@@ -454,6 +454,69 @@ sealed interface com.davils.kaml.core.node/YamlNode { // com.davils.kaml.core.no
     }
 }
 
+sealed interface com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils.kaml.core.syntax.ast/YamlValueSyntax|null[0]
+    abstract val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.node|{}node[0]
+        abstract fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.node.<get-node>|<get-node>(){}[0]
+    open val anchor // com.davils.kaml.core.syntax.ast/YamlValueSyntax.anchor|{}anchor[0]
+        open fun <get-anchor>(): kotlin/String? // com.davils.kaml.core.syntax.ast/YamlValueSyntax.anchor.<get-anchor>|<get-anchor>(){}[0]
+    open val tag // com.davils.kaml.core.syntax.ast/YamlValueSyntax.tag|{}tag[0]
+        open fun <get-tag>(): kotlin/String? // com.davils.kaml.core.syntax.ast/YamlValueSyntax.tag.<get-tag>|<get-tag>(){}[0]
+
+    final class Alias : com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Alias|null[0]
+        final val name // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Alias.name|{}name[0]
+            final fun <get-name>(): kotlin/String // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Alias.name.<get-name>|<get-name>(){}[0]
+        final val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Alias.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Alias.node.<get-node>|<get-node>(){}[0]
+    }
+
+    final class Empty : com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Empty|null[0]
+        final val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Empty.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Empty.node.<get-node>|<get-node>(){}[0]
+    }
+
+    final class Mapping : com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping|null[0]
+        final val entries // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.entries|{}entries[0]
+            final fun <get-entries>(): kotlin.collections/List<com.davils.kaml.core.syntax.ast/YamlEntrySyntax> // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.entries.<get-entries>|<get-entries>(){}[0]
+        final val isFlow // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.isFlow|{}isFlow[0]
+            final fun <get-isFlow>(): kotlin/Boolean // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.isFlow.<get-isFlow>|<get-isFlow>(){}[0]
+        final val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.node.<get-node>|<get-node>(){}[0]
+
+        final fun entry(kotlin/String): com.davils.kaml.core.syntax.ast/YamlEntrySyntax? // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Mapping.entry|entry(kotlin.String){}[0]
+    }
+
+    final class Scalar : com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar|null[0]
+        final val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar.node.<get-node>|<get-node>(){}[0]
+        final val style // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar.style|{}style[0]
+            final fun <get-style>(): com.davils.kaml.core.model/YamlScalarStyle // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar.style.<get-style>|<get-style>(){}[0]
+        final val value // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar.value|{}value[0]
+            final fun <get-value>(): kotlin/String // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Scalar.value.<get-value>|<get-value>(){}[0]
+    }
+
+    final class Sequence : com.davils.kaml.core.syntax.ast/YamlValueSyntax { // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence|null[0]
+        final val isFlow // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.isFlow|{}isFlow[0]
+            final fun <get-isFlow>(): kotlin/Boolean // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.isFlow.<get-isFlow>|<get-isFlow>(){}[0]
+        final val items // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.items|{}items[0]
+            final fun <get-items>(): kotlin.collections/List<com.davils.kaml.core.syntax.ast/YamlValueSyntax> // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.items.<get-items>|<get-items>(){}[0]
+        final val node // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.node|{}node[0]
+            final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlValueSyntax.Sequence.node.<get-node>|<get-node>(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.core.syntax/YamlSyntaxElement { // com.davils.kaml.core.syntax/YamlSyntaxElement|null[0]
+    abstract val kind // com.davils.kaml.core.syntax/YamlSyntaxElement.kind|{}kind[0]
+        abstract fun <get-kind>(): com.davils.kaml.core.syntax/YamlSyntaxKind // com.davils.kaml.core.syntax/YamlSyntaxElement.kind.<get-kind>|<get-kind>(){}[0]
+    abstract val parent // com.davils.kaml.core.syntax/YamlSyntaxElement.parent|{}parent[0]
+        abstract fun <get-parent>(): com.davils.kaml.core.syntax/YamlSyntaxNode? // com.davils.kaml.core.syntax/YamlSyntaxElement.parent.<get-parent>|<get-parent>(){}[0]
+    abstract val range // com.davils.kaml.core.syntax/YamlSyntaxElement.range|{}range[0]
+        abstract fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.syntax/YamlSyntaxElement.range.<get-range>|<get-range>(){}[0]
+    abstract val text // com.davils.kaml.core.syntax/YamlSyntaxElement.text|{}text[0]
+        abstract fun <get-text>(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxElement.text.<get-text>|<get-text>(){}[0]
+    open val ancestors // com.davils.kaml.core.syntax/YamlSyntaxElement.ancestors|{}ancestors[0]
+        open fun <get-ancestors>(): kotlin.sequences/Sequence<com.davils.kaml.core.syntax/YamlSyntaxNode> // com.davils.kaml.core.syntax/YamlSyntaxElement.ancestors.<get-ancestors>|<get-ancestors>(){}[0]
+}
+
 sealed interface com.davils.kaml.core/YamlParseResult { // com.davils.kaml.core/YamlParseResult|null[0]
     abstract val diagnostics // com.davils.kaml.core/YamlParseResult.diagnostics|{}diagnostics[0]
         abstract fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.core/YamlParseResult.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
@@ -880,6 +943,101 @@ final class com.davils.kaml.core.source/YamlSource { // com.davils.kaml.core.sou
     final object Companion { // com.davils.kaml.core.source/YamlSource.Companion|null[0]
         final fun of(kotlin/ByteArray, kotlin/String? = ...): com.davils.kaml.core.source/YamlSource // com.davils.kaml.core.source/YamlSource.Companion.of|of(kotlin.ByteArray;kotlin.String?){}[0]
         final fun of(kotlin/String, kotlin/String? = ...): com.davils.kaml.core.source/YamlSource // com.davils.kaml.core.source/YamlSource.Companion.of|of(kotlin.String;kotlin.String?){}[0]
+    }
+}
+
+final class com.davils.kaml.core.syntax.ast/YamlDocumentSyntax { // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax|null[0]
+    final val directives // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.directives|{}directives[0]
+        final fun <get-directives>(): kotlin.collections/List<com.davils.kaml.core.syntax/YamlSyntaxNode> // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.directives.<get-directives>|<get-directives>(){}[0]
+    final val hasExplicitEnd // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.hasExplicitEnd|{}hasExplicitEnd[0]
+        final fun <get-hasExplicitEnd>(): kotlin/Boolean // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.hasExplicitEnd.<get-hasExplicitEnd>|<get-hasExplicitEnd>(){}[0]
+    final val hasExplicitStart // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.hasExplicitStart|{}hasExplicitStart[0]
+        final fun <get-hasExplicitStart>(): kotlin/Boolean // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.hasExplicitStart.<get-hasExplicitStart>|<get-hasExplicitStart>(){}[0]
+    final val node // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.node|{}node[0]
+        final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.node.<get-node>|<get-node>(){}[0]
+    final val root // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.root|{}root[0]
+        final fun <get-root>(): com.davils.kaml.core.syntax.ast/YamlValueSyntax // com.davils.kaml.core.syntax.ast/YamlDocumentSyntax.root.<get-root>|<get-root>(){}[0]
+}
+
+final class com.davils.kaml.core.syntax.ast/YamlEntrySyntax { // com.davils.kaml.core.syntax.ast/YamlEntrySyntax|null[0]
+    final val column // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.column|{}column[0]
+        final fun <get-column>(): kotlin/Int // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.column.<get-column>|<get-column>(){}[0]
+    final val key // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.key|{}key[0]
+        final fun <get-key>(): com.davils.kaml.core.syntax.ast/YamlValueSyntax // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.key.<get-key>|<get-key>(){}[0]
+    final val keyText // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.keyText|{}keyText[0]
+        final fun <get-keyText>(): kotlin/String? // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.keyText.<get-keyText>|<get-keyText>(){}[0]
+    final val leadingComments // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.leadingComments|{}leadingComments[0]
+        final fun <get-leadingComments>(): kotlin.collections/List<kotlin/String> // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.leadingComments.<get-leadingComments>|<get-leadingComments>(){}[0]
+    final val node // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.node|{}node[0]
+        final fun <get-node>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.node.<get-node>|<get-node>(){}[0]
+    final val trailingComment // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.trailingComment|{}trailingComment[0]
+        final fun <get-trailingComment>(): kotlin/String? // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.trailingComment.<get-trailingComment>|<get-trailingComment>(){}[0]
+    final val value // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.value|{}value[0]
+        final fun <get-value>(): com.davils.kaml.core.syntax.ast/YamlValueSyntax? // com.davils.kaml.core.syntax.ast/YamlEntrySyntax.value.<get-value>|<get-value>(){}[0]
+}
+
+final class com.davils.kaml.core.syntax/YamlSyntaxNode : com.davils.kaml.core.syntax/YamlSyntaxElement { // com.davils.kaml.core.syntax/YamlSyntaxNode|null[0]
+    final val childNodes // com.davils.kaml.core.syntax/YamlSyntaxNode.childNodes|{}childNodes[0]
+        final fun <get-childNodes>(): kotlin.collections/List<com.davils.kaml.core.syntax/YamlSyntaxNode> // com.davils.kaml.core.syntax/YamlSyntaxNode.childNodes.<get-childNodes>|<get-childNodes>(){}[0]
+    final val children // com.davils.kaml.core.syntax/YamlSyntaxNode.children|{}children[0]
+        final fun <get-children>(): kotlin.collections/List<com.davils.kaml.core.syntax/YamlSyntaxElement> // com.davils.kaml.core.syntax/YamlSyntaxNode.children.<get-children>|<get-children>(){}[0]
+    final val descendants // com.davils.kaml.core.syntax/YamlSyntaxNode.descendants|{}descendants[0]
+        final fun <get-descendants>(): kotlin.sequences/Sequence<com.davils.kaml.core.syntax/YamlSyntaxNode> // com.davils.kaml.core.syntax/YamlSyntaxNode.descendants.<get-descendants>|<get-descendants>(){}[0]
+    final val kind // com.davils.kaml.core.syntax/YamlSyntaxNode.kind|{}kind[0]
+        final fun <get-kind>(): com.davils.kaml.core.syntax/YamlSyntaxKind // com.davils.kaml.core.syntax/YamlSyntaxNode.kind.<get-kind>|<get-kind>(){}[0]
+    final val parent // com.davils.kaml.core.syntax/YamlSyntaxNode.parent|{}parent[0]
+        final fun <get-parent>(): com.davils.kaml.core.syntax/YamlSyntaxNode? // com.davils.kaml.core.syntax/YamlSyntaxNode.parent.<get-parent>|<get-parent>(){}[0]
+    final val range // com.davils.kaml.core.syntax/YamlSyntaxNode.range|{}range[0]
+        final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.syntax/YamlSyntaxNode.range.<get-range>|<get-range>(){}[0]
+    final val text // com.davils.kaml.core.syntax/YamlSyntaxNode.text|{}text[0]
+        final fun <get-text>(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxNode.text.<get-text>|<get-text>(){}[0]
+    final val tokens // com.davils.kaml.core.syntax/YamlSyntaxNode.tokens|{}tokens[0]
+        final fun <get-tokens>(): kotlin.sequences/Sequence<com.davils.kaml.core.syntax/YamlSyntaxToken> // com.davils.kaml.core.syntax/YamlSyntaxNode.tokens.<get-tokens>|<get-tokens>(){}[0]
+
+    final fun child(com.davils.kaml.core.syntax/YamlSyntaxKind): com.davils.kaml.core.syntax/YamlSyntaxNode? // com.davils.kaml.core.syntax/YamlSyntaxNode.child|child(com.davils.kaml.core.syntax.YamlSyntaxKind){}[0]
+    final fun coveringNode(com.davils.kore.core.text/TextRange): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax/YamlSyntaxNode.coveringNode|coveringNode(com.davils.kore.core.text.TextRange){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax/YamlSyntaxNode.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax/YamlSyntaxNode.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxNode.toString|toString(){}[0]
+    final fun token(com.davils.kaml.core.syntax/YamlSyntaxKind): com.davils.kaml.core.syntax/YamlSyntaxToken? // com.davils.kaml.core.syntax/YamlSyntaxNode.token|token(com.davils.kaml.core.syntax.YamlSyntaxKind){}[0]
+    final fun tokenAt(kotlin/Int): com.davils.kaml.core.syntax/YamlSyntaxToken? // com.davils.kaml.core.syntax/YamlSyntaxNode.tokenAt|tokenAt(kotlin.Int){}[0]
+}
+
+final class com.davils.kaml.core.syntax/YamlSyntaxToken : com.davils.kaml.core.syntax/YamlSyntaxElement { // com.davils.kaml.core.syntax/YamlSyntaxToken|null[0]
+    final val kind // com.davils.kaml.core.syntax/YamlSyntaxToken.kind|{}kind[0]
+        final fun <get-kind>(): com.davils.kaml.core.syntax/YamlSyntaxKind // com.davils.kaml.core.syntax/YamlSyntaxToken.kind.<get-kind>|<get-kind>(){}[0]
+    final val parent // com.davils.kaml.core.syntax/YamlSyntaxToken.parent|{}parent[0]
+        final fun <get-parent>(): com.davils.kaml.core.syntax/YamlSyntaxNode? // com.davils.kaml.core.syntax/YamlSyntaxToken.parent.<get-parent>|<get-parent>(){}[0]
+    final val range // com.davils.kaml.core.syntax/YamlSyntaxToken.range|{}range[0]
+        final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.syntax/YamlSyntaxToken.range.<get-range>|<get-range>(){}[0]
+    final val text // com.davils.kaml.core.syntax/YamlSyntaxToken.text|{}text[0]
+        final fun <get-text>(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxToken.text.<get-text>|<get-text>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax/YamlSyntaxToken.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax/YamlSyntaxToken.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxToken.toString|toString(){}[0]
+}
+
+final class com.davils.kaml.core.syntax/YamlSyntaxTree { // com.davils.kaml.core.syntax/YamlSyntaxTree|null[0]
+    final val diagnostics // com.davils.kaml.core.syntax/YamlSyntaxTree.diagnostics|{}diagnostics[0]
+        final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.core.syntax/YamlSyntaxTree.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+    final val documents // com.davils.kaml.core.syntax/YamlSyntaxTree.documents|{}documents[0]
+        final fun <get-documents>(): kotlin.collections/List<com.davils.kaml.core.syntax.ast/YamlDocumentSyntax> // com.davils.kaml.core.syntax/YamlSyntaxTree.documents.<get-documents>|<get-documents>(){}[0]
+    final val lines // com.davils.kaml.core.syntax/YamlSyntaxTree.lines|{}lines[0]
+        final fun <get-lines>(): com.davils.kore.core.text/LineMap // com.davils.kaml.core.syntax/YamlSyntaxTree.lines.<get-lines>|<get-lines>(){}[0]
+    final val root // com.davils.kaml.core.syntax/YamlSyntaxTree.root|{}root[0]
+        final fun <get-root>(): com.davils.kaml.core.syntax/YamlSyntaxNode // com.davils.kaml.core.syntax/YamlSyntaxTree.root.<get-root>|<get-root>(){}[0]
+    final val text // com.davils.kaml.core.syntax/YamlSyntaxTree.text|{}text[0]
+        final fun <get-text>(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxTree.text.<get-text>|<get-text>(){}[0]
+    final val yaml // com.davils.kaml.core.syntax/YamlSyntaxTree.yaml|{}yaml[0]
+        final fun <get-yaml>(): com.davils.kaml.core/Yaml // com.davils.kaml.core.syntax/YamlSyntaxTree.yaml.<get-yaml>|<get-yaml>(){}[0]
+
+    final fun compose(): com.davils.kaml.core/YamlParseResult // com.davils.kaml.core.syntax/YamlSyntaxTree.compose|compose(){}[0]
+    final fun edit(kotlin.collections/List<com.davils.kore.core.text/TextEdit>): com.davils.kaml.core.syntax/YamlSyntaxTree // com.davils.kaml.core.syntax/YamlSyntaxTree.edit|edit(kotlin.collections.List<com.davils.kore.core.text.TextEdit>){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.syntax/YamlSyntaxTree.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.syntax/YamlSyntaxTree.Companion|null[0]
+        final fun parse(kotlin/String, com.davils.kaml.core/Yaml = ...): com.davils.kaml.core.syntax/YamlSyntaxTree // com.davils.kaml.core.syntax/YamlSyntaxTree.Companion.parse|parse(kotlin.String;com.davils.kaml.core.Yaml){}[0]
     }
 }
 
