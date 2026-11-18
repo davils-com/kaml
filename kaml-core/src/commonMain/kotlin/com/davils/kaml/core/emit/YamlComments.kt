@@ -28,12 +28,16 @@ import com.davils.kaml.core.node.YamlNode
  * comments of other nodes, such as items of a sequence, values and keys of a flow mapping, are not written.
  *
  * Instances are built with [yamlComments] or [YamlCommentsBuilder], which split every comment into lines and refuse a
- * line that could break the YAML or hide text from a reader, so every line held here is safe to write. They are
- * immutable and safe to share between threads; the lists they return cannot be changed, not even through a cast.
+ * line that could break the YAML or hide text from a reader, so every line held here is safe to write. The
+ * constructor checks every line again and copies the lines, so not even a Java caller, which can reach it, holds an
+ * instance with a line that could break the YAML. They are immutable and safe to share between threads; the lists
+ * they return cannot be changed, not even through a cast.
  *
  * @since 1.0.0
  */
-public class YamlComments internal constructor(private val byNode: Map<NodeIdentity, List<String>>) {
+public class YamlComments internal constructor(byNode: Map<NodeIdentity, List<String>>) {
+    private val byNode: Map<NodeIdentity, List<String>> = byNode.mapValues { (_, lines) -> CommentLines.checked(lines) }
+
     /**
      * Whether no node has a comment.
      *

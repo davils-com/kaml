@@ -27,6 +27,14 @@ internal object CommentLines {
         return lines
     }
 
+    fun checked(lines: List<String>): List<String> {
+        lines.forEach { line ->
+            require(LINE_FEED !in line) { "A comment line cannot contain a line break: it would end the comment" }
+            requireShowable(line)
+        }
+        return buildList(lines.size) { addAll(lines) }
+    }
+
     private fun requireShowable(line: String) {
         val refused = UnsafeCharacters.firstUnsafeIndex(line)
         require(refused == UnsafeCharacters.NONE) {

@@ -18,12 +18,14 @@ package com.davils.kaml.core.syntax.format
 
 import com.davils.kore.core.validation.Validatable
 import com.davils.kore.core.validation.ValidationScope
+import com.davils.kore.core.validation.validateOrThrow
 import com.davils.kore.core.validation.violation.ViolationCode
 
 /**
  * How a [YamlFormatter] lays out documents; built and validated with [yamlFormatOptions].
  *
- * Options are immutable and safe to share between threads.
+ * Options are immutable and safe to share between threads. They are validated when they are created, also by a Java
+ * caller that reaches the constructor, so no instance holds an indent or a number of blank lines out of range.
  *
  * @since 1.0.0
  */
@@ -60,6 +62,10 @@ public class YamlFormatOptions internal constructor(builder: YamlFormatOptionsBu
     private val values: List<Any>
         get() = listOf(indent, isSequenceIndented, maximumEmptyLines, hasFinalLineBreak)
 
+    init {
+        validateOrThrow(SUBJECT)
+    }
+
     override fun ValidationScope.validate() {
         if (indent !in 1..MAXIMUM_INDENT) {
             fail(
@@ -91,6 +97,7 @@ public class YamlFormatOptions internal constructor(builder: YamlFormatOptionsBu
      */
     public companion object {
         private const val MAXIMUM_INDENT: Int = 9
+        private const val SUBJECT: String = "yaml formatter"
         private val INVALID: ViolationCode = ViolationCode("kaml.format.invalid-option")
 
         /**
