@@ -32,6 +32,7 @@ way.
 - **The lossless syntax tree** with incremental reparsing and a typed view, which no limit can be bypassed through.
 - **The editor**, which changes values, keys and comments of a document as text edits that keep the rest of it and
   cannot inject YAML.
+- **The formatter**, which refuses every change that would change the meaning of a document.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

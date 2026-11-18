@@ -162,6 +162,17 @@ final enum class com.davils.kaml.core.syntax.edit/YamlEditRefusal : kotlin/Enum<
     final fun values(): kotlin/Array<com.davils.kaml.core.syntax.edit/YamlEditRefusal> // com.davils.kaml.core.syntax.edit/YamlEditRefusal.values|values#static(){}[0]
 }
 
+final enum class com.davils.kaml.core.syntax.format/YamlFormatRefusal : kotlin/Enum<com.davils.kaml.core.syntax.format/YamlFormatRefusal> { // com.davils.kaml.core.syntax.format/YamlFormatRefusal|null[0]
+    enum entry MeaningChanged // com.davils.kaml.core.syntax.format/YamlFormatRefusal.MeaningChanged|null[0]
+    enum entry SyntaxErrors // com.davils.kaml.core.syntax.format/YamlFormatRefusal.SyntaxErrors|null[0]
+
+    final val entries // com.davils.kaml.core.syntax.format/YamlFormatRefusal.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.core.syntax.format/YamlFormatRefusal> // com.davils.kaml.core.syntax.format/YamlFormatRefusal.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.core.syntax.format/YamlFormatRefusal // com.davils.kaml.core.syntax.format/YamlFormatRefusal.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.core.syntax.format/YamlFormatRefusal> // com.davils.kaml.core.syntax.format/YamlFormatRefusal.values|values#static(){}[0]
+}
+
 final enum class com.davils.kaml.core.syntax/YamlSyntaxKind : kotlin/Enum<com.davils.kaml.core.syntax/YamlSyntaxKind> { // com.davils.kaml.core.syntax/YamlSyntaxKind|null[0]
     enum entry ALIAS // com.davils.kaml.core.syntax/YamlSyntaxKind.ALIAS|null[0]
     enum entry ALIAS_NODE // com.davils.kaml.core.syntax/YamlSyntaxKind.ALIAS_NODE|null[0]
@@ -543,6 +554,32 @@ sealed interface com.davils.kaml.core.syntax.edit/YamlEditResult { // com.davils
         final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // com.davils.kaml.core.syntax.edit/YamlEditResult.Refused.toString|toString(){}[0]
+    }
+}
+
+sealed interface com.davils.kaml.core.syntax.format/YamlFormatResult { // com.davils.kaml.core.syntax.format/YamlFormatResult|null[0]
+    final class Formatted : com.davils.kaml.core.syntax.format/YamlFormatResult { // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted|null[0]
+        constructor <init>(kotlin.collections/List<com.davils.kore.core.text/TextEdit>, com.davils.kaml.core.syntax/YamlSyntaxTree) // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.<init>|<init>(kotlin.collections.List<com.davils.kore.core.text.TextEdit>;com.davils.kaml.core.syntax.YamlSyntaxTree){}[0]
+
+        final val edits // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.edits|{}edits[0]
+            final fun <get-edits>(): kotlin.collections/List<com.davils.kore.core.text/TextEdit> // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.edits.<get-edits>|<get-edits>(){}[0]
+        final val tree // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.tree|{}tree[0]
+            final fun <get-tree>(): com.davils.kaml.core.syntax/YamlSyntaxTree // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.tree.<get-tree>|<get-tree>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.syntax.format/YamlFormatResult.Formatted.toString|toString(){}[0]
+    }
+
+    final class Refused : com.davils.kaml.core.syntax.format/YamlFormatResult { // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused|null[0]
+        constructor <init>(com.davils.kaml.core.syntax.format/YamlFormatRefusal) // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused.<init>|<init>(com.davils.kaml.core.syntax.format.YamlFormatRefusal){}[0]
+
+        final val reason // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused.reason|{}reason[0]
+            final fun <get-reason>(): com.davils.kaml.core.syntax.format/YamlFormatRefusal // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.syntax.format/YamlFormatResult.Refused.toString|toString(){}[0]
     }
 }
 
@@ -1073,6 +1110,52 @@ final class com.davils.kaml.core.syntax.edit/YamlPath { // com.davils.kaml.core.
     }
 }
 
+final class com.davils.kaml.core.syntax.format/YamlFormatOptions : com.davils.kore.core.validation/Validatable { // com.davils.kaml.core.syntax.format/YamlFormatOptions|null[0]
+    final val hasFinalLineBreak // com.davils.kaml.core.syntax.format/YamlFormatOptions.hasFinalLineBreak|{}hasFinalLineBreak[0]
+        final fun <get-hasFinalLineBreak>(): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatOptions.hasFinalLineBreak.<get-hasFinalLineBreak>|<get-hasFinalLineBreak>(){}[0]
+    final val indent // com.davils.kaml.core.syntax.format/YamlFormatOptions.indent|{}indent[0]
+        final fun <get-indent>(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatOptions.indent.<get-indent>|<get-indent>(){}[0]
+    final val isSequenceIndented // com.davils.kaml.core.syntax.format/YamlFormatOptions.isSequenceIndented|{}isSequenceIndented[0]
+        final fun <get-isSequenceIndented>(): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatOptions.isSequenceIndented.<get-isSequenceIndented>|<get-isSequenceIndented>(){}[0]
+    final val maximumEmptyLines // com.davils.kaml.core.syntax.format/YamlFormatOptions.maximumEmptyLines|{}maximumEmptyLines[0]
+        final fun <get-maximumEmptyLines>(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatOptions.maximumEmptyLines.<get-maximumEmptyLines>|<get-maximumEmptyLines>(){}[0]
+
+    final fun (com.davils.kore.core.validation/ValidationScope).validate() // com.davils.kaml.core.syntax.format/YamlFormatOptions.validate|validate@com.davils.kore.core.validation.ValidationScope(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatOptions.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatOptions.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.syntax.format/YamlFormatOptions.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.core.syntax.format/YamlFormatOptions.Companion|null[0]
+        final val Default // com.davils.kaml.core.syntax.format/YamlFormatOptions.Companion.Default|{}Default[0]
+            final fun <get-Default>(): com.davils.kaml.core.syntax.format/YamlFormatOptions // com.davils.kaml.core.syntax.format/YamlFormatOptions.Companion.Default.<get-Default>|<get-Default>(){}[0]
+    }
+}
+
+final class com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder : com.davils.kore.core.dsl/ValidatingBuilder<com.davils.kaml.core.syntax.format/YamlFormatOptions> { // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder|null[0]
+    final var hasFinalLineBreak // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.hasFinalLineBreak|{}hasFinalLineBreak[0]
+        final fun <get-hasFinalLineBreak>(): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.hasFinalLineBreak.<get-hasFinalLineBreak>|<get-hasFinalLineBreak>(){}[0]
+        final fun <set-hasFinalLineBreak>(kotlin/Boolean) // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.hasFinalLineBreak.<set-hasFinalLineBreak>|<set-hasFinalLineBreak>(kotlin.Boolean){}[0]
+    final var indent // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.indent|{}indent[0]
+        final fun <get-indent>(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.indent.<get-indent>|<get-indent>(){}[0]
+        final fun <set-indent>(kotlin/Int) // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.indent.<set-indent>|<set-indent>(kotlin.Int){}[0]
+    final var isSequenceIndented // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.isSequenceIndented|{}isSequenceIndented[0]
+        final fun <get-isSequenceIndented>(): kotlin/Boolean // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.isSequenceIndented.<get-isSequenceIndented>|<get-isSequenceIndented>(){}[0]
+        final fun <set-isSequenceIndented>(kotlin/Boolean) // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.isSequenceIndented.<set-isSequenceIndented>|<set-isSequenceIndented>(kotlin.Boolean){}[0]
+    final var maximumEmptyLines // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.maximumEmptyLines|{}maximumEmptyLines[0]
+        final fun <get-maximumEmptyLines>(): kotlin/Int // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.maximumEmptyLines.<get-maximumEmptyLines>|<get-maximumEmptyLines>(){}[0]
+        final fun <set-maximumEmptyLines>(kotlin/Int) // com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder.maximumEmptyLines.<set-maximumEmptyLines>|<set-maximumEmptyLines>(kotlin.Int){}[0]
+}
+
+final class com.davils.kaml.core.syntax.format/YamlFormatter { // com.davils.kaml.core.syntax.format/YamlFormatter|null[0]
+    constructor <init>(com.davils.kaml.core.syntax.format/YamlFormatOptions = ...) // com.davils.kaml.core.syntax.format/YamlFormatter.<init>|<init>(com.davils.kaml.core.syntax.format.YamlFormatOptions){}[0]
+
+    final val options // com.davils.kaml.core.syntax.format/YamlFormatter.options|{}options[0]
+        final fun <get-options>(): com.davils.kaml.core.syntax.format/YamlFormatOptions // com.davils.kaml.core.syntax.format/YamlFormatter.options.<get-options>|<get-options>(){}[0]
+
+    final fun format(com.davils.kaml.core.syntax/YamlSyntaxTree, com.davils.kore.core.text/TextRange? = ...): com.davils.kaml.core.syntax.format/YamlFormatResult // com.davils.kaml.core.syntax.format/YamlFormatter.format|format(com.davils.kaml.core.syntax.YamlSyntaxTree;com.davils.kore.core.text.TextRange?){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.syntax.format/YamlFormatter.toString|toString(){}[0]
+}
+
 final class com.davils.kaml.core.syntax/YamlSyntaxNode : com.davils.kaml.core.syntax/YamlSyntaxElement { // com.davils.kaml.core.syntax/YamlSyntaxNode|null[0]
     final val childNodes // com.davils.kaml.core.syntax/YamlSyntaxNode.childNodes|{}childNodes[0]
         final fun <get-childNodes>(): kotlin.collections/List<com.davils.kaml.core.syntax/YamlSyntaxNode> // com.davils.kaml.core.syntax/YamlSyntaxNode.childNodes.<get-childNodes>|<get-childNodes>(){}[0]
@@ -1317,4 +1400,5 @@ final fun com.davils.kaml.core.node/yamlSequence(kotlin.collections/List<com.dav
 final fun com.davils.kaml.core.node/yamlSequence(kotlin/Function1<com.davils.kaml.core.node/YamlSequenceBuilder, kotlin/Unit>): com.davils.kaml.core.node/YamlNode.Sequence // com.davils.kaml.core.node/yamlSequence|yamlSequence(kotlin.Function1<com.davils.kaml.core.node.YamlSequenceBuilder,kotlin.Unit>){}[0]
 final fun com.davils.kaml.core.node/yamlTagged(kotlin/String, com.davils.kaml.core.model/YamlTag, com.davils.kaml.core.model/YamlScalarStyle = ...): com.davils.kaml.core.node/YamlNode.Scalar // com.davils.kaml.core.node/yamlTagged|yamlTagged(kotlin.String;com.davils.kaml.core.model.YamlTag;com.davils.kaml.core.model.YamlScalarStyle){}[0]
 final fun com.davils.kaml.core.schema/yamlSchema(com.davils.kaml.core.schema/YamlSchema = ..., kotlin/Function1<com.davils.kaml.core.schema/YamlSchemaBuilder, kotlin/Unit>): com.davils.kaml.core.schema/YamlSchema // com.davils.kaml.core.schema/yamlSchema|yamlSchema(com.davils.kaml.core.schema.YamlSchema;kotlin.Function1<com.davils.kaml.core.schema.YamlSchemaBuilder,kotlin.Unit>){}[0]
+final fun com.davils.kaml.core.syntax.format/yamlFormatOptions(kotlin/Function1<com.davils.kaml.core.syntax.format/YamlFormatOptionsBuilder, kotlin/Unit>): com.davils.kaml.core.syntax.format/YamlFormatOptions // com.davils.kaml.core.syntax.format/yamlFormatOptions|yamlFormatOptions(kotlin.Function1<com.davils.kaml.core.syntax.format.YamlFormatOptionsBuilder,kotlin.Unit>){}[0]
 final fun com.davils.kaml.core/yaml(kotlin/Function1<com.davils.kaml.core/YamlBuilder, kotlin/Unit> = ...): com.davils.kaml.core/Yaml // com.davils.kaml.core/yaml|yaml(kotlin.Function1<com.davils.kaml.core.YamlBuilder,kotlin.Unit>){}[0]

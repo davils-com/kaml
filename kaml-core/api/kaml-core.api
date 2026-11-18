@@ -1004,3 +1004,73 @@ public final class com/davils/kaml/core/syntax/edit/YamlPath$Segment$Key : com/d
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/davils/kaml/core/syntax/format/YamlFormatOptions : com/davils/kore/core/validation/Validatable {
+	public static final field Companion Lcom/davils/kaml/core/syntax/format/YamlFormatOptions$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHasFinalLineBreak ()Z
+	public final fun getIndent ()I
+	public final fun getMaximumEmptyLines ()I
+	public fun hashCode ()I
+	public final fun isSequenceIndented ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatOptions$Companion {
+	public final fun getDefault ()Lcom/davils/kaml/core/syntax/format/YamlFormatOptions;
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatOptionsBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun getHasFinalLineBreak ()Z
+	public final fun getIndent ()I
+	public final fun getMaximumEmptyLines ()I
+	public final fun isSequenceIndented ()Z
+	public final fun setHasFinalLineBreak (Z)V
+	public final fun setIndent (I)V
+	public final fun setMaximumEmptyLines (I)V
+	public final fun setSequenceIndented (Z)V
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatOptionsDslKt {
+	public static final fun yamlFormatOptions (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/syntax/format/YamlFormatOptions;
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatRefusal : java/lang/Enum {
+	public static final field MeaningChanged Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
+	public static final field SyntaxErrors Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
+	public static fun values ()[Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
+}
+
+public abstract interface class com/davils/kaml/core/syntax/format/YamlFormatResult {
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatResult$Formatted : com/davils/kaml/core/syntax/format/YamlFormatResult {
+	public fun <init> (Ljava/util/List;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEdits ()Ljava/util/List;
+	public final fun getTree ()Lcom/davils/kaml/core/syntax/YamlSyntaxTree;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatResult$Refused : com/davils/kaml/core/syntax/format/YamlFormatResult {
+	public fun <init> (Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Lcom/davils/kaml/core/syntax/format/YamlFormatRefusal;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/syntax/format/YamlFormatter {
+	public fun <init> ()V
+	public fun <init> (Lcom/davils/kaml/core/syntax/format/YamlFormatOptions;)V
+	public synthetic fun <init> (Lcom/davils/kaml/core/syntax/format/YamlFormatOptions;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun format (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kore/core/text/TextRange;)Lcom/davils/kaml/core/syntax/format/YamlFormatResult;
+	public static synthetic fun format$default (Lcom/davils/kaml/core/syntax/format/YamlFormatter;Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kore/core/text/TextRange;ILjava/lang/Object;)Lcom/davils/kaml/core/syntax/format/YamlFormatResult;
+	public final fun getOptions ()Lcom/davils/kaml/core/syntax/format/YamlFormatOptions;
+	public fun toString ()Ljava/lang/String;
+}
+

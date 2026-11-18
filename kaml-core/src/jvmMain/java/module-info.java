@@ -30,4 +30,5 @@ module com.davils.kaml.core {
     exports com.davils.kaml.core.syntax;
     exports com.davils.kaml.core.syntax.ast;
     exports com.davils.kaml.core.syntax.edit;
+    exports com.davils.kaml.core.syntax.format;
 }
