@@ -35,6 +35,8 @@ import com.davils.kaml.serialization.fixture.SelfAlias
 import com.davils.kaml.serialization.fixture.Server
 import com.davils.kaml.serialization.fixture.SnakeClash
 import com.davils.kaml.serialization.fixture.Tree
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.text.SafeText
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
@@ -76,6 +78,7 @@ private fun shared(levels: Int): YamlNode = (1..levels).fold(yamlMapping(emptyLi
 
 private fun codes(decoding: YamlDecoding<*>): List<YamlDiagnosticCode> = decoding.diagnostics.map { it.code }
 
+@OptIn(DavilsInternal::class)
 class YamlFormatLimitsTest : FunSpec({
     context("depth") {
         test("decodes a node graph nested one level less than the limit") {
@@ -219,10 +222,13 @@ class YamlFormatLimitsTest : FunSpec({
         }
 
         test("refuses two keys that decode to the same map key") {
-            val decoding = YamlFormat.Default.decodeOrFailure<Server>("""{host: a, labels: {1: a, "1": b}}""")
+            val text = """{host: a, labels: {1: a, "1": b}}"""
+            val decoding = YamlFormat.Default.decodeOrFailure<Server>(text)
 
             codes(decoding) shouldBe listOf(YamlDiagnosticCode.DuplicateKey)
-            decoding.diagnostics.single().message shouldBe """The key "1" is given more than once"""
+            decoding.diagnostics.single().message shouldBe "The key ${SafeText.REDACTED} is given more than once"
+            val quoted = yamlFormat { isValueQuoted = true }.decodeOrFailure<Server>(text)
+            quoted.diagnostics.single().message shouldBe """The key "1" is given more than once"""
         }
 
         test("refuses a subtype with a property named like the class discriminator") {

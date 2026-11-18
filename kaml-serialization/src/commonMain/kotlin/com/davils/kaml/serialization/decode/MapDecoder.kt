@@ -62,7 +62,7 @@ internal class MapDecoder(
             context.report(
                 YamlDiagnosticCode.DuplicateKey,
                 key,
-                "The key ${context.describe(key)} is given more than once",
+                "The key ${context.describeValue(key)} is given more than once",
             )
         }
         return value

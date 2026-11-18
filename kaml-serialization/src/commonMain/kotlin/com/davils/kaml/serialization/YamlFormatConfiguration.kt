@@ -67,6 +67,13 @@ public class YamlFormatConfiguration internal constructor(builder: YamlFormatBui
     public val isInputCoerced: Boolean = builder.isInputCoerced
 
     /**
+     * Whether decoding messages quote the scalars they refuse, see [YamlFormatBuilder.isValueQuoted].
+     *
+     * @since 1.0.0
+     */
+    public val isValueQuoted: Boolean = builder.isValueQuoted
+
+    /**
      * How property names derive from serial names, see [YamlFormatBuilder.namingStrategy].
      *
      * @since 1.0.0
@@ -102,6 +109,7 @@ public class YamlFormatConfiguration internal constructor(builder: YamlFormatBui
 
     override fun toString(): String =
         "YamlFormatConfiguration(isUnknownKeyIgnored=$isUnknownKeyIgnored, isDefaultEncoded=$isDefaultEncoded, " +
-            "hasExplicitNulls=$hasExplicitNulls, isInputCoerced=$isInputCoerced, polymorphism=$polymorphism, " +
+            "hasExplicitNulls=$hasExplicitNulls, isInputCoerced=$isInputCoerced, isValueQuoted=$isValueQuoted, " +
+            "polymorphism=$polymorphism, " +
             "classDiscriminator=${SafeText.quoted(classDiscriminator)})"
 }

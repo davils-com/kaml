@@ -121,7 +121,8 @@ class YamlDecodingTest : FunSpec({
 
             yamlFormat { classDiscriminator = discriminator }.toString() shouldBe
                 "YamlFormat(YamlFormatConfiguration(isUnknownKeyIgnored=false, isDefaultEncoded=true, " +
-                """hasExplicitNulls=true, isInputCoerced=false, polymorphism=Property, classDiscriminator="kind\n"))"""
+                "hasExplicitNulls=true, isInputCoerced=false, isValueQuoted=false, polymorphism=Property, " +
+                """classDiscriminator="kind\n"))"""
         }
 
         test("refuses an empty discriminator") {

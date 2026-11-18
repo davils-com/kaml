@@ -38,7 +38,8 @@ way.
   annotations `YamlComment`, `YamlFlow`, `YamlNames` and `YamlStyle`, and positioned diagnostics through
   `decodeOrFailure` and `decodeAll`. Decoding applies `YamlLimits` to every node graph, also one built in code,
   refuses names that collide and keys given twice, checks every number against the range of its type, and never
-  echoes input or the message of a serializer.
+  echoes input or the message of a serializer: a refused value is shown in a message only when `isValueQuoted` asks
+  for it.
 - **Conversion between `YamlNode` and `JsonElement`** of kotlinx.serialization.json, within `YamlLimits`, refusing
   keys that are not strings or are given twice.
 - **JSON Pointer** (RFC 6901) on the node graph and on the syntax tree, where a duplicate key resolves to

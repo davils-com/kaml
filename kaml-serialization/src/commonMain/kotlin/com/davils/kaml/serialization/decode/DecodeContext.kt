@@ -74,7 +74,7 @@ internal class DecodeContext(val configuration: YamlFormatConfiguration, private
         throw DecodeFailure(diagnostic(code, location, message))
 
     fun mismatch(location: YamlNode, expected: String): Nothing =
-        fail(YamlDiagnosticCode.TypeMismatch, location, "Expected $expected, but found ${describe(location)}")
+        fail(YamlDiagnosticCode.TypeMismatch, location, "Expected $expected, but found ${describeValue(location)}")
 
     fun visit(location: YamlNode) {
         if (budget.admits()) return
@@ -93,6 +93,16 @@ internal class DecodeContext(val configuration: YamlFormatConfiguration, private
     fun describe(node: YamlNode): String {
         val scalar = node as? YamlNode.Scalar ?: return "a ${node.kind.name.lowercase()}"
         return SafeText.quoted(scalar.value)
+    }
+
+    fun describeValue(node: YamlNode): String {
+        val scalar = node as? YamlNode.Scalar ?: return describe(node)
+        return showValue(scalar.value)
+    }
+
+    fun showValue(text: String): String {
+        if (!configuration.isValueQuoted) return SafeText.REDACTED
+        return SafeText.quoted(text)
     }
 
     fun structure(descriptor: SerialDescriptor, decoder: NodeDecoder): CompositeDecoder {

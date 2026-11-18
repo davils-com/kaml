@@ -78,7 +78,7 @@ internal class NodeDecoder(
         val index = enumDescriptor.getElementIndex(name)
         if (index == CompositeDecoder.UNKNOWN_NAME) {
             val known = SafeText.text(enumDescriptor.elementNames.joinToString())
-            context.fail(YamlDiagnosticCode.UnknownEnumValue, location, "${SafeText.quoted(name)} is none of $known")
+            context.fail(YamlDiagnosticCode.UnknownEnumValue, location, "${context.showValue(name)} is none of $known")
         }
         return index
     }

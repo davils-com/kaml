@@ -101,6 +101,27 @@ public class YamlFormatBuilder internal constructor() : ValidatingBuilder<YamlFo
         }
 
     /**
+     * Whether a decoding message quotes the scalar it refuses, such as the text of a value of the wrong type, of an
+     * unknown enum value or of a map key given twice. `false` by default: the message then shows
+     * [com.davils.kore.core.text.SafeText.REDACTED] in its place, and the position of the diagnostic still points to
+     * the value.
+     *
+     * A quoted value is escaped and bounded, so it can neither forge a log line nor control a terminal, but it is
+     * shown: a secret written into the wrong property, such as a password in a numeric field, would reach the message
+     * of the [YamlDecodingException] and every log it is written to. Turn this on only where the decoded documents
+     * hold no secrets, for example to debug configuration files during development. Property and type names are
+     * always quoted; they name the structure, not its values.
+     *
+     * @throws IllegalStateException if it is set after the format was built.
+     * @since 1.0.0
+     */
+    public var isValueQuoted: Boolean = false
+        set(value) {
+            checkOpen()
+            field = value
+        }
+
+    /**
      * How the YAML names of properties derive from their serial names. [YamlNamingStrategy.Identity] by default.
      *
      * @throws IllegalStateException if it is set after the format was built.

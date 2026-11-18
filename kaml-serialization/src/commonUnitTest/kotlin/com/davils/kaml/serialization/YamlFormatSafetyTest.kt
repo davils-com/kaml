@@ -38,12 +38,16 @@ import com.davils.kore.testing.isSafeToShow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.kotest.property.Arb
+import io.kotest.property.arbitrary.Codepoint
+import io.kotest.property.arbitrary.alphanumeric
 import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
+import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
@@ -58,11 +62,15 @@ private const val LAST_NONCHARACTER_CODE: Int = 0xFFFF
 private val NONCHARACTER: String = Char(NONCHARACTER_CODE).toString()
 private val LAST_NONCHARACTER: String = Char(LAST_NONCHARACTER_CODE).toString()
 
+private val secrets: Arb<String> = Arb.string(8..24, Codepoint.alphanumeric()).map { text -> MARKER + text }
+
 private val hostile: Arb<String> = Arb.list(Arb.element(HostileFragments.all), 1..64).map { it.joinToString("") }
 
 private val unsafe: Arb<String> = hostile.filter { text -> !isSafeToShow(text, false) }
 
 private val representable: Arb<String> = hostile.filter { text -> ScalarText.isRepresentable(text) }
+
+private fun lines(vararg lines: String): String = lines.joinToString("\n")
 
 private fun unknownEntry(name: String): YamlEntry = YamlEntry(key = yamlScalar(name), value = yamlScalar(1))
 
@@ -75,6 +83,7 @@ private fun YamlDecoding<*>.shouldBeSafeToShow() {
 @OptIn(DavilsInternal::class)
 class YamlFormatSafetyTest : FunSpec({
     val format = YamlFormat.Default
+    val quoting = yamlFormat { isValueQuoted = true }
 
     context("names and values from the document") {
         test("escape an unknown property name") {
@@ -95,7 +104,7 @@ class YamlFormatSafetyTest : FunSpec({
 
         test("escape an unknown enum value") {
             checkAll(ITERATIONS, unsafe) { value ->
-                val decoding = format.decodeOrFailure<Listener>(
+                val decoding = quoting.decodeOrFailure<Listener>(
                     yamlMapping {
                         "port" to 1
                         "protocol" to value
@@ -130,7 +139,7 @@ class YamlFormatSafetyTest : FunSpec({
                     "weight" to value
                     "labels" to yamlMapping(labels)
                 }
-                val decoding = format.decodeOrFailure<Server>(node)
+                val decoding = quoting.decodeOrFailure<Server>(node)
 
                 decoding.diagnostics.map { it.code } shouldBe
                     listOf(YamlDiagnosticCode.DuplicateKey, YamlDiagnosticCode.TypeMismatch)
@@ -158,6 +167,32 @@ class YamlFormatSafetyTest : FunSpec({
 
                 lines.forEach { line -> isSafeToShow(line, false) shouldBe true }
             }
+        }
+    }
+
+    context("values from the document") {
+        test("are left out of every message unless the format quotes them") {
+            checkAll(ITERATIONS, secrets) { secret ->
+                val text = lines("host: a", "weight: $secret", "labels: {$secret: 1, !other $secret: 2}")
+                val enum = lines("port: 1", "protocol: $secret")
+                val decodings = listOf(format.decodeOrFailure<Server>(text), format.decodeOrFailure<Listener>(enum))
+                val failure = shouldThrow<YamlDecodingException> { format.decodeFromString<Server>(text) }
+
+                decodings.flatMap { decoding -> decoding.messages() }.forEach { message ->
+                    message shouldNotContain secret
+                }
+                failure.message.orEmpty() shouldNotContain secret
+                val quoted = quoting.decodeOrFailure<Server>(text)
+                quoted.messages().forEach { message -> message shouldContain secret }
+            }
+        }
+
+        test("are shown as the redacted placeholder") {
+            val decoding = format.decodeOrFailure<Listener>(lines("port: hunter2", "protocol: hunter3"))
+
+            decoding.messages() shouldBe listOf("Expected an integer, but found ${SafeText.REDACTED}")
+            val enum = format.decodeOrFailure<Listener>("{port: 1, protocol: hunter3}")
+            enum.messages().single() shouldBe "${SafeText.REDACTED} is none of tcp, udp"
         }
     }
 

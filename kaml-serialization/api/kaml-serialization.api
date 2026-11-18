@@ -52,6 +52,7 @@ public final class com/davils/kaml/serialization/YamlFormatBuilder : com/davils/
 	public final fun isDefaultEncoded ()Z
 	public final fun isInputCoerced ()Z
 	public final fun isUnknownKeyIgnored ()Z
+	public final fun isValueQuoted ()Z
 	public final fun setClassDiscriminator (Ljava/lang/String;)V
 	public final fun setDefaultEncoded (Z)V
 	public final fun setHasExplicitNulls (Z)V
@@ -60,6 +61,7 @@ public final class com/davils/kaml/serialization/YamlFormatBuilder : com/davils/
 	public final fun setPolymorphism (Lcom/davils/kaml/serialization/YamlPolymorphism;)V
 	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
 	public final fun setUnknownKeyIgnored (Z)V
+	public final fun setValueQuoted (Z)V
 	public final fun setYaml (Lcom/davils/kaml/core/Yaml;)V
 	public final fun yaml (Lkotlin/jvm/functions/Function1;)V
 }
@@ -77,6 +79,7 @@ public final class com/davils/kaml/serialization/YamlFormatConfiguration : com/d
 	public final fun isDefaultEncoded ()Z
 	public final fun isInputCoerced ()Z
 	public final fun isUnknownKeyIgnored ()Z
+	public final fun isValueQuoted ()Z
 	public fun toString ()Ljava/lang/String;
 	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
 }

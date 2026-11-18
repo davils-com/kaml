@@ -56,8 +56,9 @@ import kotlinx.serialization.modules.SerializersModule
  * `Long`, or a number too large for a `Float` or `Double`, is reported as [YamlDiagnosticCode.NumberOutOfRange]. An
  * infinite or not-a-number value is accepted only where the document writes it as such, as `.inf`, `-.inf` or `.nan`.
  *
- * Messages never contain raw input: names and values from the document are escaped with
- * [com.davils.kore.core.text.SafeText] and bounded, and an [IllegalArgumentException] or
+ * Messages never contain raw input: names from the document are escaped with [com.davils.kore.core.text.SafeText]
+ * and bounded, values are left out unless [YamlFormatBuilder.isValueQuoted] asks for them, and an
+ * [IllegalArgumentException] or
  * [kotlinx.serialization.SerializationException] thrown by a serializer, such as a `require` in an `init` block, is
  * reported as [YamlDiagnosticCode.TypeMismatch] with a redacted placeholder instead of its message. Other exceptions
  * of a serializer pass through unchanged.
