@@ -49,6 +49,7 @@ way.
   answering in part.
 - **JSON Patch** (RFC 6902), **JSON Merge Patch** (RFC 7386) and diffs on the node graph and in place on the
   syntax tree, within an operation limit and the node budget.
+- **Layered merges** with the origin of every value, merging sequences by key through a hash index.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

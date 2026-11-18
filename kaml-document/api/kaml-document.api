@@ -10,6 +10,88 @@ public final class com/davils/kaml/document/YamlDocumentViolationCodes {
 	public final fun getINVALID_REPLACEMENT-J_S2PC0 ()Ljava/lang/String;
 }
 
+public final class com/davils/kaml/document/merge/YamlDeletion : java/lang/Enum {
+	public static final field None Lcom/davils/kaml/document/merge/YamlDeletion;
+	public static final field Null Lcom/davils/kaml/document/merge/YamlDeletion;
+	public static final field Tag Lcom/davils/kaml/document/merge/YamlDeletion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/document/merge/YamlDeletion;
+	public static fun values ()[Lcom/davils/kaml/document/merge/YamlDeletion;
+}
+
+public final class com/davils/kaml/document/merge/YamlLayer {
+	public fun <init> (Ljava/lang/String;Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getNode ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/merge/YamlMergeOptions : com/davils/kore/core/validation/Validatable {
+	public static final field Companion Lcom/davils/kaml/document/merge/YamlMergeOptions$Companion;
+	public final fun getDeletion ()Lcom/davils/kaml/document/merge/YamlDeletion;
+	public final fun getSequences ()Lcom/davils/kaml/document/merge/YamlSequenceMerge;
+	public final fun getSequencesAt ()Ljava/util/Map;
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/document/merge/YamlMergeOptions$Companion {
+	public final fun getDefault ()Lcom/davils/kaml/document/merge/YamlMergeOptions;
+}
+
+public final class com/davils/kaml/document/merge/YamlMergeOptionsBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun getDeletion ()Lcom/davils/kaml/document/merge/YamlDeletion;
+	public final fun getSequences ()Lcom/davils/kaml/document/merge/YamlSequenceMerge;
+	public final fun sequences (Ljava/lang/String;Lcom/davils/kaml/document/merge/YamlSequenceMerge;)V
+	public final fun setDeletion (Lcom/davils/kaml/document/merge/YamlDeletion;)V
+	public final fun setSequences (Lcom/davils/kaml/document/merge/YamlSequenceMerge;)V
+}
+
+public final class com/davils/kaml/document/merge/YamlMergeOptionsDslKt {
+	public static final fun yamlMergeOptions (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/document/merge/YamlMergeOptions;
+}
+
+public final class com/davils/kaml/document/merge/YamlMerged {
+	public final fun getNode ()Lcom/davils/kaml/core/node/YamlNode;
+	public final fun getOrigins ()Ljava/util/Map;
+	public final fun originOf (Lcom/davils/kaml/document/pointer/JsonPointer;)Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/merge/YamlMerger {
+	public fun <init> ()V
+	public fun <init> (Lcom/davils/kaml/document/merge/YamlMergeOptions;Lcom/davils/kaml/core/limit/YamlLimits;)V
+	public synthetic fun <init> (Lcom/davils/kaml/document/merge/YamlMergeOptions;Lcom/davils/kaml/core/limit/YamlLimits;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public final fun getOptions ()Lcom/davils/kaml/document/merge/YamlMergeOptions;
+	public final fun merge (Ljava/util/List;)Lcom/davils/kaml/document/merge/YamlMerged;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/davils/kaml/document/merge/YamlSequenceMerge {
+}
+
+public final class com/davils/kaml/document/merge/YamlSequenceMerge$Append : com/davils/kaml/document/merge/YamlSequenceMerge {
+	public static final field INSTANCE Lcom/davils/kaml/document/merge/YamlSequenceMerge$Append;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/merge/YamlSequenceMerge$ByKey : com/davils/kaml/document/merge/YamlSequenceMerge {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/merge/YamlSequenceMerge$Replace : com/davils/kaml/document/merge/YamlSequenceMerge {
+	public static final field INSTANCE Lcom/davils/kaml/document/merge/YamlSequenceMerge$Replace;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/davils/kaml/document/patch/JsonMergePatch {
 	public fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;)V
 	public synthetic fun <init> (Lcom/davils/kaml/core/node/YamlNode;Lcom/davils/kaml/core/limit/YamlLimits;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

@@ -6,6 +6,18 @@
 // - Show declarations: true
 
 // Library unique name: <com.davils:kaml-document>
+final enum class com.davils.kaml.document.merge/YamlDeletion : kotlin/Enum<com.davils.kaml.document.merge/YamlDeletion> { // com.davils.kaml.document.merge/YamlDeletion|null[0]
+    enum entry None // com.davils.kaml.document.merge/YamlDeletion.None|null[0]
+    enum entry Null // com.davils.kaml.document.merge/YamlDeletion.Null|null[0]
+    enum entry Tag // com.davils.kaml.document.merge/YamlDeletion.Tag|null[0]
+
+    final val entries // com.davils.kaml.document.merge/YamlDeletion.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.davils.kaml.document.merge/YamlDeletion> // com.davils.kaml.document.merge/YamlDeletion.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): com.davils.kaml.document.merge/YamlDeletion // com.davils.kaml.document.merge/YamlDeletion.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.davils.kaml.document.merge/YamlDeletion> // com.davils.kaml.document.merge/YamlDeletion.values|values#static(){}[0]
+}
+
 final enum class com.davils.kaml.document.patch/JsonPatchRefusal : kotlin/Enum<com.davils.kaml.document.patch/JsonPatchRefusal> { // com.davils.kaml.document.patch/JsonPatchRefusal|null[0]
     enum entry InvalidDocument // com.davils.kaml.document.patch/JsonPatchRefusal.InvalidDocument|null[0]
     enum entry InvalidIndex // com.davils.kaml.document.patch/JsonPatchRefusal.InvalidIndex|null[0]
@@ -24,6 +36,27 @@ final enum class com.davils.kaml.document.patch/JsonPatchRefusal : kotlin/Enum<c
 
     final fun valueOf(kotlin/String): com.davils.kaml.document.patch/JsonPatchRefusal // com.davils.kaml.document.patch/JsonPatchRefusal.valueOf|valueOf#static(kotlin.String){}[0]
     final fun values(): kotlin/Array<com.davils.kaml.document.patch/JsonPatchRefusal> // com.davils.kaml.document.patch/JsonPatchRefusal.values|values#static(){}[0]
+}
+
+sealed interface com.davils.kaml.document.merge/YamlSequenceMerge { // com.davils.kaml.document.merge/YamlSequenceMerge|null[0]
+    final class ByKey : com.davils.kaml.document.merge/YamlSequenceMerge { // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey|null[0]
+        constructor <init>(kotlin/String) // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey.<init>|<init>(kotlin.String){}[0]
+
+        final val key // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey.key|{}key[0]
+            final fun <get-key>(): kotlin/String // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey.key.<get-key>|<get-key>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlSequenceMerge.ByKey.toString|toString(){}[0]
+    }
+
+    final object Append : com.davils.kaml.document.merge/YamlSequenceMerge { // com.davils.kaml.document.merge/YamlSequenceMerge.Append|null[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlSequenceMerge.Append.toString|toString(){}[0]
+    }
+
+    final object Replace : com.davils.kaml.document.merge/YamlSequenceMerge { // com.davils.kaml.document.merge/YamlSequenceMerge.Replace|null[0]
+        final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlSequenceMerge.Replace.toString|toString(){}[0]
+    }
 }
 
 sealed interface com.davils.kaml.document.patch/JsonPatchEdit { // com.davils.kaml.document.patch/JsonPatchEdit|null[0]
@@ -187,6 +220,69 @@ sealed interface com.davils.kaml.document.patch/JsonPatchResult { // com.davils.
     }
 }
 
+final class com.davils.kaml.document.merge/YamlLayer { // com.davils.kaml.document.merge/YamlLayer|null[0]
+    constructor <init>(kotlin/String, com.davils.kaml.core.node/YamlNode) // com.davils.kaml.document.merge/YamlLayer.<init>|<init>(kotlin.String;com.davils.kaml.core.node.YamlNode){}[0]
+
+    final val name // com.davils.kaml.document.merge/YamlLayer.name|{}name[0]
+        final fun <get-name>(): kotlin/String // com.davils.kaml.document.merge/YamlLayer.name.<get-name>|<get-name>(){}[0]
+    final val node // com.davils.kaml.document.merge/YamlLayer.node|{}node[0]
+        final fun <get-node>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.merge/YamlLayer.node.<get-node>|<get-node>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.merge/YamlLayer.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.document.merge/YamlLayer.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlLayer.toString|toString(){}[0]
+}
+
+final class com.davils.kaml.document.merge/YamlMergeOptions : com.davils.kore.core.validation/Validatable { // com.davils.kaml.document.merge/YamlMergeOptions|null[0]
+    final val deletion // com.davils.kaml.document.merge/YamlMergeOptions.deletion|{}deletion[0]
+        final fun <get-deletion>(): com.davils.kaml.document.merge/YamlDeletion // com.davils.kaml.document.merge/YamlMergeOptions.deletion.<get-deletion>|<get-deletion>(){}[0]
+    final val sequences // com.davils.kaml.document.merge/YamlMergeOptions.sequences|{}sequences[0]
+        final fun <get-sequences>(): com.davils.kaml.document.merge/YamlSequenceMerge // com.davils.kaml.document.merge/YamlMergeOptions.sequences.<get-sequences>|<get-sequences>(){}[0]
+    final val sequencesAt // com.davils.kaml.document.merge/YamlMergeOptions.sequencesAt|{}sequencesAt[0]
+        final fun <get-sequencesAt>(): kotlin.collections/Map<kotlin/String, com.davils.kaml.document.merge/YamlSequenceMerge> // com.davils.kaml.document.merge/YamlMergeOptions.sequencesAt.<get-sequencesAt>|<get-sequencesAt>(){}[0]
+
+    final fun (com.davils.kore.core.validation/ValidationScope).validate() // com.davils.kaml.document.merge/YamlMergeOptions.validate|validate@com.davils.kore.core.validation.ValidationScope(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlMergeOptions.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.document.merge/YamlMergeOptions.Companion|null[0]
+        final val Default // com.davils.kaml.document.merge/YamlMergeOptions.Companion.Default|{}Default[0]
+            final fun <get-Default>(): com.davils.kaml.document.merge/YamlMergeOptions // com.davils.kaml.document.merge/YamlMergeOptions.Companion.Default.<get-Default>|<get-Default>(){}[0]
+    }
+}
+
+final class com.davils.kaml.document.merge/YamlMergeOptionsBuilder : com.davils.kore.core.dsl/ValidatingBuilder<com.davils.kaml.document.merge/YamlMergeOptions> { // com.davils.kaml.document.merge/YamlMergeOptionsBuilder|null[0]
+    final var deletion // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.deletion|{}deletion[0]
+        final fun <get-deletion>(): com.davils.kaml.document.merge/YamlDeletion // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.deletion.<get-deletion>|<get-deletion>(){}[0]
+        final fun <set-deletion>(com.davils.kaml.document.merge/YamlDeletion) // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.deletion.<set-deletion>|<set-deletion>(com.davils.kaml.document.merge.YamlDeletion){}[0]
+    final var sequences // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.sequences|{}sequences[0]
+        final fun <get-sequences>(): com.davils.kaml.document.merge/YamlSequenceMerge // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.sequences.<get-sequences>|<get-sequences>(){}[0]
+        final fun <set-sequences>(com.davils.kaml.document.merge/YamlSequenceMerge) // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.sequences.<set-sequences>|<set-sequences>(com.davils.kaml.document.merge.YamlSequenceMerge){}[0]
+
+    final fun sequences(kotlin/String, com.davils.kaml.document.merge/YamlSequenceMerge) // com.davils.kaml.document.merge/YamlMergeOptionsBuilder.sequences|sequences(kotlin.String;com.davils.kaml.document.merge.YamlSequenceMerge){}[0]
+}
+
+final class com.davils.kaml.document.merge/YamlMerged { // com.davils.kaml.document.merge/YamlMerged|null[0]
+    final val node // com.davils.kaml.document.merge/YamlMerged.node|{}node[0]
+        final fun <get-node>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.merge/YamlMerged.node.<get-node>|<get-node>(){}[0]
+    final val origins // com.davils.kaml.document.merge/YamlMerged.origins|{}origins[0]
+        final fun <get-origins>(): kotlin.collections/Map<com.davils.kaml.document.pointer/JsonPointer, kotlin/String> // com.davils.kaml.document.merge/YamlMerged.origins.<get-origins>|<get-origins>(){}[0]
+
+    final fun originOf(com.davils.kaml.document.pointer/JsonPointer): kotlin/String? // com.davils.kaml.document.merge/YamlMerged.originOf|originOf(com.davils.kaml.document.pointer.JsonPointer){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlMerged.toString|toString(){}[0]
+}
+
+final class com.davils.kaml.document.merge/YamlMerger { // com.davils.kaml.document.merge/YamlMerger|null[0]
+    constructor <init>(com.davils.kaml.document.merge/YamlMergeOptions = ..., com.davils.kaml.core.limit/YamlLimits = ...) // com.davils.kaml.document.merge/YamlMerger.<init>|<init>(com.davils.kaml.document.merge.YamlMergeOptions;com.davils.kaml.core.limit.YamlLimits){}[0]
+
+    final val limits // com.davils.kaml.document.merge/YamlMerger.limits|{}limits[0]
+        final fun <get-limits>(): com.davils.kaml.core.limit/YamlLimits // com.davils.kaml.document.merge/YamlMerger.limits.<get-limits>|<get-limits>(){}[0]
+    final val options // com.davils.kaml.document.merge/YamlMerger.options|{}options[0]
+        final fun <get-options>(): com.davils.kaml.document.merge/YamlMergeOptions // com.davils.kaml.document.merge/YamlMerger.options.<get-options>|<get-options>(){}[0]
+
+    final fun merge(kotlin.collections/List<com.davils.kaml.document.merge/YamlLayer>): com.davils.kaml.document.merge/YamlMerged // com.davils.kaml.document.merge/YamlMerger.merge|merge(kotlin.collections.List<com.davils.kaml.document.merge.YamlLayer>){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.merge/YamlMerger.toString|toString(){}[0]
+}
+
 final class com.davils.kaml.document.patch/JsonMergePatch { // com.davils.kaml.document.patch/JsonMergePatch|null[0]
     constructor <init>(com.davils.kaml.core.node/YamlNode, com.davils.kaml.core.limit/YamlLimits = ...) // com.davils.kaml.document.patch/JsonMergePatch.<init>|<init>(com.davils.kaml.core.node.YamlNode;com.davils.kaml.core.limit.YamlLimits){}[0]
 
@@ -306,3 +402,4 @@ final fun (kotlin/String).com.davils.kaml.document.path/toJsonPath(com.davils.ka
 final fun (kotlin/String).com.davils.kaml.document.path/toJsonPathOrNull(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath? // com.davils.kaml.document.path/toJsonPathOrNull|toJsonPathOrNull@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
 final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointer(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/toJsonPointer|toJsonPointer@kotlin.String(){}[0]
 final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointerOrNull(): com.davils.kaml.document.pointer/JsonPointer? // com.davils.kaml.document.pointer/toJsonPointerOrNull|toJsonPointerOrNull@kotlin.String(){}[0]
+final fun com.davils.kaml.document.merge/yamlMergeOptions(kotlin/Function1<com.davils.kaml.document.merge/YamlMergeOptionsBuilder, kotlin/Unit>): com.davils.kaml.document.merge/YamlMergeOptions // com.davils.kaml.document.merge/yamlMergeOptions|yamlMergeOptions(kotlin.Function1<com.davils.kaml.document.merge.YamlMergeOptionsBuilder,kotlin.Unit>){}[0]

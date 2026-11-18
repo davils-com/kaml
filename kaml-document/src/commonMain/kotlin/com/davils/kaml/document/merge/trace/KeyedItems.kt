@@ -1,0 +1,53 @@
+/*
+ * Copyright 2026 Davils
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.davils.kaml.document.merge.trace
+
+import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.core.node.get
+import com.davils.kaml.core.node.string
+import com.davils.kaml.document.internal.KeyedSlots
+import com.davils.kaml.document.internal.Members
+
+internal class KeyedItems(private val layers: LayerMerging, private val markers: DeletionMarkers) {
+    fun merged(base: Traced.Items, sequence: YamlNode.Sequence, items: Overlay, key: String): Traced {
+        val slots = KeyedSlots(base.items, keyOf = { item -> keyOf(item, key) })
+        sequence.items.forEach { item -> withItem(slots, items.with(item), key) }
+        return Traced.Items(base.template, slots.items, items.layer)
+    }
+
+    private fun withItem(slots: KeyedSlots<Traced>, overlay: Overlay, key: String) {
+        val identity = overlay.node[key].string()
+        val position = identity?.let(slots::positionOf)
+        if (markers.isDeletion(overlay.node)) return slots.remove(position)
+        val existing = position?.let(slots::at)
+        if (position == null || existing == null) return slots.append(whole(overlay))
+        slots.replace(position, layers.merged(existing, overlay))
+    }
+
+    private fun whole(overlay: Overlay): Traced = layers.whole(overlay.node, overlay.layer, overlay.pattern.tokens.size)
+
+    private fun keyOf(item: Traced, key: String): String? {
+        val members = TracedNodes.members(item) ?: return null
+        return memberText(members, key)
+    }
+
+    private fun memberText(item: Traced.Members, key: String): String? {
+        val entry = item.entries.firstOrNull { candidate -> Members.tokenOf(candidate.key) == key }
+        val whole = entry?.value as? Traced.Whole
+        return whole?.node.string()
+    }
+}
