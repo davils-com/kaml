@@ -10,6 +10,39 @@ public final class com/davils/kaml/document/YamlDocumentViolationCodes {
 	public final fun getINVALID_REPLACEMENT-J_S2PC0 ()Ljava/lang/String;
 }
 
+public final class com/davils/kaml/document/path/JsonPath {
+	public static final field Companion Lcom/davils/kaml/document/path/JsonPath$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExpression ()Ljava/lang/String;
+	public final fun getLimits ()Lcom/davils/kaml/core/limit/YamlLimits;
+	public fun hashCode ()I
+	public final fun query (Lcom/davils/kaml/core/node/YamlNode;)Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/path/JsonPath$Companion {
+	public final fun parse (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/path/JsonPath;
+	public static synthetic fun parse$default (Lcom/davils/kaml/document/path/JsonPath$Companion;Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/path/JsonPath;
+	public final fun parseOrNull (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/path/JsonPath;
+	public static synthetic fun parseOrNull$default (Lcom/davils/kaml/document/path/JsonPath$Companion;Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/path/JsonPath;
+}
+
+public final class com/davils/kaml/document/path/JsonPathMatch {
+	public fun <init> (Lcom/davils/kaml/document/pointer/JsonPointer;Lcom/davils/kaml/core/node/YamlNode;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLocation ()Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun getNode ()Lcom/davils/kaml/core/node/YamlNode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/document/path/JsonPathsKt {
+	public static final fun toJsonPath (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/path/JsonPath;
+	public static synthetic fun toJsonPath$default (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/path/JsonPath;
+	public static final fun toJsonPathOrNull (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/path/JsonPath;
+	public static synthetic fun toJsonPathOrNull$default (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/path/JsonPath;
+}
+
 public final class com/davils/kaml/document/pointer/JsonPointer {
 	public static final field Companion Lcom/davils/kaml/document/pointer/JsonPointer$Companion;
 	public final fun child (I)Lcom/davils/kaml/document/pointer/JsonPointer;

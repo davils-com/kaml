@@ -6,6 +6,36 @@
 // - Show declarations: true
 
 // Library unique name: <com.davils:kaml-document>
+final class com.davils.kaml.document.path/JsonPath { // com.davils.kaml.document.path/JsonPath|null[0]
+    final val expression // com.davils.kaml.document.path/JsonPath.expression|{}expression[0]
+        final fun <get-expression>(): kotlin/String // com.davils.kaml.document.path/JsonPath.expression.<get-expression>|<get-expression>(){}[0]
+    final val limits // com.davils.kaml.document.path/JsonPath.limits|{}limits[0]
+        final fun <get-limits>(): com.davils.kaml.core.limit/YamlLimits // com.davils.kaml.document.path/JsonPath.limits.<get-limits>|<get-limits>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.path/JsonPath.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.document.path/JsonPath.hashCode|hashCode(){}[0]
+    final fun query(com.davils.kaml.core.node/YamlNode): kotlin.collections/List<com.davils.kaml.document.path/JsonPathMatch> // com.davils.kaml.document.path/JsonPath.query|query(com.davils.kaml.core.node.YamlNode){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.path/JsonPath.toString|toString(){}[0]
+
+    final object Companion { // com.davils.kaml.document.path/JsonPath.Companion|null[0]
+        final fun parse(kotlin/String, com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath // com.davils.kaml.document.path/JsonPath.Companion.parse|parse(kotlin.String;com.davils.kaml.core.limit.YamlLimits){}[0]
+        final fun parseOrNull(kotlin/String, com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath? // com.davils.kaml.document.path/JsonPath.Companion.parseOrNull|parseOrNull(kotlin.String;com.davils.kaml.core.limit.YamlLimits){}[0]
+    }
+}
+
+final class com.davils.kaml.document.path/JsonPathMatch { // com.davils.kaml.document.path/JsonPathMatch|null[0]
+    constructor <init>(com.davils.kaml.document.pointer/JsonPointer, com.davils.kaml.core.node/YamlNode) // com.davils.kaml.document.path/JsonPathMatch.<init>|<init>(com.davils.kaml.document.pointer.JsonPointer;com.davils.kaml.core.node.YamlNode){}[0]
+
+    final val location // com.davils.kaml.document.path/JsonPathMatch.location|{}location[0]
+        final fun <get-location>(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.path/JsonPathMatch.location.<get-location>|<get-location>(){}[0]
+    final val node // com.davils.kaml.document.path/JsonPathMatch.node|{}node[0]
+        final fun <get-node>(): com.davils.kaml.core.node/YamlNode // com.davils.kaml.document.path/JsonPathMatch.node.<get-node>|<get-node>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.document.path/JsonPathMatch.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.document.path/JsonPathMatch.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.document.path/JsonPathMatch.toString|toString(){}[0]
+}
+
 final class com.davils.kaml.document.pointer/JsonPointer { // com.davils.kaml.document.pointer/JsonPointer|null[0]
     final val isRoot // com.davils.kaml.document.pointer/JsonPointer.isRoot|{}isRoot[0]
         final fun <get-isRoot>(): kotlin/Boolean // com.davils.kaml.document.pointer/JsonPointer.isRoot.<get-isRoot>|<get-isRoot>(){}[0]
@@ -55,5 +85,7 @@ final object com.davils.kaml.document/YamlDocumentViolationCodes { // com.davils
 final fun (com.davils.kaml.core.node/YamlNode).com.davils.kaml.document.pointer/at(com.davils.kaml.document.pointer/JsonPointer): com.davils.kaml.core.node/YamlNode? // com.davils.kaml.document.pointer/at|at@com.davils.kaml.core.node.YamlNode(com.davils.kaml.document.pointer.JsonPointer){}[0]
 final fun (com.davils.kaml.core.syntax/YamlSyntaxTree).com.davils.kaml.document.pointer/at(com.davils.kaml.document.pointer/JsonPointer, kotlin/Int = ...): com.davils.kaml.core.syntax.ast/YamlValueSyntax? // com.davils.kaml.document.pointer/at|at@com.davils.kaml.core.syntax.YamlSyntaxTree(com.davils.kaml.document.pointer.JsonPointer;kotlin.Int){}[0]
 final fun (com.davils.kaml.core.syntax/YamlSyntaxTree).com.davils.kaml.document.pointer/nearest(com.davils.kaml.document.pointer/JsonPointer, kotlin/Int = ...): com.davils.kaml.core.syntax.ast/YamlValueSyntax? // com.davils.kaml.document.pointer/nearest|nearest@com.davils.kaml.core.syntax.YamlSyntaxTree(com.davils.kaml.document.pointer.JsonPointer;kotlin.Int){}[0]
+final fun (kotlin/String).com.davils.kaml.document.path/toJsonPath(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath // com.davils.kaml.document.path/toJsonPath|toJsonPath@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
+final fun (kotlin/String).com.davils.kaml.document.path/toJsonPathOrNull(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath? // com.davils.kaml.document.path/toJsonPathOrNull|toJsonPathOrNull@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
 final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointer(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/toJsonPointer|toJsonPointer@kotlin.String(){}[0]
 final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointerOrNull(): com.davils.kaml.document.pointer/JsonPointer? // com.davils.kaml.document.pointer/toJsonPointerOrNull|toJsonPointerOrNull@kotlin.String(){}[0]

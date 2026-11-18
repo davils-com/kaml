@@ -19,5 +19,6 @@ module com.davils.kaml.document {
     requires transitive com.davils.kaml.core;
 
     exports com.davils.kaml.document;
+    exports com.davils.kaml.document.path;
     exports com.davils.kaml.document.pointer;
 }

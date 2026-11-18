@@ -45,6 +45,8 @@ way.
   its first occurrence.
 - **A linear-time I-Regexp engine** (RFC 9485) for `match` and `search` of JSONPath, with bounded patterns,
   programs and steps.
+- **JSONPath** (RFC 9535) with nesting, step and result budgets; a query beyond a budget fails instead of
+  answering in part.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
