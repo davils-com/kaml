@@ -24,6 +24,8 @@ way.
 - **Tag resolution** with the failsafe, JSON, core and YAML 1.1 schemas and custom schemas, by hand-written linear
   scanners instead of regular expressions.
 - **The event stream** of the YAML specification.
+- **The emitter** for nodes and events, with comments, whose output parses back to the same graph and cannot be
+  injected, within an output limit.
 
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`

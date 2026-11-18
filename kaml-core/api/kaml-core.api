@@ -83,6 +83,83 @@ public final class com/davils/kaml/core/diagnostic/YamlDiagnosticCode : java/lan
 	public static fun values ()[Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
 }
 
+public final class com/davils/kaml/core/emit/YamlComments {
+	public static final field Companion Lcom/davils/kaml/core/emit/YamlComments$Companion;
+	public final fun isEmpty ()Z
+	public final fun of (Lcom/davils/kaml/core/node/YamlNode;)Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/emit/YamlComments$Companion {
+	public final fun getNone ()Lcom/davils/kaml/core/emit/YamlComments;
+}
+
+public final class com/davils/kaml/core/emit/YamlCommentsBuilder {
+	public final fun build ()Lcom/davils/kaml/core/emit/YamlComments;
+	public final fun comment (Lcom/davils/kaml/core/node/YamlNode;Ljava/lang/String;)V
+}
+
+public final class com/davils/kaml/core/emit/YamlCommentsBuilderKt {
+	public static final fun yamlComments (Lkotlin/jvm/functions/Function1;)Lcom/davils/kaml/core/emit/YamlComments;
+}
+
+public final class com/davils/kaml/core/emit/YamlEmitOptions : com/davils/kore/core/validation/Validatable {
+	public static final field Companion Lcom/davils/kaml/core/emit/YamlEmitOptions$Companion;
+	public static final field MAXIMUM_INDENT I
+	public static final field MINIMUM_INDENT I
+	public final fun getCompatibility ()Lcom/davils/kaml/core/model/YamlVersion;
+	public final fun getHasSortedKeys ()Z
+	public final fun getIndent ()I
+	public final fun getLineBreak ()Lcom/davils/kaml/core/emit/YamlLineBreak;
+	public final fun getQuoteStyle ()Lcom/davils/kaml/core/emit/YamlQuoteStyle;
+	public final fun isDocumentStartExplicit ()Z
+	public final fun isSequenceIndented ()Z
+	public final fun isStylePreserved ()Z
+	public fun toString ()Ljava/lang/String;
+	public fun validate (Lcom/davils/kore/core/validation/ValidationScope;)V
+}
+
+public final class com/davils/kaml/core/emit/YamlEmitOptions$Companion {
+	public final fun getDefault ()Lcom/davils/kaml/core/emit/YamlEmitOptions;
+}
+
+public final class com/davils/kaml/core/emit/YamlEmitOptionsBuilder : com/davils/kore/core/dsl/ValidatingBuilder {
+	public synthetic fun assemble ()Lcom/davils/kore/core/validation/Validatable;
+	public final fun getCompatibility ()Lcom/davils/kaml/core/model/YamlVersion;
+	public final fun getHasSortedKeys ()Z
+	public final fun getIndent ()I
+	public final fun getLineBreak ()Lcom/davils/kaml/core/emit/YamlLineBreak;
+	public final fun getQuoteStyle ()Lcom/davils/kaml/core/emit/YamlQuoteStyle;
+	public final fun isDocumentStartExplicit ()Z
+	public final fun isSequenceIndented ()Z
+	public final fun isStylePreserved ()Z
+	public final fun setCompatibility (Lcom/davils/kaml/core/model/YamlVersion;)V
+	public final fun setDocumentStartExplicit (Z)V
+	public final fun setHasSortedKeys (Z)V
+	public final fun setIndent (I)V
+	public final fun setLineBreak (Lcom/davils/kaml/core/emit/YamlLineBreak;)V
+	public final fun setQuoteStyle (Lcom/davils/kaml/core/emit/YamlQuoteStyle;)V
+	public final fun setSequenceIndented (Z)V
+	public final fun setStylePreserved (Z)V
+}
+
+public final class com/davils/kaml/core/emit/YamlLineBreak : java/lang/Enum {
+	public static final field CrLf Lcom/davils/kaml/core/emit/YamlLineBreak;
+	public static final field Lf Lcom/davils/kaml/core/emit/YamlLineBreak;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getText ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/emit/YamlLineBreak;
+	public static fun values ()[Lcom/davils/kaml/core/emit/YamlLineBreak;
+}
+
+public final class com/davils/kaml/core/emit/YamlQuoteStyle : java/lang/Enum {
+	public static final field Double Lcom/davils/kaml/core/emit/YamlQuoteStyle;
+	public static final field Single Lcom/davils/kaml/core/emit/YamlQuoteStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/davils/kaml/core/emit/YamlQuoteStyle;
+	public static fun values ()[Lcom/davils/kaml/core/emit/YamlQuoteStyle;
+}
+
 public abstract interface class com/davils/kaml/core/event/YamlEvent {
 	public abstract fun getRange ()Lcom/davils/kore/core/text/TextRange;
 }
