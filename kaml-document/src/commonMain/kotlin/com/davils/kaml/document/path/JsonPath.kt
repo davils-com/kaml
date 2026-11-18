@@ -42,9 +42,9 @@ import com.davils.kore.core.text.SafeText
  * [YamlLimits.maximumQueryResults] and [YamlLimits.maximumDepth]; a pattern of `match` and `search` by
  * [YamlLimits.maximumRegexpLength] and [YamlLimits.maximumRegexpSize], beyond which it is not a valid I-Regexp, and
  * so is a pattern whose compiler would emit more than twice as many nodes as that size, such as one that repeats empty
- * groups. Every selector, filter expression, operand, comparison, compiled node of a pattern and step of the I-Regexp
- * engine counts against [YamlLimits.maximumQuerySteps]. The descendant segment `..` walks the graph iteratively. A
- * pattern is compiled at most once per evaluation and never cached beyond it.
+ * groups. Every selector, filter expression, operand, comparison, compiled node of a pattern, step of the I-Regexp
+ * engine and token of the location of a result counts against [YamlLimits.maximumQuerySteps]. The descendant segment
+ * `..` walks the graph iteratively. A pattern is compiled at most once per evaluation and never cached beyond it.
  *
  * A query is immutable and safe to share between threads; every evaluation keeps its own state.
  *
@@ -71,8 +71,9 @@ public class JsonPath private constructor(
      * @since 1.0.0
      */
     public fun query(node: YamlNode): List<JsonPathMatch> {
-        val matches = PathEvaluator(node, limits).evaluate(syntax, node)
-        return buildList { matches.forEach { match -> add(JsonPathMatch(match.pointer, match.node)) } }
+        val evaluator = PathEvaluator(node, limits)
+        val matches = evaluator.evaluate(syntax, node)
+        return buildList { matches.forEach { match -> add(JsonPathMatch(evaluator.pointerOf(match), match.node)) } }
     }
 
     /**

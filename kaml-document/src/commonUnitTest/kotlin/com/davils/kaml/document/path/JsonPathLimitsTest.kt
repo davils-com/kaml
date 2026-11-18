@@ -60,6 +60,7 @@ private const val DESCENDANTS: String = "$..*"
 private const val SAME_AS_SECOND: String = "$[?@ == $[1]]"
 private const val FEW_OPERANDS: Int = 10
 private const val MANY_OPERANDS: Int = 100
+private const val LEVELS_DEEP: Int = 50
 
 private infix fun String.selectedIn(node: YamlNode): List<JsonPathMatch> = JsonPath.parse(this).query(node)
 
@@ -235,6 +236,13 @@ class JsonPathLimitsTest : FunSpec({
             val many = minimalSteps(conjunction(MANY_OPERANDS), items)
 
             (many - few >= (MANY_OPERANDS - FEW_OPERANDS).toLong() * ITEMS) shouldBe true
+        }
+
+        test("charges every token of the location of a result") {
+            val leaf = yamlSequence(List(ITEMS) { yamlScalar(0) })
+            val deep = (1..LEVELS_DEEP).fold<Int, YamlNode>(leaf) { node, _ -> yamlSequence(listOf(node)) }
+
+            (minimalSteps(DESCENDANTS, deep) >= ITEMS.toLong() * LEVELS_DEEP) shouldBe true
         }
 
         test("reads a pattern from the document") {

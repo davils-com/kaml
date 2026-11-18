@@ -18,8 +18,8 @@ package com.davils.kaml.document.path.evaluate
 
 import com.davils.kaml.document.pointer.JsonPointer
 
-internal class Location(private val parent: Location?, private val token: String) {
-    fun child(token: String): Location = Location(this, token)
+internal class Location(private val parent: Location?, private val token: String, val depth: Int) {
+    fun child(token: String): Location = Location(this, token, depth + 1)
 
     fun pointer(): JsonPointer {
         val tokens = ArrayList<String>()

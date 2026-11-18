@@ -24,6 +24,7 @@ import com.davils.kaml.document.path.function.FunctionContext
 import com.davils.kaml.document.path.query.PathQuery
 import com.davils.kaml.document.path.query.PathSegment
 import com.davils.kaml.document.path.query.PathSelector
+import com.davils.kaml.document.pointer.JsonPointer
 
 internal class PathEvaluator(private val root: YamlNode, private val limits: YamlLimits) {
     private val budget = WorkBudget(limits.maximumQuerySteps, "maximumQuerySteps")
@@ -40,6 +41,11 @@ internal class PathEvaluator(private val root: YamlNode, private val limits: Yam
         var matches = listOf(PathMatch(null, current.takeIf { query.isRelative } ?: root))
         query.segments.forEach { segment -> matches = applied(segment, matches) }
         return matches
+    }
+
+    fun pointerOf(match: PathMatch): JsonPointer {
+        budget.charge(match.depth.toLong())
+        return match.pointer
     }
 
     private fun applied(segment: PathSegment, inputs: List<PathMatch>): List<PathMatch> {

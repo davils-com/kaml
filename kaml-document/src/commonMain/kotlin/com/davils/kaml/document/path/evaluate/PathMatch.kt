@@ -22,8 +22,10 @@ import com.davils.kaml.document.pointer.JsonPointer
 internal class PathMatch(val location: Location?, val node: YamlNode) {
     val pointer: JsonPointer get() = location?.pointer() ?: JsonPointer.ROOT
 
+    val depth: Int get() = location?.depth ?: 0
+
     fun child(token: String, child: YamlNode): PathMatch {
-        val parent = location?.child(token) ?: Location(null, token)
+        val parent = location?.child(token) ?: Location(null, token, 1)
         return PathMatch(parent, child)
     }
 }
