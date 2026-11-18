@@ -110,6 +110,151 @@ final enum class com.davils.kaml.core.model/YamlScalarStyle : kotlin/Enum<com.da
     final fun values(): kotlin/Array<com.davils.kaml.core.model/YamlScalarStyle> // com.davils.kaml.core.model/YamlScalarStyle.values|values#static(){}[0]
 }
 
+sealed interface com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent|null[0]
+    abstract val range // com.davils.kaml.core.event/YamlEvent.range|{}range[0]
+        abstract fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.range.<get-range>|<get-range>(){}[0]
+
+    final class Alias : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.Alias|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange, com.davils.kaml.core.model/YamlAnchor) // com.davils.kaml.core.event/YamlEvent.Alias.<init>|<init>(com.davils.kore.core.text.TextRange;com.davils.kaml.core.model.YamlAnchor){}[0]
+
+        final val anchor // com.davils.kaml.core.event/YamlEvent.Alias.anchor|{}anchor[0]
+            final fun <get-anchor>(): com.davils.kaml.core.model/YamlAnchor // com.davils.kaml.core.event/YamlEvent.Alias.anchor.<get-anchor>|<get-anchor>(){}[0]
+        final val range // com.davils.kaml.core.event/YamlEvent.Alias.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.Alias.range.<get-range>|<get-range>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.Alias.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.Alias.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.Alias.toString|toString(){}[0]
+    }
+
+    final class DocumentEnd : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.DocumentEnd|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange, kotlin/Boolean) // com.davils.kaml.core.event/YamlEvent.DocumentEnd.<init>|<init>(com.davils.kore.core.text.TextRange;kotlin.Boolean){}[0]
+
+        final val isExplicit // com.davils.kaml.core.event/YamlEvent.DocumentEnd.isExplicit|{}isExplicit[0]
+            final fun <get-isExplicit>(): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.DocumentEnd.isExplicit.<get-isExplicit>|<get-isExplicit>(){}[0]
+        final val range // com.davils.kaml.core.event/YamlEvent.DocumentEnd.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.DocumentEnd.range.<get-range>|<get-range>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.DocumentEnd.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.DocumentEnd.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.DocumentEnd.toString|toString(){}[0]
+    }
+
+    final class DocumentStart : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.DocumentStart|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange, kotlin/Boolean, com.davils.kaml.core.model/YamlVersion?, kotlin.collections/List<com.davils.kaml.core.model/YamlTagDirective>) // com.davils.kaml.core.event/YamlEvent.DocumentStart.<init>|<init>(com.davils.kore.core.text.TextRange;kotlin.Boolean;com.davils.kaml.core.model.YamlVersion?;kotlin.collections.List<com.davils.kaml.core.model.YamlTagDirective>){}[0]
+
+        final val isExplicit // com.davils.kaml.core.event/YamlEvent.DocumentStart.isExplicit|{}isExplicit[0]
+            final fun <get-isExplicit>(): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.DocumentStart.isExplicit.<get-isExplicit>|<get-isExplicit>(){}[0]
+        final val range // com.davils.kaml.core.event/YamlEvent.DocumentStart.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.DocumentStart.range.<get-range>|<get-range>(){}[0]
+        final val tagDirectives // com.davils.kaml.core.event/YamlEvent.DocumentStart.tagDirectives|{}tagDirectives[0]
+            final fun <get-tagDirectives>(): kotlin.collections/List<com.davils.kaml.core.model/YamlTagDirective> // com.davils.kaml.core.event/YamlEvent.DocumentStart.tagDirectives.<get-tagDirectives>|<get-tagDirectives>(){}[0]
+        final val version // com.davils.kaml.core.event/YamlEvent.DocumentStart.version|{}version[0]
+            final fun <get-version>(): com.davils.kaml.core.model/YamlVersion? // com.davils.kaml.core.event/YamlEvent.DocumentStart.version.<get-version>|<get-version>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.DocumentStart.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.DocumentStart.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.DocumentStart.toString|toString(){}[0]
+    }
+
+    final class MappingEnd : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.MappingEnd|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange) // com.davils.kaml.core.event/YamlEvent.MappingEnd.<init>|<init>(com.davils.kore.core.text.TextRange){}[0]
+
+        final val range // com.davils.kaml.core.event/YamlEvent.MappingEnd.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.MappingEnd.range.<get-range>|<get-range>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.MappingEnd.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.MappingEnd.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.MappingEnd.toString|toString(){}[0]
+    }
+
+    final class MappingStart : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.MappingStart|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange, com.davils.kaml.core.model/YamlAnchor?, com.davils.kaml.core.model/YamlTag?, com.davils.kaml.core.model/YamlCollectionStyle) // com.davils.kaml.core.event/YamlEvent.MappingStart.<init>|<init>(com.davils.kore.core.text.TextRange;com.davils.kaml.core.model.YamlAnchor?;com.davils.kaml.core.model.YamlTag?;com.davils.kaml.core.model.YamlCollectionStyle){}[0]
+
+        final val anchor // com.davils.kaml.core.event/YamlEvent.MappingStart.anchor|{}anchor[0]
+            final fun <get-anchor>(): com.davils.kaml.core.model/YamlAnchor? // com.davils.kaml.core.event/YamlEvent.MappingStart.anchor.<get-anchor>|<get-anchor>(){}[0]
+        final val range // com.davils.kaml.core.event/YamlEvent.MappingStart.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.MappingStart.range.<get-range>|<get-range>(){}[0]
+        final val style // com.davils.kaml.core.event/YamlEvent.MappingStart.style|{}style[0]
+            final fun <get-style>(): com.davils.kaml.core.model/YamlCollectionStyle // com.davils.kaml.core.event/YamlEvent.MappingStart.style.<get-style>|<get-style>(){}[0]
+        final val tag // com.davils.kaml.core.event/YamlEvent.MappingStart.tag|{}tag[0]
+            final fun <get-tag>(): com.davils.kaml.core.model/YamlTag? // com.davils.kaml.core.event/YamlEvent.MappingStart.tag.<get-tag>|<get-tag>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.MappingStart.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.MappingStart.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.MappingStart.toString|toString(){}[0]
+    }
+
+    final class Scalar : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.Scalar|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange, com.davils.kaml.core.model/YamlAnchor?, com.davils.kaml.core.model/YamlTag?, kotlin/String, com.davils.kaml.core.model/YamlScalarStyle) // com.davils.kaml.core.event/YamlEvent.Scalar.<init>|<init>(com.davils.kore.core.text.TextRange;com.davils.kaml.core.model.YamlAnchor?;com.davils.kaml.core.model.YamlTag?;kotlin.String;com.davils.kaml.core.model.YamlScalarStyle){}[0]
+
+        final val anchor // com.davils.kaml.core.event/YamlEvent.Scalar.anchor|{}anchor[0]
+            final fun <get-anchor>(): com.davils.kaml.core.model/YamlAnchor? // com.davils.kaml.core.event/YamlEvent.Scalar.anchor.<get-anchor>|<get-anchor>(){}[0]
+        final val range // com.davils.kaml.core.event/YamlEvent.Scalar.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.Scalar.range.<get-range>|<get-range>(){}[0]
+        final val style // com.davils.kaml.core.event/YamlEvent.Scalar.style|{}style[0]
+            final fun <get-style>(): com.davils.kaml.core.model/YamlScalarStyle // com.davils.kaml.core.event/YamlEvent.Scalar.style.<get-style>|<get-style>(){}[0]
+        final val tag // com.davils.kaml.core.event/YamlEvent.Scalar.tag|{}tag[0]
+            final fun <get-tag>(): com.davils.kaml.core.model/YamlTag? // com.davils.kaml.core.event/YamlEvent.Scalar.tag.<get-tag>|<get-tag>(){}[0]
+        final val value // com.davils.kaml.core.event/YamlEvent.Scalar.value|{}value[0]
+            final fun <get-value>(): kotlin/String // com.davils.kaml.core.event/YamlEvent.Scalar.value.<get-value>|<get-value>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.Scalar.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.Scalar.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.Scalar.toString|toString(){}[0]
+    }
+
+    final class SequenceEnd : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.SequenceEnd|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange) // com.davils.kaml.core.event/YamlEvent.SequenceEnd.<init>|<init>(com.davils.kore.core.text.TextRange){}[0]
+
+        final val range // com.davils.kaml.core.event/YamlEvent.SequenceEnd.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.SequenceEnd.range.<get-range>|<get-range>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.SequenceEnd.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.SequenceEnd.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.SequenceEnd.toString|toString(){}[0]
+    }
+
+    final class SequenceStart : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.SequenceStart|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange, com.davils.kaml.core.model/YamlAnchor?, com.davils.kaml.core.model/YamlTag?, com.davils.kaml.core.model/YamlCollectionStyle) // com.davils.kaml.core.event/YamlEvent.SequenceStart.<init>|<init>(com.davils.kore.core.text.TextRange;com.davils.kaml.core.model.YamlAnchor?;com.davils.kaml.core.model.YamlTag?;com.davils.kaml.core.model.YamlCollectionStyle){}[0]
+
+        final val anchor // com.davils.kaml.core.event/YamlEvent.SequenceStart.anchor|{}anchor[0]
+            final fun <get-anchor>(): com.davils.kaml.core.model/YamlAnchor? // com.davils.kaml.core.event/YamlEvent.SequenceStart.anchor.<get-anchor>|<get-anchor>(){}[0]
+        final val range // com.davils.kaml.core.event/YamlEvent.SequenceStart.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.SequenceStart.range.<get-range>|<get-range>(){}[0]
+        final val style // com.davils.kaml.core.event/YamlEvent.SequenceStart.style|{}style[0]
+            final fun <get-style>(): com.davils.kaml.core.model/YamlCollectionStyle // com.davils.kaml.core.event/YamlEvent.SequenceStart.style.<get-style>|<get-style>(){}[0]
+        final val tag // com.davils.kaml.core.event/YamlEvent.SequenceStart.tag|{}tag[0]
+            final fun <get-tag>(): com.davils.kaml.core.model/YamlTag? // com.davils.kaml.core.event/YamlEvent.SequenceStart.tag.<get-tag>|<get-tag>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.SequenceStart.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.SequenceStart.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.SequenceStart.toString|toString(){}[0]
+    }
+
+    final class StreamEnd : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.StreamEnd|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange) // com.davils.kaml.core.event/YamlEvent.StreamEnd.<init>|<init>(com.davils.kore.core.text.TextRange){}[0]
+
+        final val range // com.davils.kaml.core.event/YamlEvent.StreamEnd.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.StreamEnd.range.<get-range>|<get-range>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.StreamEnd.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.StreamEnd.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.StreamEnd.toString|toString(){}[0]
+    }
+
+    final class StreamStart : com.davils.kaml.core.event/YamlEvent { // com.davils.kaml.core.event/YamlEvent.StreamStart|null[0]
+        constructor <init>(com.davils.kore.core.text/TextRange) // com.davils.kaml.core.event/YamlEvent.StreamStart.<init>|<init>(com.davils.kore.core.text.TextRange){}[0]
+
+        final val range // com.davils.kaml.core.event/YamlEvent.StreamStart.range|{}range[0]
+            final fun <get-range>(): com.davils.kore.core.text/TextRange // com.davils.kaml.core.event/YamlEvent.StreamStart.range.<get-range>|<get-range>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEvent.StreamStart.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEvent.StreamStart.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEvent.StreamStart.toString|toString(){}[0]
+    }
+}
+
 sealed interface com.davils.kaml.core.node/YamlNode { // com.davils.kaml.core.node/YamlNode|null[0]
     abstract val anchor // com.davils.kaml.core.node/YamlNode.anchor|{}anchor[0]
         abstract fun <get-anchor>(): com.davils.kaml.core.model/YamlAnchor? // com.davils.kaml.core.node/YamlNode.anchor.<get-anchor>|<get-anchor>(){}[0]
@@ -204,6 +349,21 @@ final class com.davils.kaml.core.diagnostic/YamlDiagnostic { // com.davils.kaml.
     final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.diagnostic/YamlDiagnostic.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // com.davils.kaml.core.diagnostic/YamlDiagnostic.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // com.davils.kaml.core.diagnostic/YamlDiagnostic.toString|toString(){}[0]
+}
+
+final class com.davils.kaml.core.event/YamlEventResult { // com.davils.kaml.core.event/YamlEventResult|null[0]
+    constructor <init>(kotlin.collections/List<com.davils.kaml.core.event/YamlEvent>, kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic>) // com.davils.kaml.core.event/YamlEventResult.<init>|<init>(kotlin.collections.List<com.davils.kaml.core.event.YamlEvent>;kotlin.collections.List<com.davils.kaml.core.diagnostic.YamlDiagnostic>){}[0]
+
+    final val diagnostics // com.davils.kaml.core.event/YamlEventResult.diagnostics|{}diagnostics[0]
+        final fun <get-diagnostics>(): kotlin.collections/List<com.davils.kaml.core.diagnostic/YamlDiagnostic> // com.davils.kaml.core.event/YamlEventResult.diagnostics.<get-diagnostics>|<get-diagnostics>(){}[0]
+    final val events // com.davils.kaml.core.event/YamlEventResult.events|{}events[0]
+        final fun <get-events>(): kotlin.collections/List<com.davils.kaml.core.event/YamlEvent> // com.davils.kaml.core.event/YamlEventResult.events.<get-events>|<get-events>(){}[0]
+    final val isValid // com.davils.kaml.core.event/YamlEventResult.isValid|{}isValid[0]
+        final fun <get-isValid>(): kotlin/Boolean // com.davils.kaml.core.event/YamlEventResult.isValid.<get-isValid>|<get-isValid>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.davils.kaml.core.event/YamlEventResult.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.davils.kaml.core.event/YamlEventResult.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.davils.kaml.core.event/YamlEventResult.toString|toString(){}[0]
 }
 
 final class com.davils.kaml.core.limit/YamlLimits : com.davils.kore.core.validation/Validatable { // com.davils.kaml.core.limit/YamlLimits|null[0]

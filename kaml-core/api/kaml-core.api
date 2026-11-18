@@ -83,6 +83,115 @@ public final class com/davils/kaml/core/diagnostic/YamlDiagnosticCode : java/lan
 	public static fun values ()[Lcom/davils/kaml/core/diagnostic/YamlDiagnosticCode;
 }
 
+public abstract interface class com/davils/kaml/core/event/YamlEvent {
+	public abstract fun getRange ()Lcom/davils/kore/core/text/TextRange;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$Alias : com/davils/kaml/core/event/YamlEvent {
+	public synthetic fun <init> (Lcom/davils/kore/core/text/TextRange;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnchor-2Fb7pes ()Ljava/lang/String;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$DocumentEnd : com/davils/kaml/core/event/YamlEvent {
+	public fun <init> (Lcom/davils/kore/core/text/TextRange;Z)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public fun hashCode ()I
+	public final fun isExplicit ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$DocumentStart : com/davils/kaml/core/event/YamlEvent {
+	public fun <init> (Lcom/davils/kore/core/text/TextRange;ZLcom/davils/kaml/core/model/YamlVersion;Ljava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getTagDirectives ()Ljava/util/List;
+	public final fun getVersion ()Lcom/davils/kaml/core/model/YamlVersion;
+	public fun hashCode ()I
+	public final fun isExplicit ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$MappingEnd : com/davils/kaml/core/event/YamlEvent {
+	public fun <init> (Lcom/davils/kore/core/text/TextRange;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$MappingStart : com/davils/kaml/core/event/YamlEvent {
+	public synthetic fun <init> (Lcom/davils/kore/core/text/TextRange;Ljava/lang/String;Ljava/lang/String;Lcom/davils/kaml/core/model/YamlCollectionStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getStyle ()Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public final fun getTag-SZdxdjU ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$Scalar : com/davils/kaml/core/event/YamlEvent {
+	public synthetic fun <init> (Lcom/davils/kore/core/text/TextRange;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/davils/kaml/core/model/YamlScalarStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getStyle ()Lcom/davils/kaml/core/model/YamlScalarStyle;
+	public final fun getTag-SZdxdjU ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$SequenceEnd : com/davils/kaml/core/event/YamlEvent {
+	public fun <init> (Lcom/davils/kore/core/text/TextRange;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$SequenceStart : com/davils/kaml/core/event/YamlEvent {
+	public synthetic fun <init> (Lcom/davils/kore/core/text/TextRange;Ljava/lang/String;Ljava/lang/String;Lcom/davils/kaml/core/model/YamlCollectionStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnchor-9xtq4ic ()Ljava/lang/String;
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public final fun getStyle ()Lcom/davils/kaml/core/model/YamlCollectionStyle;
+	public final fun getTag-SZdxdjU ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$StreamEnd : com/davils/kaml/core/event/YamlEvent {
+	public fun <init> (Lcom/davils/kore/core/text/TextRange;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEvent$StreamStart : com/davils/kaml/core/event/YamlEvent {
+	public fun <init> (Lcom/davils/kore/core/text/TextRange;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getRange ()Lcom/davils/kore/core/text/TextRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/davils/kaml/core/event/YamlEventResult {
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDiagnostics ()Ljava/util/List;
+	public final fun getEvents ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isValid ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/davils/kaml/core/limit/YamlLimits : com/davils/kore/core/validation/Validatable {
 	public static final field Companion Lcom/davils/kaml/core/limit/YamlLimits$Companion;
 	public static final field HARD_ALIAS_EXPANSION J
