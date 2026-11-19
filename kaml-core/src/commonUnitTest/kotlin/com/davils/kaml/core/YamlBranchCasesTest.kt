@@ -231,7 +231,7 @@ class YamlBranchCasesTest : FunSpec({
         }
 
         test("quotes strings with characters that plain scalars cannot hold") {
-            val values = listOf("a\rb", "tab\tend\t", "\uFFFE", "-[a]", "a:\tb", "\ta")
+            val values = listOf("a\rb", "tab\tend\t", "\uFFFD", "-[a]", "a:\tb", "\ta")
             val node = yamlSequence(values.map { yamlScalar(it) })
 
             yaml.root(yaml.emit(node)) shouldBe node

@@ -30,6 +30,7 @@ internal object EscapeDecoder {
     private val HIGH_SURROGATES: LongRange = 0xD800L..0xDBFFL
     private val LOW_SURROGATES: LongRange = 0xDC00L..0xDFFFL
     private val SURROGATES: LongRange = 0xD800L..0xDFFFL
+    private val NONCHARACTERS: LongRange = 0xFFFEL..0xFFFFL
 
     private val simple: Map<Char, Char> = mapOf(
         '0' to '\u0000',
@@ -94,7 +95,7 @@ internal object EscapeDecoder {
         character in '0'..'9' || character in 'a'..'f' || character in 'A'..'F'
 
     private fun appendCodePoint(target: StringBuilder, codePoint: Long) {
-        val isScalarValue = codePoint <= LARGEST_CODE_POINT && codePoint !in SURROGATES
+        val isScalarValue = codePoint <= LARGEST_CODE_POINT && codePoint !in SURROGATES && codePoint !in NONCHARACTERS
         val safe = codePoint.toInt().takeIf { isScalarValue } ?: REPLACEMENT
         if (safe < SUPPLEMENTARY_START) {
             target.append(safe.toChar())

@@ -488,6 +488,9 @@ public sealed interface YamlEvent {
     /**
      * A scalar, with its value after escapes, folding and the chomping of block scalars.
      *
+     * Read from a source with errors, the value holds U+FFFD in place of a character the source cannot hold, such as
+     * an escape of a lone surrogate, U+FFFE or U+FFFF; an error diagnostic of the result always reports it.
+     *
      * @param range the place of the scalar in the source, its quotes included.
      * @param anchor the anchor of the scalar, or `null` without one.
      * @param tag the tag the source gives the scalar, or `null` without one; events resolve no tags.

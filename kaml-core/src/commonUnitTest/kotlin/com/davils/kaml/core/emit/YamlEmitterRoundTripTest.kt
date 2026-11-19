@@ -105,14 +105,14 @@ class YamlEmitterRoundTripTest : FunSpec({
     context("the schema that reads the text") {
         test("reads back the same graph for every fragment, whatever schema the configuration has") {
             readers.forEach { reader ->
-                fragments.filterNot(UnsafeCharacters::hasLoneSurrogate).forEach { fragment ->
+                fragments.filterNot(UnsafeCharacters::hasUnrepresentable).forEach { fragment ->
                     readBack(reader, YamlDocument(graphOf(key = fragment, value = fragment, YamlScalarStyle.Plain)))
                 }
             }
         }
 
         test("reads back the same graph in a document that declares YAML 1.1") {
-            fragments.filterNot(UnsafeCharacters::hasLoneSurrogate).forEach { fragment ->
+            fragments.filterNot(UnsafeCharacters::hasUnrepresentable).forEach { fragment ->
                 val node = graphOf(key = fragment, value = "a${fragment}b", YamlScalarStyle.Plain)
                 readBack(Yaml.Default, YamlDocument(node, version = YamlVersion.V1_1))
             }
@@ -165,7 +165,7 @@ class YamlEmitterRoundTripTest : FunSpec({
 
 private fun roundTrip(setup: EmitSetup, key: String, value: String) {
     val node = graphOf(key = key, value = value, style = setup.style)
-    val isRepresentable = !UnsafeCharacters.hasLoneSurrogate(key) && !UnsafeCharacters.hasLoneSurrogate(value)
+    val isRepresentable = !UnsafeCharacters.hasUnrepresentable(key) && !UnsafeCharacters.hasUnrepresentable(value)
     if (!isRepresentable) {
         shouldThrow<IllegalArgumentException> { setup.yaml.emit(node) }
         return

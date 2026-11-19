@@ -32,11 +32,12 @@ internal sealed interface EmitNode {
         val plainTag: YamlTag?,
     ) : EmitNode {
         init {
-            require(!UnsafeCharacters.hasLoneSurrogate(value)) { LONE_SURROGATE }
+            require(!UnsafeCharacters.hasUnrepresentable(value)) { LONE_SURROGATE }
         }
 
         companion object {
-            const val LONE_SURROGATE: String = "A scalar cannot contain a lone surrogate, which YAML cannot represent"
+            const val LONE_SURROGATE: String =
+                "A scalar cannot contain a lone surrogate, U+FFFE or U+FFFF, which YAML cannot represent"
         }
     }
 

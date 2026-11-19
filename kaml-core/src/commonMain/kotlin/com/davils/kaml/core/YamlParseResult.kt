@@ -90,7 +90,8 @@ public sealed interface YamlParseResult {
      * @param diagnostics the problems found in the source; the result keeps a copy.
      * @property partial the documents, or the parts of them, that could be built before or despite the errors. It
      * holds no node beyond the limit that stopped the work, and a mapping in it keeps only the first of several equal
-     * keys. It is meant for tools such as editors; a caller that needs a valid document uses [Parsed] only.
+     * keys, and a character the source cannot hold, such as an escape of a lone surrogate, is replaced by U+FFFD. It
+     * is meant for tools such as editors; a caller that needs a valid document uses [Parsed] only.
      * @since 1.0.0
      */
     public class Failed(diagnostics: List<YamlDiagnostic>, public val partial: YamlStream) : YamlParseResult {

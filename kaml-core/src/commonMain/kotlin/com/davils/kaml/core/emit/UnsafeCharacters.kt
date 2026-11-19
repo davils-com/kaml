@@ -28,6 +28,7 @@ internal object UnsafeCharacters {
     private const val FIRST_SURROGATE: Int = 0xD800
     private const val LAST_SURROGATE: Int = 0xDFFF
     private const val SUPPLEMENTARY_START: Int = 0x10000
+    private const val NONCHARACTERS: String = "\uFFFE\uFFFF"
     private const val SURROGATE_BITS: Int = 10
     private const val HIDDEN: String = "007F..009F 00AD 034F 061C 115F..1160 17B4..17B5 180B..180F 200B..200F " +
         "2028..202E 2060..206F 3164 FE00..FE0F FEFF FFA0 FFF0..FFFB FFFE..FFFF 1BCA0..1BCA3 1D173..1D17A E0000..E0FFF"
@@ -53,6 +54,11 @@ internal object UnsafeCharacters {
             index += widthOf(codePoint)
         }
         return isLone
+    }
+
+    fun hasUnrepresentable(text: String): Boolean {
+        val isNoncharacter = text.any { character -> character in NONCHARACTERS }
+        return isNoncharacter || hasLoneSurrogate(text)
     }
 
     fun isUnsafe(codePoint: Int): Boolean {

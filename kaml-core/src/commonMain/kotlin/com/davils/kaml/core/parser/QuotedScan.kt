@@ -148,12 +148,13 @@ internal class QuotedScan(private val state: ParseState, private val shape: Shap
         val value = hexValue(from = index + 2, to = end)
         val isPair = code == SHORT_UNICODE && value in HIGH_SURROGATES && isLowSurrogateEscapeAt(end)
         val isScalarValue = value <= LAST_CODE_POINT && value !in SURROGATES
-        if (!isPair && !isScalarValue) {
+        val isAllowed = isScalarValue && value !in NONCHARACTERS
+        if (!isPair && !isAllowed) {
             val shown = SafeText.quoted(state.text.substring(startIndex = index, endIndex = end))
             state.report(
                 YamlDiagnosticCode.InvalidEscape,
                 state.span(start = index, end = end),
-                "$shown is a surrogate or lies beyond U+10FFFF, so it is no Unicode character",
+                "$shown is a surrogate, U+FFFE, U+FFFF or lies beyond U+10FFFF, which YAML does not allow",
             )
         }
         return (end + SHORT_UNICODE_LENGTH).takeIf { isPair } ?: end
@@ -187,6 +188,7 @@ internal class QuotedScan(private val state: ParseState, private val shape: Shap
         val HIGH_SURROGATES: LongRange = 0xD800L..0xDBFFL
         val LOW_SURROGATES: LongRange = 0xDC00L..0xDFFFL
         val SURROGATES: LongRange = 0xD800L..0xDFFFL
+        val NONCHARACTERS: LongRange = 0xFFFEL..0xFFFFL
         val HEX_WIDTHS: Map<Char, Int> = mapOf('x' to 2, SHORT_UNICODE to UNICODE_DIGITS, 'U' to 8)
     }
 }

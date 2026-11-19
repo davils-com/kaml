@@ -104,9 +104,9 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
      * @return the YAML text.
      * @throws IllegalStateException if the text would be longer than `YamlLimits.maximumOutputLength` of the
      * configuration; the emitter stops at the limit and returns no part of the text.
-     * @throws IllegalArgumentException if a scalar, a tag or a tag prefix holds a lone surrogate, if a `%TAG` handle
-     * is invalid, declared twice or has no prefix, or if a node nests as deep as
-     * `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
+     * @throws IllegalArgumentException if a scalar holds a lone surrogate, U+FFFE or U+FFFF, if a tag or a tag prefix
+     * holds a lone surrogate, if a `%TAG` handle is invalid, declared twice or has no prefix, or if a node nests as
+     * deep as `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
      * @since 1.0.0
      */
     public fun emit(stream: YamlStream): String {
@@ -124,9 +124,9 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
      * @return the YAML text.
      * @throws IllegalStateException if the text would be longer than `YamlLimits.maximumOutputLength` of the
      * configuration; the emitter stops at the limit and returns no part of the text.
-     * @throws IllegalArgumentException if a scalar, a tag or a tag prefix holds a lone surrogate, if a `%TAG` handle
-     * is invalid, declared twice or has no prefix, or if a node nests as deep as
-     * `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
+     * @throws IllegalArgumentException if a scalar holds a lone surrogate, U+FFFE or U+FFFF, if a tag or a tag prefix
+     * holds a lone surrogate, if a `%TAG` handle is invalid, declared twice or has no prefix, or if a node nests as
+     * deep as `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
      * @since 1.0.0
      */
     public fun emit(document: YamlDocument): String = emit(YamlStream(listOf(document)))
@@ -143,9 +143,9 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
      * @return the YAML text.
      * @throws IllegalStateException if the text would be longer than `YamlLimits.maximumOutputLength` of the
      * configuration; the emitter stops at the limit and returns no part of the text.
-     * @throws IllegalArgumentException if a scalar, a tag or a tag prefix holds a lone surrogate, if a `%TAG` handle
-     * is invalid, declared twice or has no prefix, or if a node nests as deep as
-     * `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
+     * @throws IllegalArgumentException if a scalar holds a lone surrogate, U+FFFE or U+FFFF, if a tag or a tag prefix
+     * holds a lone surrogate, if a `%TAG` handle is invalid, declared twice or has no prefix, or if a node nests as
+     * deep as `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
      * @since 1.0.0
      */
     public fun emit(document: YamlDocument, comments: YamlComments): String {
@@ -160,9 +160,9 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
      * @return the YAML text.
      * @throws IllegalStateException if the text would be longer than `YamlLimits.maximumOutputLength` of the
      * configuration; the emitter stops at the limit and returns no part of the text.
-     * @throws IllegalArgumentException if a scalar, a tag or a tag prefix holds a lone surrogate, if a `%TAG` handle
-     * is invalid, declared twice or has no prefix, or if a node nests as deep as
-     * `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
+     * @throws IllegalArgumentException if a scalar holds a lone surrogate, U+FFFE or U+FFFF, if a tag or a tag prefix
+     * holds a lone surrogate, if a `%TAG` handle is invalid, declared twice or has no prefix, or if a node nests as
+     * deep as `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
      * @since 1.0.0
      */
     public fun emit(node: YamlNode): String = emit(YamlDocument(node))
@@ -179,9 +179,9 @@ public class Yaml internal constructor(public val configuration: YamlConfigurati
      * @throws IllegalStateException if the text would be longer than `YamlLimits.maximumOutputLength` of the
      * configuration; the emitter stops at the limit and returns no part of the text.
      * @throws IllegalArgumentException if [events] do not form a well-formed sequence, if an alias refers to an
-     * undefined anchor, if a scalar, a tag or a tag prefix holds a lone surrogate, if a `%TAG` handle is invalid,
-     * declared twice or has no prefix, or if collections nest as deep as `YamlLimits.maximumDepth` of the configuration
-     * or deeper, which its parser would refuse.
+     * undefined anchor, if a scalar holds a lone surrogate, U+FFFE or U+FFFF, if a tag or a tag prefix holds a lone
+     * surrogate, if a `%TAG` handle is invalid, declared twice or has no prefix, or if collections nest as deep as
+     * `YamlLimits.maximumDepth` of the configuration or deeper, which its parser would refuse.
      * @since 1.0.0
      */
     public fun emitEvents(events: List<YamlEvent>): String =

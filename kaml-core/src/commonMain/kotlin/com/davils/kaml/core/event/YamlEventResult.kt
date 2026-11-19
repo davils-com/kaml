@@ -24,8 +24,10 @@ private const val HASH_FACTOR: Int = 31
 /**
  * The events of a source and the problems found while reading them, the result of [com.davils.kaml.core.Yaml.events].
  *
- * A source with errors still has the events that could be read; [isValid] tells whether there were errors. A result
- * is immutable and safe to share between threads.
+ * A source with errors still has the events that could be read; [isValid] tells whether there were errors. In such
+ * events a character the source cannot hold, such as a byte that is no valid UTF-8 or an escape of a lone surrogate,
+ * U+FFFE or U+FFFF, is replaced by U+FFFD, and an error diagnostic always reports it, so events with a replaced
+ * character never come with a valid result. A result is immutable and safe to share between threads.
  *
  * @param events the events of the source, in order; the result keeps a copy.
  * @param diagnostics the problems found in the source; the result keeps a copy.
