@@ -79,11 +79,28 @@ The following are **not** vulnerabilities in kaml:
 - `@DavilsInternal` is a compile-time opt-in, not an access boundary. Kotlin `internal` is public in JVM bytecode:
   Java code and reflection reach internal declarations through their mangled names. On the module path the
   `module-info` of every module exports only packages with public API, and implementation details live in packages
-  it does not export; on the class path every class is reachable. kaml therefore validates in every constructor.
+  it does not export; on the class path every class is reachable. kaml therefore validates in the constructor of
+  every value a caller can build, such as limits, configurations, options, comments, scalars and redactions, so a
+  call that bypasses a builder still cannot create an invalid one.
 - Messages and diagnostics escape input as Kore's `SafeText` does: escapes are written as `\u{XXXX}`, `\n`, `\r`
   and `\t`. A literal backslash in free text is shown as it is, so input can display text that looks like an escape,
   but never a real control character. Right-to-left letters are shown as they are; a viewer may reorder the neutral
   characters around them.
+- Whether `SafeText` shows a code point as it is or as an escape follows the Unicode tables of the platform: the JDK
+  on the JVM and the JavaScript engine on Wasm, which may know newer code points. kaml's own decisions, such as which
+  anchors and plain scalars it writes, use fixed ranges of code points and are the same on both targets.
+- Wasm has no tree bins in its hash maps. kaml's own indexes of mapping keys, merges, diffs and redaction are ordered
+  and stay O(n log n) under colliding hash codes on both targets, but a `Map` that kotlinx.serialization builds while
+  decoding, and the tables of anchor names and tag handles, are hash maps. On Wasm, keys with colliding hash codes make
+  them quadratic within `maximumCollectionSize` and `maximumAnchors`; lower those limits for hostile input on Wasm.
+- Binary, octal and hexadecimal integers are converted in time quadratic in their length, bounded by
+  `maximumNumberLength` (at most 1,024 characters).
+- The incremental reparse of a syntax tree charges the node budget for the documents it parses again; composing the
+  tree charges the whole stream again, so a tree that exceeds a limit never composes to a graph.
+- The partial graph of a failed parse may hold U+FFFD where the source held a code point YAML does not allow; the
+  result is always `Failed` with an error diagnostic for it.
+- A decoding message of `kaml-serialization` leaves out the value that did not fit. `isValueQuoted` shows it,
+  escaped and shortened, for debugging; keep it off when documents may hold secrets in fields of the wrong type.
 
 ## Verifying a Release
 
