@@ -16,6 +16,7 @@
 
 package com.davils.kaml.document.redact.rule
 
+import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
 import com.davils.kaml.document.internal.NodeSet
@@ -30,11 +31,26 @@ internal class Targets(
 ) {
     fun of(root: YamlNode): NodeSet {
         val targets = NodeSet(ordinalOf)
+        val roots = queryRoots(root)
         rules.paths.forEach { path ->
-            path.query(root).forEach { match -> allAt(root, match.location).forEach(targets::add) }
+            roots.forEach { start ->
+                path.query(start).forEach { match -> allAt(start, match.location).forEach(targets::add) }
+            }
         }
         if (rules.hasKeys) keyed(root, targets)
         return targets
+    }
+
+    private fun queryRoots(root: YamlNode): List<YamlNode> {
+        val roots = NodeSet(ordinalOf)
+        roots.add(root)
+        if (rules.paths.isNotEmpty()) subtree(root) { node -> collectionKeysOf(node).forEach(roots::add) }
+        return roots.nodes
+    }
+
+    private fun collectionKeysOf(node: YamlNode): List<YamlNode> {
+        val entries = (node as? YamlNode.Mapping)?.entries.orEmpty()
+        return entries.map(YamlEntry::key).filter { key -> key !is YamlNode.Scalar }
     }
 
     fun subtree(node: YamlNode, seen: NodeSet = NodeSet(ordinalOf), visit: (YamlNode) -> Unit) {

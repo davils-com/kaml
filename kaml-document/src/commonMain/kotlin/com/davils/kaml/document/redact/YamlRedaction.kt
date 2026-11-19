@@ -35,11 +35,12 @@ import com.davils.kore.core.validation.validateOrThrow
  * Removes secrets from YAML documents, from a node graph or in place from a lossless syntax tree, and fails closed.
  *
  * A node is secret when a configured JSONPath selects it or when it is the value of a member whose key a configured
- * predicate accepts; every occurrence of a duplicate key counts. A secret node is replaced as a whole, and so is
- * every other reference to it: an alias, a merge key `<<` and the anchored node itself, and in a syntax tree also
- * whatever an anchor or alias inside it stands for. Value patterns replace the parts of scalar values they match,
- * comment patterns those of comments, and the comment on the line of a redacted value goes with it unless
- * [isTrailingCommentRedacted] is off. Every replacement is literal.
+ * predicate accepts; every occurrence of a duplicate key counts. A JSONPath also runs on every key that is a
+ * mapping or a sequence, which a query of JSON never enters, so a secret inside such a key is found as well. A secret
+ * node is replaced as a whole, and so is every other reference to it: an alias, a merge key `<<` and the anchored
+ * node itself, and in a syntax tree also whatever an anchor or alias inside it stands for. Value patterns replace the
+ * parts of scalar values they match, comment patterns those of comments, and the comment on the line of a redacted
+ * value goes with it unless [isTrailingCommentRedacted] is off. Every replacement is literal.
  *
  * A syntax tree that does not compose without errors is refused as a whole, never redacted in part, and so is one the
  * redaction cannot decide how to redact or whose redacted text would not compose again. No secret ever appears in a

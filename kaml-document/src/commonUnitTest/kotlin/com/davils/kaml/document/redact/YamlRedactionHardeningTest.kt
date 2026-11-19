@@ -21,17 +21,21 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
+import com.davils.kaml.document.fixture.lines
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.fixture.treeOf
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
 
 private const val SECRET: String = "hunter2"
 private const val PASSWORD_PATH: String = "$.password"
+private const val ANY_PASSWORD: String = "$..password"
 private const val FEW_MAPPINGS: Int = 5_000
 private const val MANY_MAPPINGS: Int = 40_000
 private const val GROWTH: Int = 16
@@ -90,6 +94,21 @@ class YamlRedactionHardeningTest : FunSpec({
             val colliding = nodeOf("{password: &p $SECRET, *p : x, '***': y}")
 
             shouldThrow<IllegalStateException> { yamlRedaction { path(PASSWORD_PATH) }.redact(colliding) }
+        }
+    }
+
+    context("keys that are collections") {
+        val inKey = lines("? {password: $SECRET}", ": x")
+
+        test("are searched by a path in a graph") {
+            scalarsOf(yamlRedaction { path(ANY_PASSWORD) }.redact(nodeOf(inKey))) shouldNotContain SECRET
+        }
+
+        test("are searched by a path in a syntax tree") {
+            val redacted = yamlRedaction { path(ANY_PASSWORD) }.redact(treeOf(inKey))
+
+            redacted.shouldBeInstanceOf<YamlRedactionResult.Redacted>().tree.text shouldBe
+                lines("? {password: \"***\"}", ": x")
         }
     }
 
