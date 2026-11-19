@@ -24,11 +24,12 @@ private const val HEADING: String = "The YAML could not be decoded:"
 
 internal object DiagnosticText {
     fun render(text: String, diagnostics: List<YamlDiagnostic>): String {
-        val lines = LineMap.of(text)
+        val indexed = text.takeIf { it.length <= Limits.MAX_LINE_MAP_LENGTH }.orEmpty()
+        val lines = LineMap.of(indexed)
         val message = StringBuilder(HEADING)
         var shown = 0
         for (diagnostic in diagnostics) {
-            val line = "\n" + lineOf(lines, text, diagnostic)
+            val line = "\n" + lineOf(lines, indexed, diagnostic)
             val isFull = shown > 0 && message.length + line.length > Limits.MAX_MESSAGE_LENGTH
             if (isFull) break
             message.append(line)
