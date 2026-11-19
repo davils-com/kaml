@@ -16,14 +16,15 @@
 
 package com.davils.kaml.serialization
 
+import com.davils.kaml.core.Yaml
+import com.davils.kaml.core.YamlParseResult
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
-import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
-import com.davils.kaml.core.node.yamlTagged
 import com.davils.kaml.serialization.fixture.Numbers
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 private const val HUGE_DIGITS: Int = 40
 private const val OVERFLOW_DIGITS: Int = 400
@@ -92,8 +93,8 @@ class YamlFormatNumbersTest : FunSpec({
         }
 
         test("refuse a number beyond the range of a Double") {
-            codes("double: 1e400") shouldBe listOf(YamlDiagnosticCode.NumberOutOfRange)
-            codes("float: -1e400") shouldBe listOf(YamlDiagnosticCode.NumberOutOfRange)
+            codes("double: 1e400") shouldBe listOf(YamlDiagnosticCode.InvalidTaggedValue)
+            codes("float: -1e400") shouldBe listOf(YamlDiagnosticCode.InvalidTaggedValue)
             codes("double: 1${"0".repeat(OVERFLOW_DIGITS)}") shouldBe listOf(YamlDiagnosticCode.NumberOutOfRange)
         }
 
@@ -117,7 +118,10 @@ class YamlFormatNumbersTest : FunSpec({
 
         test("refuse text where a number belongs") {
             codes("double: text") shouldBe listOf(YamlDiagnosticCode.TypeMismatch)
-            val tagged = yamlMapping { "double" to yamlTagged("1.5", YamlTag.FLOAT) }
+            val failed = Yaml.Default.parse("double: !!float x").shouldBeInstanceOf<YamlParseResult.Failed>()
+            val tagged = failed.partial.documents
+                .single()
+                .root
 
             format.decodeOrFailure<Numbers>(tagged).diagnostics.map { it.code } shouldBe
                 listOf(YamlDiagnosticCode.TypeMismatch)

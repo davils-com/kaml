@@ -52,7 +52,11 @@ class YamlJsonTest : FunSpec({
 
         test("refuses a number that JSON cannot hold") {
             val infinity = root(".inf").toJsonElement()
-            val overflow = root("1e400").toJsonElement()
+            val misread = Yaml.Default.parse("!!float x").shouldBeInstanceOf<YamlParseResult.Failed>()
+            val overflow = misread.partial.documents
+                .single()
+                .root
+                .toJsonElement()
 
             infinity.shouldBeInstanceOf<YamlJsonConversion.Refused>()
             overflow.shouldBeInstanceOf<YamlJsonConversion.Refused>()

@@ -72,7 +72,8 @@ private const val BIG: String = "123456789012345678901234567890"
 private const val BOOLEAN_REASON: String = "The boolean has no valid value"
 private const val INTEGER_REASON: String = "The integer is outside the range of a Long or has no valid value"
 private const val STRING_KEYS: String = "JSON keys must be strings"
-private const val MAYBE: String = "maybe"
+private const val MAYBE_BOOLEAN: String = "!!bool maybe"
+private const val TEXT_FLOAT: String = "!!float x"
 private const val REPEATED: String = "{a: 1, a: 2}"
 private const val LAST_NONCHARACTER: Int = 0xFFFF
 
@@ -118,6 +119,13 @@ private val elements: Arb<JsonElement> = arbitrary {
 }
 
 @OptIn(ExperimentalSerializationApi::class)
+private fun misread(document: String): YamlNode {
+    val failed = Yaml.Default.parse(document).shouldBeInstanceOf<YamlParseResult.Failed>()
+    return failed.partial.documents
+        .single()
+        .root
+}
+
 class YamlJsonInteropTest : FunSpec({
     context("keys") {
         test("refuses keys that are no strings") {
@@ -153,11 +161,9 @@ class YamlJsonInteropTest : FunSpec({
         }
 
         test("refuses scalars whose text is no value of their tag") {
-            refusal(yamlTagged(MAYBE, YamlTag.BOOLEAN)) shouldBe BOOLEAN_REASON
-            refusal(
-                yamlTagged("x", YamlTag.FLOAT),
-            ) shouldBe "JSON has no infinity, no NaN and no float outside a Double"
-            refusal(yamlTagged("x", YamlTag.INTEGER)) shouldBe INTEGER_REASON
+            refusal(misread(MAYBE_BOOLEAN)) shouldBe BOOLEAN_REASON
+            refusal(misread(TEXT_FLOAT)) shouldBe "JSON has no infinity, no NaN and no float outside a Double"
+            refusal(misread("!!int x")) shouldBe INTEGER_REASON
         }
     }
 
@@ -246,17 +252,17 @@ class YamlJsonInteropTest : FunSpec({
             converted.hashCode() shouldBe same.hashCode()
             converted shouldNotBe yamlScalar(2).toJsonElement()
             converted.toString() shouldBe "Converted"
-            converted shouldNotBe yamlTagged(MAYBE, YamlTag.BOOLEAN).toJsonElement()
+            converted shouldNotBe misread(MAYBE_BOOLEAN).toJsonElement()
         }
 
         test("compare refusals by node and reason") {
-            val refused = yamlTagged(MAYBE, YamlTag.BOOLEAN).toJsonElement()
-            val same = yamlTagged(MAYBE, YamlTag.BOOLEAN).toJsonElement()
+            val refused = misread(MAYBE_BOOLEAN).toJsonElement()
+            val same = misread(MAYBE_BOOLEAN).toJsonElement()
 
             refused shouldBe same
             refused.hashCode() shouldBe same.hashCode()
-            refused shouldNotBe yamlTagged("perhaps", YamlTag.BOOLEAN).toJsonElement()
-            refused shouldNotBe yamlTagged("x", YamlTag.FLOAT).toJsonElement()
+            refused shouldNotBe misread("!!bool perhaps").toJsonElement()
+            refused shouldNotBe misread(TEXT_FLOAT).toJsonElement()
             refused shouldNotBe yamlScalar(1).toJsonElement()
             refused.toString() shouldBe "Refused(reason=$BOOLEAN_REASON)"
         }
