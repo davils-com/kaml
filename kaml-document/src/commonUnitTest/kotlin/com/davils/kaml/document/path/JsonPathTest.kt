@@ -206,6 +206,10 @@ class JsonPathTest : FunSpec({
             select("$[?value(@..color) == 'red'].name", people) shouldBe nodesOf("ann", "bob")
         }
 
+        test("reads a query as the argument of value before a logical expression") {
+            select("$[?value(@.*) == 4]", nodeOf("[[4], [4, 5], [5]]")) shouldBe listOf(nodeOf("[4]"))
+        }
+
         test("match tests the whole text and search any part") {
             select("$[?match(@.name, 'a.n')].name", people) shouldBe nodesOf("ann")
             select("$[?search(@.name, 'b')].name", people) shouldBe nodesOf("bob")
@@ -327,6 +331,9 @@ class JsonPathTest : FunSpec({
                 "$[?count(@, @) == 1]",
                 "$[?count() == 1]",
                 "$[?count(@ == 1) == 1]",
+                "$[?length(1 == 1) == 1]",
+                "$[?true(1) == 0]",
+                "$[?blt(1 == 1)]",
                 "$[?(@.a]",
                 "$[?!1]",
             ).forEach { expression -> JsonPath.parseOrNull(expression).shouldBeNull() }

@@ -60,7 +60,8 @@ private val valid: List<String> = listOf(
 private val invalid: List<String> = listOf(
     "(", ")", "a)", "a**", "*", "+a", "?", "{", "}", "a{", "a{2", "a{3,2}", "a{,2}", "a{2}{3}", "[", "[]", "[^]",
     "]", "[a", "[a-\\p{L}]", "[\\p{L}-z]", "[z-a]", "[a-z-0]", "[[]", "\\", "\\d", "\\w", "\\s", "\\b", "\\1",
-    "(?:a)", "(?=a)", "\\p{X}", "\\p{Cs}", "\\p{Lx}", "\\p{L", "\\p", "\\pL", "a\uD800", "[\uDC00]",
+    "(?:a)", "(?=a)", "\\S", "\\D", "\\W", "[\\S ]", "\\p{IsBasicLatin}",
+    "[\\u0000-\\u007f]", "\\p{X}", "\\p{Cs}", "\\p{Lx}", "\\p{L", "\\p", "\\pL", "a\uD800", "[\uDC00]",
 )
 
 private val members: List<Pair<String, Int>> = listOf(
