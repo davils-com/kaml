@@ -87,7 +87,8 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         val groups = candidates.groupBy(::resolvedRangeOf).values
         val kept = groups.mapTo(HashSet()) { group -> group.last().takeIf { isLastKept } ?: group.first() }
         val unkept = mapping.entries.filter { entry -> entry !in kept }
-        val (merges, others) = unkept.partition(::isMerge)
+        val isMergeKey = kept.none(::isMerge)
+        val (merges, others) = unkept.partition { entry -> isMergeKey && isMerge(entry) }
         merges.mapTo(merged) { entry -> entry.node.range }
         return found.addAll(others.flatMap(::partsOf))
     }

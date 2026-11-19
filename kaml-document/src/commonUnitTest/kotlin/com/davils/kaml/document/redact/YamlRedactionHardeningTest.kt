@@ -160,6 +160,16 @@ class YamlRedactionHardeningTest : FunSpec({
             redactedText(yamlRedaction { path(OTHER_PATH) }, YamlSyntaxTree.parse(keys, keepFirst)) shouldBe keys
         }
 
+        test("are redacted when their key is a plain << that the schema reads as text") {
+            val first = YamlSyntaxTree.parse(lines("<<: safe", "<<: $SECRET", "b: 1"), keepFirst)
+            val last = YamlSyntaxTree.parse(lines("<<: $SECRET", "<<: safe", "b: 1"), keepLast)
+
+            val redacted = lines("<<: $QUOTED", "<<: $QUOTED", "b: $QUOTED")
+
+            redactedText(yamlRedaction { path("$.b") }, first) shouldBe redacted
+            redactedText(yamlRedaction { path("$.b") }, last) shouldBe redacted
+        }
+
         test("leave merge keys and their sources alone") {
             val merging = yaml {
                 duplicateKeys = YamlDuplicateKeys.KeepFirst
@@ -170,6 +180,10 @@ class YamlRedactionHardeningTest : FunSpec({
 
             redactedText(yamlRedaction { path("$.m.y") }, tree) shouldBe
                 lines("base: &b {x: 1}", "m:", "  <<: [*b, {z: 3}]", "  y: \"***\"")
+            val twice = lines("a: &a {x: 1}", "b: &b {y: 2}", "m:", "  <<: *a", "  <<: *b", "  z: 3")
+
+            redactedText(yamlRedaction { path("$.m.z") }, YamlSyntaxTree.parse(twice, merging)) shouldBe
+                lines("a: &a {x: 1}", "b: &b {y: 2}", "m:", "  <<: *a", "  <<: *b", "  z: $QUOTED")
         }
     }
 

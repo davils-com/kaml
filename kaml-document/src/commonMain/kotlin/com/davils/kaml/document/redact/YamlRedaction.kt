@@ -122,8 +122,9 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
      * An entry that the composer drops as a duplicate, which [com.davils.kaml.core.YamlDuplicateKeys.KeepFirst] and
      * [com.davils.kaml.core.YamlDuplicateKeys.KeepLast] allow, is invisible to every path and may be the one another
      * reader keeps, so its value and a key that is a collection are redacted whole, and so is every other entry whose
-     * key has the same text. A mapping of the text that the redaction cannot match with the composed graph makes it
-     * refuse with [YamlRedactionRefusal.Undecidable].
+     * key has the same text; a key `<<` counts as a merge key only where the composer merged it. A mapping of the
+     * text that the redaction cannot match with the composed graph makes it refuse with
+     * [YamlRedactionRefusal.Undecidable].
      *
      * @param tree the syntax tree, which stays unchanged.
      * @return the redacted tree with its text edits, or why it was refused.
