@@ -45,6 +45,9 @@ private const val FEW_LAYERS: Int = 2
 private const val MANY_LAYERS: Int = 100
 private const val LAYER_GROWTH: Int = 3
 private const val THREE: Int = 3
+private const val SHORT_POINTER: Int = 5_000
+private const val LONG_POINTER: Int = 50_000
+private const val POINTER_GROWTH: Int = 20
 private const val COLLIDING_BITS: Int = 3
 private const val FEW_BITS: Int = 11
 private const val MANY_BITS: Int = 13
@@ -137,6 +140,28 @@ class YamlMergerLimitsTest : FunSpec({
             merged.node shouldBe nodeOf("{k0: v, k1: changed}")
             merged.originOf(JsonPointer.of("k0")) shouldBe "base"
             merged.originOf(JsonPointer.of("k1")) shouldBe "c"
+        }
+    }
+
+    context("origins") {
+        test("are found in time that does not grow with the square of the length of a pointer") {
+            val merged = YamlMerger().merge(listOf(YamlLayer("only", wide(1))))
+            val shortTime = timed { merged.originOf(JsonPointer.of(List(SHORT_POINTER) { "x" })) }
+            val longTime = timed { merged.originOf(JsonPointer.of(List(LONG_POINTER) { "x" })) }
+
+            (longTime < shortTime * POINTER_GROWTH + slack) shouldBe true
+            merged.originOf(JsonPointer.of(List(LONG_POINTER) { "k0" })) shouldBe "only"
+        }
+
+        test("are those of the nearest listed ancestor") {
+            val layers = listOf(YamlLayer("a", nodeOf("{x: {y: [1, {z: 2}]}}")), YamlLayer("b", nodeOf("{x: {w: 3}}")))
+            val merged = YamlMerger().merge(layers)
+
+            merged.originOf(JsonPointer.ROOT) shouldBe "b"
+            merged.originOf(JsonPointer.of("x", "w")) shouldBe "b"
+            merged.originOf(JsonPointer.of("x", "y", "1", "z")) shouldBe "a"
+            merged.originOf(JsonPointer.of("x", "y", "9")) shouldBe "a"
+            merged.originOf(JsonPointer.of("q")) shouldBe "b"
         }
     }
 

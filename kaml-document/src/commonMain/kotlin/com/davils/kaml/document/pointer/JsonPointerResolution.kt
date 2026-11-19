@@ -16,6 +16,7 @@
 
 package com.davils.kaml.document.pointer
 
+import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
@@ -24,20 +25,24 @@ import com.davils.kaml.core.syntax.ast.YamlValueSyntax
  * Parses this text as the RFC 6901 form of a JSON pointer.
  *
  * @receiver the pointer, such as `/a/0`; the empty text is the root.
+ * @param limits the limits of the text, see [JsonPointer.parse]; [YamlLimits.Untrusted] by default.
  * @return the pointer.
- * @throws IllegalArgumentException if the text is not a JSON pointer; see [JsonPointer.parse].
+ * @throws IllegalArgumentException if the text is not a JSON pointer within the limits; see [JsonPointer.parse].
  * @since 1.0.0
  */
-public fun String.toJsonPointer(): JsonPointer = JsonPointer.parse(this)
+public fun String.toJsonPointer(limits: YamlLimits = YamlLimits.Untrusted): JsonPointer =
+    JsonPointer.parse(this, limits)
 
 /**
  * Parses this text as the RFC 6901 form of a JSON pointer and never throws.
  *
  * @receiver the pointer, such as `/a/0`; the empty text is the root.
- * @return the pointer, or `null` if the text is not one.
+ * @param limits the limits of the text, see [JsonPointer.parseOrNull]; [YamlLimits.Untrusted] by default.
+ * @return the pointer, or `null` if the text is not one within the limits.
  * @since 1.0.0
  */
-public fun String.toJsonPointerOrNull(): JsonPointer? = JsonPointer.parseOrNull(this)
+public fun String.toJsonPointerOrNull(limits: YamlLimits = YamlLimits.Untrusted): JsonPointer? =
+    JsonPointer.parseOrNull(this, limits)
 
 /**
  * Returns the node [pointer] refers to below this node.

@@ -46,7 +46,7 @@ internal object PatchNotation {
         var invalid: JsonPatchReading.Invalid? = null
         var index = 0
         while (invalid == null && index < sequence.items.size) {
-            when (val reading = OperationNotation.read(sequence.items[index])) {
+            when (val reading = OperationNotation.read(sequence.items[index], limits)) {
                 is OperationReading.Read -> operations.add(reading.operation)
                 is OperationReading.Invalid -> invalid = JsonPatchReading.Invalid(index, reading.reason)
             }

@@ -17,6 +17,7 @@
 package com.davils.kaml.document.merge
 
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.merge.trace.OriginIndex
 import com.davils.kaml.document.pointer.JsonPointer
 
 /**
@@ -34,23 +35,20 @@ public class YamlMerged internal constructor(public val node: YamlNode, origins:
      */
     public val origins: Map<JsonPointer, String> = buildMap { putAll(origins) }
 
+    private val index = OriginIndex(origins)
+
     /**
      * Returns the name of the layer the value at [pointer] comes from: that of [pointer] itself, or of its nearest
      * ancestor that [origins] lists.
+     *
+     * The pointer is walked once from the root, so the time grows with the depth of the merged graph at most, not
+     * with the square of the length of [pointer].
      *
      * @param pointer the location in [node].
      * @return the name of the layer, or `null` if no ancestor of [pointer] is listed.
      * @since 1.0.0
      */
-    public fun originOf(pointer: JsonPointer): String? {
-        var candidate: JsonPointer? = pointer
-        var origin: String? = null
-        while (origin == null && candidate != null) {
-            origin = origins[candidate]
-            candidate = candidate.parent
-        }
-        return origin
-    }
+    public fun originOf(pointer: JsonPointer): String? = index.originOf(pointer)
 
     /**
      * Returns the kind of the merged graph and the number of origins, never the content, which may be sensitive.

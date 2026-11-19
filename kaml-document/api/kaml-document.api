@@ -314,8 +314,10 @@ public final class com/davils/kaml/document/pointer/JsonPointer$Companion {
 	public final fun getROOT ()Lcom/davils/kaml/document/pointer/JsonPointer;
 	public final fun of (Ljava/util/List;)Lcom/davils/kaml/document/pointer/JsonPointer;
 	public final fun of ([Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
-	public final fun parse (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
-	public final fun parseOrNull (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun parse (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static synthetic fun parse$default (Lcom/davils/kaml/document/pointer/JsonPointer$Companion;Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public final fun parseOrNull (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static synthetic fun parseOrNull$default (Lcom/davils/kaml/document/pointer/JsonPointer$Companion;Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/pointer/JsonPointer;
 }
 
 public final class com/davils/kaml/document/pointer/JsonPointerResolutionKt {
@@ -324,8 +326,10 @@ public final class com/davils/kaml/document/pointer/JsonPointerResolutionKt {
 	public static synthetic fun at$default (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;IILjava/lang/Object;)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
 	public static final fun nearest (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;I)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
 	public static synthetic fun nearest$default (Lcom/davils/kaml/core/syntax/YamlSyntaxTree;Lcom/davils/kaml/document/pointer/JsonPointer;IILjava/lang/Object;)Lcom/davils/kaml/core/syntax/ast/YamlValueSyntax;
-	public static final fun toJsonPointer (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
-	public static final fun toJsonPointerOrNull (Ljava/lang/String;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static final fun toJsonPointer (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static synthetic fun toJsonPointer$default (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static final fun toJsonPointerOrNull (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;)Lcom/davils/kaml/document/pointer/JsonPointer;
+	public static synthetic fun toJsonPointerOrNull$default (Ljava/lang/String;Lcom/davils/kaml/core/limit/YamlLimits;ILjava/lang/Object;)Lcom/davils/kaml/document/pointer/JsonPointer;
 }
 
 public final class com/davils/kaml/document/redact/YamlRedaction : com/davils/kore/core/validation/Validatable {

@@ -16,16 +16,17 @@
 
 package com.davils.kaml.document.patch.notation
 
+import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.string
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.toJsonPointerOrNull
 
-internal class OperationFields(item: YamlNode) {
-    val path: JsonPointer? = item["path"].string()?.toJsonPointerOrNull()
+internal class OperationFields(item: YamlNode, limits: YamlLimits) {
+    val path: JsonPointer? = item["path"].string()?.toJsonPointerOrNull(limits)
 
-    val from: JsonPointer? = item["from"].string()?.toJsonPointerOrNull()
+    val from: JsonPointer? = item["from"].string()?.toJsonPointerOrNull(limits)
 
     val value: YamlNode? = item["value"]
 }

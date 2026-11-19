@@ -16,6 +16,7 @@
 
 package com.davils.kaml.document.patch.notation
 
+import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.get
 import com.davils.kaml.core.node.string
@@ -35,14 +36,14 @@ internal object OperationNotation {
         "test" to Reader(VALUE_FIELDS) { fields -> withValue(fields, JsonPatchOperation::Test) },
     )
 
-    fun read(item: YamlNode): OperationReading {
+    fun read(item: YamlNode, limits: YamlLimits): OperationReading {
         val name = item["op"].string() ?: return OperationReading.Invalid("an operation needs an \"op\"")
-        return readNamed(name, item)
+        return readNamed(name, item, limits)
     }
 
-    private fun readNamed(name: String, item: YamlNode): OperationReading {
+    private fun readNamed(name: String, item: YamlNode, limits: YamlLimits): OperationReading {
         val reader = readers[name] ?: return OperationReading.Invalid("the operation is not known")
-        val operation = reader.create(OperationFields(item))
+        val operation = reader.create(OperationFields(item, limits))
         return operation?.let(OperationReading::Read) ?: OperationReading.Invalid("the operation needs ${reader.needs}")
     }
 

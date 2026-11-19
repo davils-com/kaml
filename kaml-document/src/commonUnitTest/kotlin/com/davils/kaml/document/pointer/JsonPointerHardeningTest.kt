@@ -17,6 +17,8 @@
 package com.davils.kaml.document.pointer
 
 import com.davils.kaml.core.YamlDuplicateKeys
+import com.davils.kaml.core.limit.YamlLimits
+import com.davils.kaml.core.limit.yamlLimits
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
@@ -41,6 +43,7 @@ import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
 
 private const val LONG: Int = 100_000
+private const val SHORT_POINTER: Int = 8
 
 private const val PIECES: Int = 32
 private const val SHARED_TEXT: String = "1"
@@ -86,7 +89,7 @@ class JsonPointerHardeningTest : FunSpec({
             val long = JsonPointer.of(List(LONG) { "a" })
 
             val tree = YamlSyntaxTree.parse(NESTED)
-            val parsed = "/a".repeat(LONG).toJsonPointer()
+            val parsed = "/a".repeat(LONG).toJsonPointer(YamlLimits.Relaxed)
 
             val node = nodeOf(NESTED)
 
@@ -94,6 +97,19 @@ class JsonPointerHardeningTest : FunSpec({
             tree.at(long).shouldBeNull()
             tree.nearest(long).shouldBeInstanceOf<YamlValueSyntax.Scalar>()
             parsed.tokens.size shouldBe LONG
+        }
+
+        test("are refused before they are split when their text is longer than the limit") {
+            val short = yamlLimits { maximumPointerLength = SHORT_POINTER }
+            val longest = "/a".repeat(SHORT_POINTER / 2)
+            val tooLong = "$longest/"
+            val unlimited = "/a".repeat(LONG)
+
+            JsonPointer.parse(longest, short).tokens.size shouldBe SHORT_POINTER / 2
+            JsonPointer.parseOrNull(tooLong, short).shouldBeNull()
+            tooLong.toJsonPointerOrNull(short).shouldBeNull()
+            shouldThrow<IllegalArgumentException> { tooLong.toJsonPointer(short) }
+            unlimited.toJsonPointerOrNull().shouldBeNull()
         }
     }
 

@@ -48,7 +48,7 @@ class JsonPointerTest : FunSpec({
             "/a~2".toJsonPointerOrNull().shouldBeNull()
             "/a~".toJsonPointerOrNull().shouldBeNull()
             shouldThrow<IllegalArgumentException> { JsonPointer.parse("x") }.message shouldBe
-                "\"x\" is not a JSON pointer"
+                "\"x\" is not a JSON pointer within its limits"
         }
 
         test("writes the escaped form") {

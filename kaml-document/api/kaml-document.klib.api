@@ -410,8 +410,8 @@ final class com.davils.kaml.document.pointer/JsonPointer { // com.davils.kaml.do
 
         final fun of(kotlin.collections/List<kotlin/String>): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/JsonPointer.Companion.of|of(kotlin.collections.List<kotlin.String>){}[0]
         final fun of(kotlin/Array<out kotlin/String>...): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/JsonPointer.Companion.of|of(kotlin.Array<out|kotlin.String>...){}[0]
-        final fun parse(kotlin/String): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/JsonPointer.Companion.parse|parse(kotlin.String){}[0]
-        final fun parseOrNull(kotlin/String): com.davils.kaml.document.pointer/JsonPointer? // com.davils.kaml.document.pointer/JsonPointer.Companion.parseOrNull|parseOrNull(kotlin.String){}[0]
+        final fun parse(kotlin/String, com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/JsonPointer.Companion.parse|parse(kotlin.String;com.davils.kaml.core.limit.YamlLimits){}[0]
+        final fun parseOrNull(kotlin/String, com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.pointer/JsonPointer? // com.davils.kaml.document.pointer/JsonPointer.Companion.parseOrNull|parseOrNull(kotlin.String;com.davils.kaml.core.limit.YamlLimits){}[0]
     }
 }
 
@@ -469,7 +469,7 @@ final fun (com.davils.kaml.core.syntax/YamlSyntaxTree).com.davils.kaml.document.
 final fun (com.davils.kaml.core.syntax/YamlSyntaxTree).com.davils.kaml.document.pointer/nearest(com.davils.kaml.document.pointer/JsonPointer, kotlin/Int = ...): com.davils.kaml.core.syntax.ast/YamlValueSyntax? // com.davils.kaml.document.pointer/nearest|nearest@com.davils.kaml.core.syntax.YamlSyntaxTree(com.davils.kaml.document.pointer.JsonPointer;kotlin.Int){}[0]
 final fun (kotlin/String).com.davils.kaml.document.path/toJsonPath(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath // com.davils.kaml.document.path/toJsonPath|toJsonPath@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
 final fun (kotlin/String).com.davils.kaml.document.path/toJsonPathOrNull(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.path/JsonPath? // com.davils.kaml.document.path/toJsonPathOrNull|toJsonPathOrNull@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
-final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointer(): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/toJsonPointer|toJsonPointer@kotlin.String(){}[0]
-final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointerOrNull(): com.davils.kaml.document.pointer/JsonPointer? // com.davils.kaml.document.pointer/toJsonPointerOrNull|toJsonPointerOrNull@kotlin.String(){}[0]
+final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointer(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.pointer/JsonPointer // com.davils.kaml.document.pointer/toJsonPointer|toJsonPointer@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
+final fun (kotlin/String).com.davils.kaml.document.pointer/toJsonPointerOrNull(com.davils.kaml.core.limit/YamlLimits = ...): com.davils.kaml.document.pointer/JsonPointer? // com.davils.kaml.document.pointer/toJsonPointerOrNull|toJsonPointerOrNull@kotlin.String(com.davils.kaml.core.limit.YamlLimits){}[0]
 final fun com.davils.kaml.document.merge/yamlMergeOptions(kotlin/Function1<com.davils.kaml.document.merge/YamlMergeOptionsBuilder, kotlin/Unit>): com.davils.kaml.document.merge/YamlMergeOptions // com.davils.kaml.document.merge/yamlMergeOptions|yamlMergeOptions(kotlin.Function1<com.davils.kaml.document.merge.YamlMergeOptionsBuilder,kotlin.Unit>){}[0]
 final fun com.davils.kaml.document.redact/yamlRedaction(kotlin/Function1<com.davils.kaml.document.redact/YamlRedactionBuilder, kotlin/Unit>): com.davils.kaml.document.redact/YamlRedaction // com.davils.kaml.document.redact/yamlRedaction|yamlRedaction(kotlin.Function1<com.davils.kaml.document.redact.YamlRedactionBuilder,kotlin.Unit>){}[0]

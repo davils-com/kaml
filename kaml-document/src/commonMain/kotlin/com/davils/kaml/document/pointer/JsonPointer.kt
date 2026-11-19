@@ -16,6 +16,7 @@
 
 package com.davils.kaml.document.pointer
 
+import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kore.core.annotation.DavilsInternal
 import com.davils.kore.core.text.SafeText
 
@@ -166,23 +167,34 @@ public class JsonPointer private constructor(tokens: List<String>) {
          * Parses the RFC 6901 form of a pointer, such as `/a~1b/0`.
          *
          * @param text the pointer; the empty text is the root.
+         * @param limits the limits of the text: it must not be longer than [YamlLimits.maximumPointerLength];
+         * [YamlLimits.Untrusted] by default.
          * @return the pointer.
-         * @throws IllegalArgumentException if [text] does not start with `/` or holds a `~` that is not followed by
-         * `0` or `1`; the message shows [text] escaped and shortened.
+         * @throws IllegalArgumentException if [text] is longer than its limit, does not start with `/` or holds a `~`
+         * that is not followed by `0` or `1`; the message shows [text] escaped and shortened.
          * @since 1.0.0
          */
         @OptIn(DavilsInternal::class)
-        public fun parse(text: String): JsonPointer =
-            requireNotNull(parseOrNull(text)) { "${SafeText.quoted(text)} is not a JSON pointer" }
+        public fun parse(text: String, limits: YamlLimits = YamlLimits.Untrusted): JsonPointer =
+            requireNotNull(parseOrNull(text, limits)) {
+                "${SafeText.quoted(text)} is not a JSON pointer within its limits"
+            }
 
         /**
          * Parses the RFC 6901 form of a pointer, such as `/a~1b/0`, and never throws.
          *
          * @param text the pointer; the empty text is the root.
-         * @return the pointer, or `null` if [text] is not one.
+         * @param limits the limits of the text: a text longer than [YamlLimits.maximumPointerLength] is refused before
+         * it is split; [YamlLimits.Untrusted] by default.
+         * @return the pointer, or `null` if [text] is not one within the limits.
          * @since 1.0.0
          */
-        public fun parseOrNull(text: String): JsonPointer? {
+        public fun parseOrNull(text: String, limits: YamlLimits = YamlLimits.Untrusted): JsonPointer? {
+            if (text.length > limits.maximumPointerLength) return null
+            return parsedOrNull(text)
+        }
+
+        private fun parsedOrNull(text: String): JsonPointer? {
             if (text.isEmpty()) return ROOT
             val tokens = text.split("/").map(PointerTokens::unescaped)
             val isValid = tokens.first() == "" && tokens.none { it == null }

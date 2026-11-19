@@ -145,6 +145,18 @@ class JsonPatchLimitsTest : FunSpec({
             refused shouldBe JsonPatchReading.Invalid(-1, "a patch must not have more operations than its limits allow")
         }
 
+        test("refuse a pointer whose text is longer than the limit") {
+            val short = limits { maximumPointerLength = TWO }
+
+            val within = JsonPatch.read(nodeOf("[{op: remove, path: /a}]"), short)
+            val longFrom = JsonPatch.read(nodeOf("[{op: move, from: /ab, path: /a}]"), short)
+
+            within.shouldBeInstanceOf<JsonPatchReading.Read>()
+            JsonPatch.read(nodeOf("[{op: remove, path: /ab}]"), short) shouldBe
+                JsonPatchReading.Invalid(0, "the operation needs a valid \"path\"")
+            longFrom.shouldBeInstanceOf<JsonPatchReading.Invalid>()
+        }
+
         test("ignores members an operation does not define, as RFC 6902 requires") {
             val reading = JsonPatch.read(nodeOf("[{op: test, path: /a, value: 1, from: /b, spurious: 1}]"))
             val patch = reading.shouldBeInstanceOf<JsonPatchReading.Read>().patch
