@@ -22,9 +22,9 @@ import com.davils.kaml.core.node.YamlNode
 internal object Members {
     fun tokenOf(key: YamlNode): String = (key as? YamlNode.Scalar)?.value ?: key.kind.name
 
-    fun allByToken(mapping: YamlNode.Mapping): Map<String, List<YamlNode>> {
-        val members = LinkedHashMap<String, MutableList<YamlNode>>()
-        mapping.entries.forEach { entry -> members.getOrPut(tokenOf(entry.key)) { ArrayList() }.add(entry.value) }
+    fun allByToken(mapping: YamlNode.Mapping): OrderedGroups<String, YamlNode> {
+        val members = OrderedGroups<String, YamlNode>()
+        mapping.entries.forEach { entry -> members.add(tokenOf(entry.key), entry.value) }
         return members
     }
 

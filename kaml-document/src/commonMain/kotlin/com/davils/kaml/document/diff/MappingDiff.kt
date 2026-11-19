@@ -18,6 +18,7 @@ package com.davils.kaml.document.diff
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.internal.OrderedGroups
 import com.davils.kaml.document.patch.JsonPatchOperation
 import com.davils.kaml.document.pointer.JsonPointer
 
@@ -34,23 +35,24 @@ internal object MappingDiff {
         if (before == null || after == null) return false
         val removed = before.keys.filter { key -> key !in after }
         removed.forEach { key -> diff.add(JsonPatchOperation.Remove(pointer.child(key))) }
-        before.forEach { (key, value) ->
+        before.forEach { key, values ->
             after[key]?.let { changed ->
                 val child = pointer.child(key)
-                diff.between(source = value, target = changed, pointer = child, isHashTrusted = isHashTrusted)
+                val next = changed.first()
+                diff.between(source = values.first(), target = next, pointer = child, isHashTrusted = isHashTrusted)
             }
         }
-        val added = after.filter { (key, _) -> key !in before }
-        added.forEach { (key, value) -> diff.add(JsonPatchOperation.Add(pointer.child(key), value)) }
+        val added = after.keys.filter { key -> key !in before }
+        added.forEach { key -> diff.add(JsonPatchOperation.Add(pointer.child(key), after[key].orEmpty().first())) }
         return true
     }
 
-    private fun membersOf(node: YamlNode): Map<String, YamlNode>? {
+    private fun membersOf(node: YamlNode): OrderedGroups<String, YamlNode>? {
         val mapping = node as? YamlNode.Mapping ?: return null
-        val members = LinkedHashMap<String, YamlNode>()
+        val members = OrderedGroups<String, YamlNode>()
         mapping.entries.forEach { entry ->
             val key = (entry.key as? YamlNode.Scalar)?.takeIf { it.tag == YamlTag.STRING }
-            key?.let { text -> members[text.value] = entry.value }
+            key?.let { text -> members.add(text.value, entry.value) }
         }
         return members.takeIf { it.size == mapping.entries.size }
     }

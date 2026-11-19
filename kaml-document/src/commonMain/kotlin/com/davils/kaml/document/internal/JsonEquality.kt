@@ -105,10 +105,10 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
         val leftMembers = Members.allByToken(left)
         val rightMembers = Members.allByToken(right)
         val isSameCount = isSameSize && leftMembers.size == rightMembers.size
-        val isSameKeys = isSameCount && leftMembers.all { (token, values) -> rightMembers[token]?.size == values.size }
+        val isSameKeys = isSameCount && leftMembers.all { token, values -> rightMembers[token]?.size == values.size }
         if (!isSameKeys) return false
-        leftMembers.forEach { (token, values) ->
-            val counterparts = rightMembers.getValue(token)
+        leftMembers.forEach { token, values ->
+            val counterparts = rightMembers[token].orEmpty()
             values.forEachIndexed { index, value ->
                 pending.addLast(Pending(left = value, right = counterparts[index], depth = depth))
             }

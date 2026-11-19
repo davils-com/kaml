@@ -16,6 +16,7 @@
 
 package com.davils.kaml.document.diff
 
+import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
@@ -23,6 +24,8 @@ import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlNull
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
+import com.davils.kaml.document.fixture.collidingMapping
+import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
 import com.davils.kaml.document.patch.JsonPatch
 import com.davils.kaml.document.patch.JsonPatchOperation
@@ -164,6 +167,16 @@ class JsonPatchDiffTest : FunSpec({
 
             JsonPatch.diff(source = source, target = target).operations shouldBe
                 listOf(JsonPatchOperation.Replace(JsonPointer.ROOT, target))
+        }
+
+        test("compares members in near-linear time, also when the hash codes of their keys collide") {
+            val isLinear = growsNearLinearly { bits ->
+                val source = collidingMapping(bits)
+                val target = collidingMapping(bits) { index -> yamlScalar(index + 1) }
+                JsonPatch.diff(source = source, target = target, limits = YamlLimits.Relaxed)
+            }
+
+            isLinear shouldBe true
         }
 
         test("skips a subtree both sides share") {

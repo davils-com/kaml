@@ -25,6 +25,8 @@ import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.core.node.yamlTagged
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.fixture.collidingMapping
+import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -216,6 +218,14 @@ class JsonValuesTest : FunSpec({
             equality().isEqual(left = nodeOf("{1: x, '1': y, b: z}"), right = nodeOf("{1: x, b: z, !t b: w}")) shouldBe
                 false
             equality().isEqual(left = yamlNull(), right = yamlNull()) shouldBe true
+        }
+
+        test("compares mappings in near-linear time, also when the hash codes of their keys collide") {
+            val isLinear = growsNearLinearly { bits ->
+                equality().isEqual(left = collidingMapping(bits), right = collidingMapping(bits)) shouldBe true
+            }
+
+            isLinear shouldBe true
         }
 
         test("charges its steps and stops at the budget") {
