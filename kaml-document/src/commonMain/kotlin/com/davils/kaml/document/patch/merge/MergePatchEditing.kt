@@ -22,6 +22,7 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.isNull
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.internal.MemberIndex
 import com.davils.kaml.document.internal.NodeCount
 import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchEdit
@@ -33,7 +34,6 @@ import com.davils.kaml.document.patch.syntax.SyntaxState
 import com.davils.kaml.document.patch.syntax.SyntaxStep
 import com.davils.kaml.document.patch.syntax.SyntaxVerification
 import com.davils.kaml.document.pointer.JsonPointer
-import com.davils.kaml.document.pointer.at
 
 internal class MergePatchEditing(
     private val tree: YamlSyntaxTree,
@@ -53,7 +53,7 @@ internal class MergePatchEditing(
 
     private fun bounded(patch: YamlNode, root: YamlNode): JsonPatchEdit = try {
         val expected = expectation.merged(root, patch)
-        finished(Edits(root).merged(tree, JsonPointer.ROOT, patch), expected)
+        finished(Edits(root).merged(tree, Place(JsonPointer.ROOT, root), patch), expected)
     } catch (expected: YamlDocumentLimitException) {
         JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
     }
@@ -63,43 +63,57 @@ internal class MergePatchEditing(
         is SyntaxStep.Refused -> JsonPatchEdit.Failed(0, step.reason)
     }
 
+    private data class Place(val pointer: JsonPointer, val node: YamlNode?)
+
     private inner class Edits(private val root: YamlNode) {
-        fun merged(current: YamlSyntaxTree, pointer: JsonPointer, patch: YamlNode): SyntaxStep {
-            depth.checkDepth(pointer.tokens.size)
-            val isMerge = root.at(pointer) is YamlNode.Mapping
-            val members = (patch as? YamlNode.Mapping)?.takeIf { isMerge } ?: return replaced(current, pointer, patch)
+        fun merged(current: YamlSyntaxTree, place: Place, patch: YamlNode): SyntaxStep {
+            depth.checkDepth(place.pointer.tokens.size)
+            val target = place.node as? YamlNode.Mapping
+            val members = patch as? YamlNode.Mapping
+            if (target == null || members == null) return replaced(current, place, patch)
+            val index = MemberIndex(target, work)
             val initial: SyntaxStep = SyntaxStep.Done(current)
             return members.entries.fold(initial) { step, member ->
-                step.then { edited -> withMember(edited, pointer, member) }
+                step.then { edited ->
+                    withMember(current = edited, parent = place.pointer, member = member, index = index)
+                }
             }
         }
 
-        private fun withMember(current: YamlSyntaxTree, pointer: JsonPointer, member: YamlEntry): SyntaxStep {
+        private fun withMember(
+            current: YamlSyntaxTree,
+            parent: JsonPointer,
+            member: YamlEntry,
+            index: MemberIndex,
+        ): SyntaxStep {
             val key = (member.key as? YamlNode.Scalar)?.value ?: return SyntaxStep.Refused(JsonPatchRefusal.Unsupported)
-            return memberChanged(current, pointer.child(key), member.value)
+            return memberChanged(current, Place(parent.child(key), index.valueOf(key)), member.value)
         }
 
-        private fun memberChanged(current: YamlSyntaxTree, pointer: JsonPointer, value: YamlNode): SyntaxStep {
-            if (value.isNull) return removed(current, pointer)
-            return nestedOrReplaced(current, pointer, value)
+        private fun memberChanged(current: YamlSyntaxTree, place: Place, value: YamlNode): SyntaxStep {
+            if (value.isNull) return removed(current, place)
+            return nestedOrReplaced(current, place, value)
         }
 
-        private fun nestedOrReplaced(current: YamlSyntaxTree, pointer: JsonPointer, value: YamlNode): SyntaxStep {
-            val isNested = value is YamlNode.Mapping && root.at(pointer) is YamlNode.Mapping
-            if (isNested) return merged(current, pointer, value)
-            return replaced(current, pointer, value)
+        private fun nestedOrReplaced(current: YamlSyntaxTree, place: Place, value: YamlNode): SyntaxStep {
+            val isNested = value is YamlNode.Mapping && place.node is YamlNode.Mapping
+            if (isNested) return merged(current, place, value)
+            return replaced(current, place, value)
         }
 
-        private fun removed(current: YamlSyntaxTree, pointer: JsonPointer): SyntaxStep {
-            if (root.at(pointer) == null) return SyntaxStep.Done(current)
+        private fun removed(current: YamlSyntaxTree, place: Place): SyntaxStep {
+            if (place.node == null) return SyntaxStep.Done(current)
             changes.charge()
-            return SyntaxEdits(tree = current, document = document, root = root, budget = work).removed(pointer)
+            return editsOf(current).removed(place.pointer)
         }
 
-        private fun replaced(current: YamlSyntaxTree, pointer: JsonPointer, patch: YamlNode): SyntaxStep {
+        private fun replaced(current: YamlSyntaxTree, place: Place, patch: YamlNode): SyntaxStep {
             changes.charge()
-            val value = values.merged(root.at(pointer), patch)
-            return SyntaxEdits(tree = current, document = document, root = root, budget = work).added(pointer, value)
+            val value = values.merged(place.node, patch)
+            return editsOf(current).added(place.pointer, value)
         }
+
+        private fun editsOf(current: YamlSyntaxTree): SyntaxEdits =
+            SyntaxEdits(tree = current, document = document, root = root, budget = work)
     }
 }

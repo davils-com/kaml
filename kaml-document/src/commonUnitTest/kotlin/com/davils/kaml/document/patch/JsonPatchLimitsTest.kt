@@ -46,6 +46,9 @@ import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.list
 import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 private const val TWO: Int = 2
 private const val THREE: Int = 3
@@ -61,8 +64,13 @@ private const val EMPTY: String = "{}"
 private const val ALIASED: String = "a: &x {k: 1}"
 private const val WIDE: Int = 1_000
 private const val WIDE_BUDGET: Long = 10_000L
+private const val WIDE_INDEX: Long = 500L
 private const val FEW_REPLACES: Int = 5
 private const val MANY_REPLACES: Int = 20
+private const val FEW_MEMBERS: Int = 1_500
+private const val MANY_MEMBERS: Int = 6_000
+private const val GROWTH: Int = 8
+private val slack: Duration = 200.milliseconds
 private const val DEEP_MOVE: String = "{a: [[1]], b: []}"
 private const val TWINS: String = "{true: 1, 'true': 2}"
 private const val SHORT_OUTPUT: Int = 100
@@ -99,6 +107,18 @@ private fun copies(count: Int): List<JsonPatchOperation> =
 
 private fun nested(depth: Int): YamlNode =
     (1..depth).fold<Int, YamlNode>(yamlScalar("x")) { node, _ -> yamlSequence(listOf(node)) }
+
+private fun members(count: Int): String = List(count) { index -> "k$index: v" }.joinToString("\n")
+
+private fun absentNulls(count: Int): YamlNode = yamlMapping(List(count) { index -> member("absent$index", yamlNull()) })
+
+private fun absentNullsOn(count: Int): JsonPatchEdit = JsonMergePatch(absentNulls(count)).apply(treeOf(members(count)))
+
+private fun timed(work: () -> Unit): Duration {
+    val mark = TimeSource.Monotonic.markNow()
+    work()
+    return mark.elapsedNow()
+}
 
 private infix fun JsonPatch.on(text: String): JsonPatchResult = apply(nodeOf(text))
 
@@ -312,6 +332,22 @@ class JsonPatchLimitsTest : FunSpec({
             within.shouldBeInstanceOf<JsonPatchEdit.Edited>()
             JsonMergePatch(nodeOf("{a: 1, b: 2, c: 3}"), two) onTree "x: 0" shouldBe
                 JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
+        }
+
+        test("look up every member of a syntax tree in an index of its mapping") {
+            val few = timed { absentNullsOn(FEW_MEMBERS) }
+            val many = timed { absentNullsOn(MANY_MEMBERS) }
+
+            (many < few * GROWTH + slack) shouldBe true
+            absentNullsOn(FEW_MEMBERS).shouldBeInstanceOf<JsonPatchEdit.Edited>()
+        }
+
+        test("charge the members of every mapping of a syntax tree they look into") {
+            val oneAbsent = JsonMergePatch(absentNulls(1), limits { maximumNodes = WIDE_INDEX })
+            val unlimited = JsonMergePatch(absentNulls(1)).apply(treeOf(members(WIDE)))
+
+            unlimited.shouldBeInstanceOf<JsonPatchEdit.Edited>()
+            oneAbsent.apply(treeOf(members(WIDE))) shouldBe JsonPatchEdit.Failed(0, JsonPatchRefusal.LimitExceeded)
         }
 
         test("refuse a broken document and an edit the editor cannot make") {
