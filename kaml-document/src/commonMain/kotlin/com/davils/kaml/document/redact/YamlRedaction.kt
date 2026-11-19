@@ -97,14 +97,14 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
      * match of a value pattern replaced in its scalar.
      *
      * Secrets are found by identity, so every alias of a secret node and every member merged in through `<<` is
-     * replaced too. Shared nodes stay shared in the copy.
+     * replaced too, also where a secret node is used as a key. Shared nodes stay shared in the copy.
      *
      * @param node the root of the graph, which stays unchanged.
      * @return the redacted graph.
      * @throws YamlDocumentLimitException if a query or a walk exceeds a limit, or a scalar value a value pattern
      * would have to read is longer than [YamlLimits.maximumPatternInputLength]; nothing is returned in part.
-     * @throws IllegalStateException if a key predicate throws, or if redacting inside keys that are collections would
-     * make two keys of one mapping equal; nothing is returned in part.
+     * @throws IllegalStateException if a key predicate throws, or if redacting a key or inside a key that is a
+     * collection would make two keys of one mapping equal; nothing is returned in part.
      * @since 1.0.0
      */
     public fun redact(node: YamlNode): YamlNode = GraphRedaction(rules).redacted(node)

@@ -58,19 +58,23 @@ internal class GraphRedaction(private val rules: RedactionRules) {
 
     private fun mapping(node: YamlNode.Mapping, targets: NodeSet, depth: Int): YamlNode {
         val entries = node.entries.map { entry ->
-            val key = entry.key.takeIf { it is YamlNode.Scalar } ?: rewrittenOf(entry.key, targets, depth)
-            YamlEntry(key, rewrittenOf(entry.value, targets, depth))
+            YamlEntry(key = keyOf(entry.key, targets, depth), value = rewrittenOf(entry.value, targets, depth))
         }
         val isSame = entries.indices.all { index ->
             entries[index].key === node.entries[index].key && entries[index].value === node.entries[index].value
         }
-        return node.takeIf { isSame } ?: GraphNodes.withEntries(node, unique(entries), node.anchor)
+        return node.takeIf { isSame } ?: unique(node, entries)
     }
 
-    private fun unique(entries: List<YamlEntry>): List<YamlEntry> {
-        val keys = entries.mapTo(HashSet(), YamlEntry::key)
-        check(keys.size == entries.size) { "The redacted graph would hold a key of a mapping twice" }
-        return entries
+    private fun keyOf(key: YamlNode, targets: NodeSet, depth: Int): YamlNode {
+        if (key !is YamlNode.Scalar) return rewrittenOf(key, targets, depth)
+        return yamlScalar(rules.replacement).takeIf { key in targets } ?: key
+    }
+
+    private fun unique(node: YamlNode.Mapping, entries: List<YamlEntry>): YamlNode = try {
+        GraphNodes.withEntries(node, entries, node.anchor)
+    } catch (repeated: IllegalArgumentException) {
+        throw IllegalStateException("The redacted graph would hold a key of a mapping twice", repeated)
     }
 
     private fun scalar(node: YamlNode.Scalar): YamlNode {

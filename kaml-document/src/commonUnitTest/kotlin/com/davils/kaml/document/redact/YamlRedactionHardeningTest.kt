@@ -21,12 +21,17 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
+import com.davils.kaml.document.fixture.nodeOf
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
 
+private const val SECRET: String = "hunter2"
+private const val PASSWORD_PATH: String = "$.password"
 private const val FEW_MAPPINGS: Int = 5_000
 private const val MANY_MAPPINGS: Int = 40_000
 private const val GROWTH: Int = 16
@@ -41,7 +46,53 @@ private fun timed(work: () -> Unit): Duration {
     return mark.elapsedNow()
 }
 
+private fun scalarsOf(node: YamlNode): List<String> {
+    val found = ArrayList<String>()
+    val pending = ArrayDeque<YamlNode>()
+    pending.addLast(node)
+    while (pending.isNotEmpty()) {
+        when (val current = pending.removeLast()) {
+            is YamlNode.Scalar -> found.add(current.value)
+
+            is YamlNode.Sequence -> current.items.forEach(pending::addLast)
+
+            is YamlNode.Mapping -> current.entries.forEach { entry ->
+                pending.addLast(entry.key)
+                pending.addLast(entry.value)
+            }
+        }
+    }
+    return found
+}
+
 class YamlRedactionHardeningTest : FunSpec({
+    context("keys of a graph") {
+        test("are redacted where a path target is used as a key through an alias") {
+            val redacted = yamlRedaction { path(PASSWORD_PATH) }.redact(nodeOf("{password: &p $SECRET, *p : x}"))
+
+            scalarsOf(redacted) shouldNotContain SECRET
+        }
+
+        test("are redacted where the target of a key predicate is used as a key through an alias") {
+            val redacted = yamlRedaction { key { it == "token" } }.redact(nodeOf("{token: &t $SECRET, *t : x}"))
+
+            scalarsOf(redacted) shouldNotContain SECRET
+        }
+
+        test("are redacted where a target aliases an anchored key") {
+            val redacted = yamlRedaction { path(PASSWORD_PATH) }.redact(nodeOf("{&p $SECRET : x, password: *p}"))
+
+            scalarsOf(redacted) shouldNotContain SECRET
+            redacted shouldBe nodeOf("{'***': x, password: '***'}")
+        }
+
+        test("refuse to make two keys of a mapping equal") {
+            val colliding = nodeOf("{password: &p $SECRET, *p : x, '***': y}")
+
+            shouldThrow<IllegalStateException> { yamlRedaction { path(PASSWORD_PATH) }.redact(colliding) }
+        }
+    }
+
     context("graphs built in code") {
         test("are redacted in near-linear time, however many equal nodes without a range they hold") {
             val redaction = yamlRedaction { key { it == "password" } }
