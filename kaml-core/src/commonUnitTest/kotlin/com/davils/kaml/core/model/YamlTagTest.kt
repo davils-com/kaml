@@ -17,7 +17,9 @@ package com.davils.kaml.core.model
 
 import com.davils.kaml.core.fixture.everyHostileFragment
 import com.davils.kaml.core.fixture.hostileText
+import com.davils.kaml.core.fixture.shouldBeSafeToShow
 import com.davils.kaml.core.fixture.shouldShowSafely
+import com.davils.kaml.core.fixture.visibleTagOf
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -76,8 +78,21 @@ class YamlTagTest : FunSpec({
         }
 
         test("shows a hostile URI escaped") {
-            YamlTag("!$everyHostileFragment").shouldShowSafely()
-            checkAll(hostileText) { text -> YamlTag("!$text").shouldShowSafely() }
+            visibleTagOf(everyHostileFragment).shouldShowSafely()
+            checkAll(hostileText) { text -> visibleTagOf(text).shouldShowSafely() }
+        }
+
+        test("refuses a URI with a control, format or invisible character, without showing it") {
+            val failure = shouldThrow<IllegalArgumentException> { YamlTag("!$everyHostileFragment") }
+            failure.message.orEmpty().shouldBeSafeToShow()
+            listOf("!a\u0000", "!a\u202Eb", "!a\u200B", "!a\uFEFF", "!\uD800", "!\uDB40\uDC41").forEach { uri ->
+                shouldThrow<IllegalArgumentException> { YamlTag(uri) }
+            }
+        }
+
+        test("accepts a URI with spaces and letters of every script") {
+            YamlTag("!a b").uri shouldBe "!a b"
+            YamlTag("!\u05D0\u65E5").uri shouldBe "!\u05D0\u65E5"
         }
 
         test("shows a long URI shortened") {

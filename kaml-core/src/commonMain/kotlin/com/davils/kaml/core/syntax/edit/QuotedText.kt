@@ -46,7 +46,7 @@ internal object QuotedText {
 
     fun isShownAsIs(text: String): Boolean = isEvery(text, ::isRaw)
 
-    fun isVisible(text: String): Boolean = isEvery(text, VisibleCodePoints::isVisible)
+    fun isVisible(text: String): Boolean = VisibleCodePoints.isVisibleText(text)
 
     private fun escaped(codePoint: Int, raw: String): String {
         val name = named[codePoint]

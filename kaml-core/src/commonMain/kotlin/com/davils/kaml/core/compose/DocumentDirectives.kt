@@ -18,6 +18,7 @@
 package com.davils.kaml.core.compose
 
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
+import com.davils.kaml.core.model.VisibleCodePoints
 import com.davils.kaml.core.model.YamlTagDirective
 import com.davils.kaml.core.model.YamlVersion
 import com.davils.kaml.core.parser.isWordCharacter
@@ -84,7 +85,7 @@ internal class DocumentDirectives(private val reports: Reports) {
 
     private fun tag(name: String, parameters: List<String>, range: TextRange): Boolean {
         if (name != TAG_DIRECTIVE) return false
-        val isValid = parameters.size == 2 && isHandle(parameters[0])
+        val isValid = parameters.size == 2 && isHandle(parameters[0]) && VisibleCodePoints.isVisibleText(parameters[1])
         if (!isValid) {
             reports.add(
                 YamlDiagnosticCode.InvalidDirective,

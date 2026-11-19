@@ -110,8 +110,8 @@ class YamlBranchCasesTest : FunSpec({
     }
 
     context("tags") {
-        test("read an empty verbatim tag as no tag") {
-            yaml.root("!<> a").tag shouldBe YamlTag.STRING
+        test("refuse an empty verbatim tag") {
+            yaml.problems("!<> a") shouldContain YamlDiagnosticCode.InvalidTag
         }
 
         test("decode a short or broken percent escape literally") {

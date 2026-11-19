@@ -23,6 +23,7 @@ import com.davils.kaml.core.fixture.hostileText
 import com.davils.kaml.core.fixture.root
 import com.davils.kaml.core.fixture.shouldShowSafely
 import com.davils.kaml.core.fixture.text
+import com.davils.kaml.core.fixture.visibleTagOf
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlNodeKind
@@ -324,7 +325,7 @@ class YamlNodeTest : FunSpec({
         test("is escaped by every text form of a node") {
             yamlScalar(everyHostileFragment).shouldShowSafely()
             checkAll(hostileText) { value ->
-                val tag = YamlTag("!$value")
+                val tag = visibleTagOf(value)
                 val scalar = yamlTagged(value, tag)
                 val entry = YamlEntry(key = scalar, value = yamlScalar(value))
 

@@ -18,6 +18,7 @@
 package com.davils.kaml.core.compose
 
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
+import com.davils.kaml.core.model.VisibleCodePoints
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.syntax.YamlSyntaxKind
@@ -46,8 +47,10 @@ internal class NodePropertyReader(private val directives: DocumentDirectives, pr
             val handle = SafeText.quoted(TagResolution.handleOf(token.text))
             reports.add(YamlDiagnosticCode.UnknownTagHandle, token.range, "The tag handle $handle is not declared")
         }
-        return resolved?.takeIf(String::isNotEmpty)?.let(::YamlTag)
+        return resolved?.takeIf(::isTagText)?.let(::YamlTag)
     }
+
+    private fun isTagText(text: String): Boolean = text.isNotEmpty() && VisibleCodePoints.isVisibleText(text)
 
     private fun reportRepeated(repeated: List<Located>) {
         repeated.forEach { token ->

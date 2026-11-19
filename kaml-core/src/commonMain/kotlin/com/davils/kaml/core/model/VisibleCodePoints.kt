@@ -20,6 +20,8 @@ internal object VisibleCodePoints {
     private const val HEX_RADIX: Int = 16
     private const val LAST_CODE_POINT: Int = 0x10FFFF
     private const val RANGE_SEPARATOR: String = ".."
+    private const val SURROGATE_BITS: Int = 10
+    private const val SURROGATE_OFFSET: Int = 0x35FDC00
     private const val CONTROLS: String = "0000..001F 007F..009F"
     private const val FORMATS: String = "00AD 0600..0605 061C 06DD 070F 0890..0891 08E2 180E 200B..200F 202A..202E " +
         "2060..2064 2066..206F FEFF FFF9..FFFB 110BD 110CD 13430..1343F 1BCA0..1BCA3 1D173..1D17A"
@@ -35,6 +37,20 @@ internal object VisibleCodePoints {
 
     fun isVisible(codePoint: Int): Boolean =
         codePoint in 0..LAST_CODE_POINT && hidden.none { range -> codePoint in range }
+
+    fun isVisibleText(text: String): Boolean {
+        var index = 0
+        var isVisible = true
+        while (isVisible && index < text.length) {
+            val high = text[index]
+            val low = text.getOrNull(index + 1)
+            val isPair = high.isHighSurrogate() && low != null && low.isLowSurrogate()
+            val codePoint = low?.takeIf { isPair }?.let { (high.code shl SURROGATE_BITS) + it.code - SURROGATE_OFFSET }
+            isVisible = isVisible(codePoint ?: high.code)
+            index += 2.takeIf { isPair } ?: 1
+        }
+        return isVisible
+    }
 
     private fun rangeOf(entry: String): IntRange {
         val bounds = entry.split(RANGE_SEPARATOR).map { bound -> bound.toInt(HEX_RADIX) }

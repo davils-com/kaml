@@ -30,20 +30,24 @@ private const val NON_SPECIFIC_URI: String = "!"
  * or the non-specific tag `!`.
  *
  * A tag holds its resolved form, after the handle of a shorthand such as `!!str` has been replaced by its prefix and
- * percent escapes have been decoded, so it may hold any character a document holds. A tag only names a type: kaml
- * never constructs an object from a tag. [toString] escapes the URI, and the emitter percent-encodes it, so a tag
- * can neither forge a log line nor inject YAML.
+ * percent escapes have been decoded, so it may hold any visible character, but no control, format or bidirectional
+ * character, line or paragraph separator, invisible filler, surrogate, private use character or noncharacter, the
+ * same characters a document cannot hide in a tag through percent escapes. A tag only names a type: kaml never
+ * constructs an object from a tag. [toString] escapes the URI, and the emitter percent-encodes it, so a tag can
+ * neither forge a log line nor inject YAML.
  *
  * A tag is an immutable value and safe to share between threads; two tags are equal when their URIs are equal.
  *
  * @property uri the resolved URI of the tag.
- * @throws IllegalArgumentException if [uri] is empty.
+ * @throws IllegalArgumentException if [uri] is empty or holds a character a tag cannot hold; the message does not
+ * show [uri].
  * @since 1.0.0
  */
 @JvmInline
 public value class YamlTag(public val uri: String) {
     init {
         require(uri.isNotEmpty()) { "A tag needs a URI" }
+        require(VisibleCodePoints.isVisibleText(uri)) { "A tag cannot hold control, format or invisible characters" }
     }
 
     /**

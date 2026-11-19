@@ -17,6 +17,7 @@
 package com.davils.kaml.core.parser
 
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
+import com.davils.kaml.core.model.VisibleCodePoints
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.syntax.YamlSyntaxKind
 
@@ -79,8 +80,38 @@ internal class Properties(private val state: ParseState, private val trivia: Tri
             return
         }
         reportInvalidEscapes(start, end)
-        if (state.charAt(start + 1) != VERBATIM_START) reportInvalidEncoding(start, end)
+        val isVerbatim = state.charAt(start + 1) == VERBATIM_START
+        if (isVerbatim) reportInvalidVerbatim(start, end)
+        if (!isVerbatim) reportInvalidShorthand(start, end)
         state.emitTo(YamlSyntaxKind.TAG, end)
+    }
+
+    private fun reportInvalidVerbatim(start: Int, end: Int) {
+        val content = state.text.substring(startIndex = start + 2, endIndex = end - 1)
+        val isLocal = content.length > 1 && content.first() == TAG_INDICATOR
+        if (isLocal || isGlobal(content)) return
+        val range = state.span(start = start, end = end)
+        state.report(YamlDiagnosticCode.InvalidTag, range, "A verbatim tag needs a local tag such as !x or a URI")
+    }
+
+    private fun isGlobal(content: String): Boolean {
+        val schemeEnd = content.indexOf(SCHEME_END)
+        val scheme = content.take(schemeEnd.coerceAtLeast(0))
+        val first = scheme.firstOrNull() ?: SCHEME_END
+        val isScheme = (first in 'a'..'z' || first in 'A'..'Z') && scheme.all(::isSchemeCharacter)
+        return isScheme && schemeEnd < content.length - 1
+    }
+
+    private fun isSchemeCharacter(character: Char): Boolean = character.isWordCharacter() || character in SCHEME_EXTRAS
+
+    private fun reportInvalidShorthand(start: Int, end: Int) {
+        val text = state.text.substring(startIndex = start, endIndex = end)
+        val handleEnd = text.indexOf(TAG_INDICATOR, startIndex = 1)
+        val isWithoutSuffix = handleEnd > 0 && handleEnd == text.lastIndex
+        if (isWithoutSuffix) {
+            state.report(YamlDiagnosticCode.InvalidTag, state.span(start = start, end = end), "A tag needs a suffix")
+        }
+        reportInvalidEncoding(start, end)
     }
 
     private fun tagEnd(start: Int): Int {
@@ -127,9 +158,12 @@ internal class Properties(private val state: ParseState, private val trivia: Tri
 
     private fun reportInvalidEncoding(start: Int, end: Int) {
         val decoded = TagEscapes.decode(state.text.substring(startIndex = start, endIndex = end))
-        if (decoded.firstInvalidByte == null) return
         val range = state.span(start = start, end = end)
-        state.report(YamlDiagnosticCode.InvalidTag, range, "The percent escapes of a tag are no valid UTF-8")
+        if (decoded.firstInvalidByte != null) {
+            state.report(YamlDiagnosticCode.InvalidTag, range, "The percent escapes of a tag are no valid UTF-8")
+        }
+        val isHidden = decoded.firstInvalidByte == null && !VisibleCodePoints.isVisibleText(decoded.text)
+        if (isHidden) state.report(YamlDiagnosticCode.InvalidTag, range, HIDDEN_CHARACTERS)
     }
 
     private fun reportRepeated(first: Char, second: Char) {
@@ -153,6 +187,10 @@ internal class Properties(private val state: ParseState, private val trivia: Tri
         const val VERBATIM_START: Char = '<'
         const val VERBATIM_END: Char = '>'
         const val PERCENT: Char = '%'
+        const val SCHEME_END: Char = ':'
+        const val SCHEME_EXTRAS: String = "+.-"
+        const val HIDDEN_CHARACTERS: String =
+            "The percent escapes of a tag decode to a control, format, separator or bidirectional character"
         const val INVALID_NAME: String =
             "An anchor name holds a character an anchor cannot hold or is longer than ${YamlAnchor.MAX_NAME_LENGTH}"
     }

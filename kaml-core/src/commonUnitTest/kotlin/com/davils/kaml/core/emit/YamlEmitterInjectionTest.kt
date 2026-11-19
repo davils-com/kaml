@@ -95,9 +95,9 @@ class YamlEmitterInjectionTest : FunSpec({
         }
 
         test("encodes characters of a global tag that are not allowed in a URI") {
-            val tag = YamlTag("${GLOBAL_PREFIX}a b>\n%zz")
+            val tag = YamlTag("${GLOBAL_PREFIX}a b>\u00E4%zz")
 
-            yaml.emit(yamlTagged("x", tag)) shouldBe text("!<${GLOBAL_PREFIX}a%20b%3E%0A%25zz> x", "")
+            yaml.emit(yamlTagged("x", tag)) shouldBe text("!<${GLOBAL_PREFIX}a%20b%3E%C3%A4%25zz> x", "")
         }
 
         test("writes the non-specific tag and an empty core suffix") {

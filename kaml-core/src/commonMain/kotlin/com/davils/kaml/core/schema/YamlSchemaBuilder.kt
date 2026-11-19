@@ -15,6 +15,7 @@
  */
 package com.davils.kaml.core.schema
 
+import com.davils.kaml.core.model.VisibleCodePoints
 import com.davils.kaml.core.model.YamlNodeKind
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kore.core.annotation.DavilsDsl
@@ -120,7 +121,10 @@ public class YamlSchemaBuilder internal constructor(private val base: YamlSchema
     private fun collection(tag: String, kind: YamlNodeKind): YamlTagDefinition =
         YamlTagDefinition(tag = tagOf(tag), kind = kind, implicit = null, accepts = { true })
 
-    private fun tagOf(text: String): YamlTag = YamlTag(text.ifEmpty { BLANK })
+    private fun tagOf(text: String): YamlTag {
+        val isTag = text.isNotEmpty() && VisibleCodePoints.isVisibleText(text)
+        return YamlTag(text.takeIf { isTag } ?: BLANK)
+    }
 
     private companion object {
         const val BLANK: String = " "

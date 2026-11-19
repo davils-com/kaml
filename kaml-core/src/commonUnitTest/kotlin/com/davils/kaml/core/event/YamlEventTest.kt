@@ -20,6 +20,7 @@ import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.fixture.everyHostileFragment
 import com.davils.kaml.core.fixture.hostileText
 import com.davils.kaml.core.fixture.shouldShowSafely
+import com.davils.kaml.core.fixture.visibleTagOf
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
@@ -223,11 +224,11 @@ class YamlEventTest : FunSpec({
         }
 
         test("escape a hostile value and a hostile tag") {
-            scalar(value = everyHostileFragment, tag = YamlTag("!$everyHostileFragment")).shouldShowSafely()
+            scalar(value = everyHostileFragment, tag = visibleTagOf(everyHostileFragment)).shouldShowSafely()
             checkAll(hostileText) { text ->
                 scalar(value = text).shouldShowSafely()
-                sequenceStart(tag = YamlTag("!$text")).shouldShowSafely()
-                mappingStart(tag = YamlTag("!$text")).shouldShowSafely()
+                sequenceStart(tag = visibleTagOf(text)).shouldShowSafely()
+                mappingStart(tag = visibleTagOf(text)).shouldShowSafely()
             }
         }
     }

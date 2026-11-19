@@ -18,6 +18,7 @@ package com.davils.kaml.core.compose
 import com.davils.kaml.core.Yaml
 import com.davils.kaml.core.YamlUnknownTags
 import com.davils.kaml.core.fixture.text
+import com.davils.kaml.core.fixture.visibleTagOf
 import com.davils.kaml.core.schema.YamlSchema
 import com.davils.kaml.core.schema.yamlSchema
 import com.davils.kaml.core.source.YamlSource
@@ -75,16 +76,17 @@ class HostileTextTest : FunSpec({
 
         test("show no tag of a schema unescaped") {
             checkAll(ITERATIONS, hostile) { text ->
+                val tag = visibleTagOf(text)
                 val custom = yamlSchema {
                     name = text
-                    mapping("!$text")
+                    mapping(tag.uri)
                 }
                 val reader = yaml {
                     schema = custom
                     unknownTags = YamlUnknownTags.Refuse
                 }
                 val shown = listOf(custom.toString(), custom.tags.single().toString())
-                val messages = reader.parse("!${percentEncoded(text)} x").diagnostics.map { it.message }
+                val messages = reader.parse("!${percentEncoded(tag.uri.drop(1))} x").diagnostics.map { it.message }
 
                 (shown + messages).forEach { message -> unsafeCodePointsIn(message).shouldBeEmpty() }
             }

@@ -15,6 +15,8 @@
  */
 package com.davils.kaml.core.fixture
 
+import com.davils.kaml.core.model.VisibleCodePoints
+import com.davils.kaml.core.model.YamlTag
 import com.davils.kore.testing.HostileFragments
 import com.davils.kore.testing.unsafeCodePointsIn
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -27,6 +29,20 @@ private const val MOST_FRAGMENTS: Int = 64
 
 internal val hostileText: Arb<String> =
     Arb.list(Arb.element(HostileFragments.all), 0..MOST_FRAGMENTS).map { fragments -> fragments.joinToString("") }
+
+internal fun visibleTagOf(text: String): YamlTag {
+    val visible = buildString {
+        var index = 0
+        while (index < text.length) {
+            val isPair = text[index].isHighSurrogate() && text.getOrNull(index + 1)?.isLowSurrogate() == true
+            val end = index + (2.takeIf { isPair } ?: 1)
+            val piece = text.substring(startIndex = index, endIndex = end)
+            if (VisibleCodePoints.isVisibleText(piece)) append(piece)
+            index = end
+        }
+    }
+    return YamlTag("!$visible")
+}
 
 internal val everyHostileFragment: String = HostileFragments.all.joinToString("")
 
