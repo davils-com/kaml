@@ -59,3 +59,21 @@ way.
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
   carries a code, a range, a severity and an escaped message.
+### Security
+
+- **An independent security audit** of the parser and composer, the emitter, the syntax tree, the editor and the
+  formatter, `kaml-document`, `kaml-serialization` and the build found 60 problems before the first release; every
+  one is fixed, mitigated within a limit or named under Known Limitations in `SECURITY.md`, and every fix ships with
+  a test that reproduces the problem.
+- **No input decides the complexity.** Long lines, comment runs, mapping keys and merge keys with colliding hash
+  codes, nested repeats of an I-Regexp, filters, huge numbers, wide patches, merges and diffs are linear or
+  O(n log n), and every step of a query, a patch and a redaction is charged to a budget.
+- **Redaction fails closed** also for duplicates the composer drops, secrets reused as keys through anchors, keys
+  that are collections, comments on the lines of a redacted entry and aliases to anchored keys.
+- **Emitted and edited YAML cannot be injected**, also not through a flow scalar that starts with `?` or `:`, a
+  comment, a tag or an anchor, and an incremental reparse always gives the same tree as a full parse.
+- **Fail closed** on malformed tags, a byte order mark inside a document, U+FFFE and U+FFFF from escapes, a float
+  too large for a double and a throwing callback of a custom schema; values, limits and options built from Java
+  are validated in their constructors.
+- **The build** resolves only released, signed artifacts of Kore and only the `kotlin-dsl` plugin from the Gradle
+  Plugin Portal, asks no key server, and its sources hold no invisible or right-to-left characters.
