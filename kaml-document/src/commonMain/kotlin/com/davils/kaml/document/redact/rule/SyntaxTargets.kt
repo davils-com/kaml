@@ -22,8 +22,9 @@ import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
-import com.davils.kaml.document.internal.NodeKey
+import com.davils.kaml.document.internal.NodeSet
 import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kaml.document.patch.syntax.ContentRanges
 import com.davils.kore.core.text.TextRange
 
@@ -33,18 +34,19 @@ internal class SyntaxTargets(
     private val budget: WorkBudget,
 ) {
     fun graphNodes(stream: YamlStream): List<YamlSyntaxNode>? {
-        val targets = Targets(rules, budget)
+        val ordinalOf = identityOrdinals()
+        val targets = Targets(rules, budget, ordinalOf)
         val ranges = ArrayList<TextRange?>()
         stream.documents.forEach { document ->
-            val seen = HashSet<NodeKey>()
-            targets.of(document.root).forEach { target -> ranges.addAll(definitionsOf(target.node, targets, seen)) }
+            val seen = NodeSet(ordinalOf)
+            targets.of(document.root).nodes.forEach { target -> ranges.addAll(definitionsOf(target, targets, seen)) }
         }
         val known = ranges.filterNotNull()
         val nonEmpty = known.filter { range -> !range.isEmpty }
         return nonEmpty.map(tree.root::coveringNode).takeIf { known.size == ranges.size }
     }
 
-    private fun definitionsOf(target: YamlNode, targets: Targets, seen: MutableSet<NodeKey>): List<TextRange?> {
+    private fun definitionsOf(target: YamlNode, targets: Targets, seen: NodeSet): List<TextRange?> {
         val definitions = ArrayList<TextRange?>()
         targets.subtree(target, seen) { node ->
             val range = node.range

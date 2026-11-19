@@ -232,13 +232,16 @@ class JsonValuesTest : FunSpec({
         }
     }
 
-    context("node keys") {
+    context("node sets") {
         test("tell nodes apart by identity") {
             val node = yamlScalar("a")
+            val nodes = NodeSet(identityOrdinals())
 
-            NodeKey(node) shouldBe NodeKey(node)
-            (NodeKey(node) == NodeKey(yamlScalar("a"))) shouldBe false
-            NodeKey(node).equals(node) shouldBe false
+            nodes.add(node) shouldBe true
+            nodes.add(node) shouldBe false
+            (yamlScalar("a") in nodes) shouldBe false
+            nodes.add(yamlScalar("a")) shouldBe true
+            nodes.nodes.size shouldBe 2
         }
     }
 })

@@ -18,27 +18,31 @@ package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
-import com.davils.kaml.document.internal.NodeKey
+import com.davils.kaml.document.internal.NodeSet
 import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerTokens
 
-internal class Targets(private val rules: RedactionRules, private val budget: WorkBudget) {
-    fun of(root: YamlNode): Set<NodeKey> {
-        val targets = HashSet<NodeKey>()
+internal class Targets(
+    private val rules: RedactionRules,
+    private val budget: WorkBudget,
+    private val ordinalOf: (YamlNode) -> Int,
+) {
+    fun of(root: YamlNode): NodeSet {
+        val targets = NodeSet(ordinalOf)
         rules.paths.forEach { path ->
-            path.query(root).forEach { match -> allAt(root, match.location).forEach { targets.add(NodeKey(it)) } }
+            path.query(root).forEach { match -> allAt(root, match.location).forEach(targets::add) }
         }
         if (rules.hasKeys) keyed(root, targets)
         return targets
     }
 
-    fun subtree(node: YamlNode, seen: MutableSet<NodeKey> = HashSet(), visit: (YamlNode) -> Unit) {
+    fun subtree(node: YamlNode, seen: NodeSet = NodeSet(ordinalOf), visit: (YamlNode) -> Unit) {
         val pending = ArrayDeque<YamlNode>()
         pending.addLast(node)
         while (pending.isNotEmpty()) {
             val current = pending.removeLast()
-            if (seen.add(NodeKey(current))) {
+            if (seen.add(current)) {
                 budget.charge()
                 visit(current)
                 childrenOf(current).forEach(pending::addLast)
@@ -46,11 +50,11 @@ internal class Targets(private val rules: RedactionRules, private val budget: Wo
         }
     }
 
-    private fun keyed(root: YamlNode, targets: MutableSet<NodeKey>) {
+    private fun keyed(root: YamlNode, targets: NodeSet) {
         subtree(root) { node ->
             val entries = (node as? YamlNode.Mapping)?.entries.orEmpty()
             entries.forEach { entry ->
-                if (rules.isSecretKey(Members.tokenOf(entry.key))) targets.add(NodeKey(entry.value))
+                if (rules.isSecretKey(Members.tokenOf(entry.key))) targets.add(entry.value)
             }
         }
     }

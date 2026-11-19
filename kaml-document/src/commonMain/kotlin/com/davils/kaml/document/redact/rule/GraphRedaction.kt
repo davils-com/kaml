@@ -20,26 +20,27 @@ import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.document.YamlDocumentLimitException
-import com.davils.kaml.document.internal.NodeKey
+import com.davils.kaml.document.internal.NodeSet
 import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kaml.document.patch.graph.GraphNodes
 
 internal class GraphRedaction(private val rules: RedactionRules) {
     private val budget = WorkBudget(rules.limits.maximumNodes, "maximumNodes")
-    private val rewritten = HashMap<NodeKey, YamlNode>()
+    private val ordinalOf = identityOrdinals()
+    private val rewritten = HashMap<Int, YamlNode>()
 
     fun redacted(root: YamlNode): YamlNode {
-        val targets = Targets(rules, budget).of(root)
+        val targets = Targets(rules, budget, ordinalOf).of(root)
         return rewrittenOf(root, targets, 0)
     }
 
-    private fun rewrittenOf(node: YamlNode, targets: Set<NodeKey>, depth: Int): YamlNode {
-        val key = NodeKey(node)
-        if (key in targets) return yamlScalar(rules.replacement)
-        return rewritten.getOrPut(key) { changed(node, targets, depth) }
+    private fun rewrittenOf(node: YamlNode, targets: NodeSet, depth: Int): YamlNode {
+        if (node in targets) return yamlScalar(rules.replacement)
+        return rewritten.getOrPut(ordinalOf(node)) { changed(node, targets, depth) }
     }
 
-    private fun changed(node: YamlNode, targets: Set<NodeKey>, depth: Int): YamlNode {
+    private fun changed(node: YamlNode, targets: NodeSet, depth: Int): YamlNode {
         budget.charge()
         if (depth > rules.limits.maximumDepth) throw YamlDocumentLimitException("maximumDepth")
         return when (node) {
@@ -49,13 +50,13 @@ internal class GraphRedaction(private val rules: RedactionRules) {
         }
     }
 
-    private fun sequence(node: YamlNode.Sequence, targets: Set<NodeKey>, depth: Int): YamlNode {
+    private fun sequence(node: YamlNode.Sequence, targets: NodeSet, depth: Int): YamlNode {
         val items = node.items.map { item -> rewrittenOf(item, targets, depth) }
         val isSame = items.indices.all { index -> items[index] === node.items[index] }
         return node.takeIf { isSame } ?: GraphNodes.withItems(node, items, node.anchor)
     }
 
-    private fun mapping(node: YamlNode.Mapping, targets: Set<NodeKey>, depth: Int): YamlNode {
+    private fun mapping(node: YamlNode.Mapping, targets: NodeSet, depth: Int): YamlNode {
         val entries = node.entries.map { entry ->
             val key = entry.key.takeIf { it is YamlNode.Scalar } ?: rewrittenOf(entry.key, targets, depth)
             YamlEntry(key, rewrittenOf(entry.value, targets, depth))

@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.core.node.YamlNode
 
-internal class NodeKey(node: YamlNode) {
-    val node: YamlNode = node
-
-    private val hash: Int = node.range?.hashCode() ?: node.hashCode()
-
-    override fun equals(other: Any?): Boolean = other is NodeKey && other.node === node
-
-    override fun hashCode(): Int = hash
+internal actual fun identityOrdinals(): (YamlNode) -> Int {
+    val ordinals = identityTable()
+    return { node -> ordinalIn(ordinals, node.toJsReference()) }
 }
+
+@JsFun("() => new Map()")
+private external fun identityTable(): JsAny
+
+@JsFun(
+    """(table, key) => {
+        let ordinal = table.get(key);
+        if (ordinal === undefined) {
+            ordinal = table.size;
+            table.set(key, ordinal);
+        }
+        return ordinal;
+    }""",
+)
+private external fun ordinalIn(table: JsAny, key: JsReference<YamlNode>): Int
