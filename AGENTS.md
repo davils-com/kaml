@@ -122,8 +122,10 @@ a caller fails closed.
   beyond the hard limit, also when it is built in code. A walk that can be iterative, such as the descendant segment
   `..` of JSONPath, is iterative and has a step and a result budget.
 - **No input decides the complexity.** Regular expressions of a JSONPath run on the I-Regexp engine of
-  `kaml-document` in O(n·m); input never reaches `Regex`. Numbers are converted in linear time within
-  `maxNumberLength`, merges by key use a hash index, and a scalar that is too long is never parsed as a number.
+  `kaml-document` in O(n·m); input never reaches `Regex`. Decimal numbers are converted in linear time, other radixes
+  within `maxNumberLength`, and a scalar that is too long is never parsed as a number. A structure keyed by input, such as
+  mapping keys, duplicate detection, merges, diffs and redaction, is indexed in a total order, never by hash codes
+  alone, so colliding hash codes cannot make it quadratic on the JVM or on Wasm.
 - **Escape untrusted text exactly once, at the sink.** Whatever shows text that may come from input, such as an
   exception message, a diagnostic, a `toString` or a report, writes it through `SafeText` of Kore, which escapes
   control, format and separator characters, bidirectional overrides and lone surrogates and bounds the length.
