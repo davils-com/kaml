@@ -82,8 +82,20 @@ internal class LayerMerging(private val options: YamlMergeOptions, limits: YamlL
     }
 
     private fun mergedSequence(base: Traced, sequence: YamlNode.Sequence, overlay: Overlay): Traced {
-        val items = TracedNodes.items(base) ?: return whole(sequence, overlay.layer, overlay.pattern.tokens.size)
+        val items = itemsOf(base) ?: return whole(sequence, overlay.layer, overlay.pattern.tokens.size)
         return mergedItems(items, sequence, overlay)
+    }
+
+    private fun itemsOf(traced: Traced): Traced.Items? = when (traced) {
+        is Traced.Items -> traced
+        is Traced.Members -> null
+        is Traced.Whole -> (traced.node as? YamlNode.Sequence)?.let { sequence -> unkeyed(sequence, traced.origin) }
+    }
+
+    private fun unkeyed(sequence: YamlNode.Sequence, origin: String): Traced.Items {
+        val items = sequence.items.map { item -> Traced.Whole(item, origin) }
+        val slots = KeyedSlots<Traced>(items, budget, keyOf = { null })
+        return Traced.Items(template = sequence, slots = slots, key = null, origin = origin)
     }
 
     private fun withEntry(slots: KeyedSlots<TracedEntry>, entry: YamlEntry, overlay: Overlay) {
@@ -106,11 +118,7 @@ internal class LayerMerging(private val options: YamlMergeOptions, limits: YamlL
         when (val merge = options.sequenceMergeAt(overlay.pattern)) {
             YamlSequenceMerge.Replace -> whole(sequence, overlay.layer, overlay.pattern.tokens.size)
 
-            YamlSequenceMerge.Append -> Traced.Items(
-                template = base.template,
-                items = base.items + appended(sequence, overlay),
-                origin = overlay.layer,
-            )
+            YamlSequenceMerge.Append -> appendedTo(base, sequence, overlay)
 
             is YamlSequenceMerge.ByKey -> keyed.merged(
                 base = base,
@@ -119,6 +127,11 @@ internal class LayerMerging(private val options: YamlMergeOptions, limits: YamlL
                 key = merge.key,
             )
         }
+
+    private fun appendedTo(base: Traced.Items, sequence: YamlNode.Sequence, overlay: Overlay): Traced {
+        appended(sequence, overlay).forEach(base.slots::append)
+        return Traced.Items(template = base.template, slots = base.slots, key = base.key, origin = overlay.layer)
+    }
 
     private fun appended(sequence: YamlNode.Sequence, overlay: Overlay): List<Traced> {
         val kept = sequence.items.filterNot(markers::isDeletion)

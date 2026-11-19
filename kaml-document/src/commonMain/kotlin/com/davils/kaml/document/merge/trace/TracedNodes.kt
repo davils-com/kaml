@@ -48,21 +48,9 @@ internal class TracedNodes(private val count: NodeCount) {
 
             is Traced.Items -> GraphNodes.withItems(
                 traced.template,
-                traced.items.mapIndexed { index, item -> built(item, pointer.child(index), origins) },
+                traced.all.mapIndexed { index, item -> built(item, pointer.child(index), origins) },
                 traced.template.anchor,
             )
-        }
-    }
-
-    companion object {
-        fun items(traced: Traced): Traced.Items? = when (traced) {
-            is Traced.Items -> traced
-
-            is Traced.Members -> null
-
-            is Traced.Whole -> (traced.node as? YamlNode.Sequence)?.let { sequence ->
-                Traced.Items(sequence, sequence.items.map { item -> Traced.Whole(item, traced.origin) }, traced.origin)
-            }
         }
     }
 }

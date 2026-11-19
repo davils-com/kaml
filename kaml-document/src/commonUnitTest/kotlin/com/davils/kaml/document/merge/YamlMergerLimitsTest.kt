@@ -177,6 +177,35 @@ class YamlMergerLimitsTest : FunSpec({
         }
     }
 
+    context("layers over a long sequence") {
+        test("cost what they change when they merge by key or append, not the length of the sequence") {
+            val byName = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey(NAME) }
+            val appending = yamlMergeOptions { sequences = YamlSequenceMerge.Append }
+            val base = YamlLayer("base", named(List(WIDTH) { index -> "n$index" }))
+            val layers = { count: Int ->
+                listOf(base) + List(count) { YamlLayer("l$it", nodeOf("[{name: n0, x: $it}]")) }
+            }
+            val keyedFew = timed { YamlMerger(byName).merge(layers(FEW_LAYERS)) }
+            val keyedMany = timed { YamlMerger(byName).merge(layers(MANY_LAYERS)) }
+            val appendedFew = timed { YamlMerger(appending).merge(layers(FEW_LAYERS)) }
+            val appendedMany = timed { YamlMerger(appending).merge(layers(MANY_LAYERS)) }
+
+            (keyedMany < keyedFew * LAYER_GROWTH + slack) shouldBe true
+            (appendedMany < appendedFew * LAYER_GROWTH + slack) shouldBe true
+        }
+
+        test("merge, delete and add items by key over several layers") {
+            val byName = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey(NAME) }
+            val layers = listOf(
+                YamlLayer("a", nodeOf("[{name: a, v: 1}, {name: b}]")),
+                YamlLayer("b", nodeOf("[{name: a, w: 2}, {name: c}]")),
+                YamlLayer("c", nodeOf("[{name: c, z: 3}, !delete {name: b}]")),
+            )
+
+            YamlMerger(byName).merge(layers).node shouldBe nodeOf("[{name: a, v: 1, w: 2}, {name: c, z: 3}]")
+        }
+    }
+
     context("keyed items over several layers") {
         test("merge into items an earlier layer merged, and ignore deletions of missing items and members") {
             val options = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey(NAME) }

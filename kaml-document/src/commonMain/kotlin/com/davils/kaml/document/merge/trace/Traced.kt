@@ -34,7 +34,10 @@ internal sealed interface Traced {
 
     data class Items(
         val template: YamlNode.Sequence,
-        val items: List<Traced>,
+        val slots: KeyedSlots<Traced>,
+        val key: String?,
         override val origin: String,
-    ) : Traced
+    ) : Traced {
+        val all: List<Traced> get() = slots.items
+    }
 }

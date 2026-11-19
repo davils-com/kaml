@@ -29,9 +29,9 @@ internal class KeyedItems(
     private val budget: WorkBudget,
 ) {
     fun merged(base: Traced.Items, sequence: YamlNode.Sequence, items: Overlay, key: String): Traced {
-        val slots = KeyedSlots(base.items, budget, keyOf = { item -> keyOf(item, key) })
+        val slots = base.slots.takeIf { base.key == key } ?: KeyedSlots(base.all, budget, keyOf = { keyOf(it, key) })
         sequence.items.forEach { item -> withItem(slots, items.with(item), key) }
-        return Traced.Items(base.template, slots.items, items.layer)
+        return Traced.Items(template = base.template, slots = slots, key = key, origin = items.layer)
     }
 
     private fun withItem(slots: KeyedSlots<Traced>, overlay: Overlay, key: String) {
