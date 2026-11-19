@@ -21,6 +21,7 @@ plugins {
     id("kaml.git-hooks")
     id("kaml.trivy")
     id("kaml.assurance")
+    id("kaml.standards")
     id("kaml.changelog")
     id("kaml.license-header")
     id("kaml.web-tools")
