@@ -65,8 +65,7 @@ internal object NumberForms {
     fun finite(decimal: String): Double? {
         val unsigned = decimal.removePrefix("+")
         if (unsigned.length > Limits.MAX_DECIMAL_TEXT_LENGTH) return null
-        val overflow = Double.NEGATIVE_INFINITY.takeIf { unsigned.startsWith("-") } ?: Double.POSITIVE_INFINITY
-        return parseDecimalOrNull(unsigned) ?: overflow
+        return parseDecimalOrNull(unsigned)
     }
 
     private fun isDecimalFloat(text: String): Boolean {

@@ -70,9 +70,9 @@ class NumberFormsTest : FunSpec({
     }
 
     context("conversion to a double") {
-        test("overflows to an infinity with the sign of the text") {
-            NumberForms.finite(TOO_LARGE) shouldBe Double.POSITIVE_INFINITY
-            NumberForms.finite("-$TOO_LARGE") shouldBe Double.NEGATIVE_INFINITY
+        test("gives no value for a number too large for a double") {
+            NumberForms.finite(TOO_LARGE).shouldBeNull()
+            NumberForms.finite("-$TOO_LARGE").shouldBeNull()
         }
 
         test("underflows to zero") {

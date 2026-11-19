@@ -196,7 +196,8 @@ public class YamlSchema internal constructor(
         /**
          * The core schema of YAML 1.2 and the default: `null`, `~`, `true`, `false`, decimal, octal (`0o17`) and
          * hexadecimal (`0x1F`) integers, floats with `.inf` and `.nan` resolve to their tags; everything else is a
-         * string. A float too large for a double becomes an infinity.
+         * string. A float too large for a double is no value of its tag, so composing it reports an invalid tagged
+         * value instead of turning it into an infinity; only `.inf` and `-.inf` are infinite.
          *
          * @since 1.0.0
          */
