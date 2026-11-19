@@ -116,7 +116,9 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
      * Redacts every document of [tree] in place, keeping the layout, the comments and everything that is not secret.
      *
      * A redacted value is replaced by the [replacement] in double quotes; its anchor and tag stay, so aliases keep
-     * resolving, now to the replacement. An alias whose anchor was removed with a redacted value is replaced as well.
+     * resolving, now to the replacement. An alias whose anchor was removed with a redacted value is replaced as well,
+     * and so is an alias outside a key that stands for an anchored key whose text a value pattern changes, since value
+     * patterns never rewrite keys: it becomes the redacted text, as in the redacted graph.
      * An entry that the composer drops as a duplicate, which [com.davils.kaml.core.YamlDuplicateKeys.KeepFirst] and
      * [com.davils.kaml.core.YamlDuplicateKeys.KeepLast] allow, is invisible to every path and may be the one another
      * reader keeps, so its value and a key that is a collection are redacted whole, and so is every other entry whose

@@ -27,6 +27,8 @@ internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth
 
     val mappings: List<YamlValueSyntax.Mapping>
 
+    val keyScalars: List<YamlValueSyntax.Scalar>
+
     init {
         val foundScalars = ArrayList<YamlValueSyntax.Scalar>()
         val foundMappings = ArrayList<YamlValueSyntax.Mapping>()
@@ -44,6 +46,8 @@ internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth
         }
         scalars = foundScalars
         mappings = foundMappings
+        val entries = foundMappings.flatMap(YamlValueSyntax.Mapping::entries)
+        keyScalars = entries.mapNotNull { entry -> entry.key as? YamlValueSyntax.Scalar }
     }
 
     private fun childrenOf(value: YamlValueSyntax): List<YamlValueSyntax> = when (value) {

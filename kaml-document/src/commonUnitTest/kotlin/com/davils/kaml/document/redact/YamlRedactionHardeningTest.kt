@@ -28,6 +28,8 @@ import com.davils.kaml.core.yaml
 import com.davils.kaml.document.fixture.lines
 import com.davils.kaml.document.fixture.nodeOf
 import com.davils.kaml.document.fixture.treeOf
+import com.davils.kaml.document.pointer.at
+import com.davils.kaml.document.pointer.toJsonPointer
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldNotContain
@@ -42,6 +44,7 @@ private const val SECRET: String = "hunter2"
 private const val PASSWORD_PATH: String = "$.password"
 private const val ANY_PASSWORD: String = "$..password"
 private const val CONFIG: String = "config:"
+private const val ANCHORED_TOKEN: String = "&k TOKEN-123456 : x"
 private const val FEW_MAPPINGS: Int = 5_000
 private const val MANY_MAPPINGS: Int = 40_000
 private const val GROWTH: Int = 16
@@ -182,6 +185,20 @@ class YamlRedactionHardeningTest : FunSpec({
 
             text shouldNotContainText "1234"
             text shouldNotContainText "TOKEN"
+        }
+    }
+
+    context("a value pattern and an alias of an anchored key") {
+        val tokens = yamlRedaction { value(Regex("TOKEN-[0-9]+")) }
+        val text = lines(ANCHORED_TOKEN, "y: *k", "m: {*k : z}")
+
+        test("redacts the value the alias stands for in the text as in the graph") {
+            val graph = tokens.redact(nodeOf(lines(ANCHORED_TOKEN, "y: *k")))
+            val redacted = redactedText(tokens, treeOf(text))
+
+            graph.at("/y".toJsonPointer()) shouldBe yamlScalar("***")
+            redacted shouldBe lines(ANCHORED_TOKEN, "y: \"***\"", "m: {*k : z}")
+            nodeOf(redacted).at("/y".toJsonPointer()) shouldBe yamlScalar("***")
         }
     }
 

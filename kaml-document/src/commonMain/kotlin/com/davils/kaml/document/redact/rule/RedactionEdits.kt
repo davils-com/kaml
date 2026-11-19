@@ -46,13 +46,14 @@ internal class RedactionEdits(
     private val lines = LineMap.of(tree.text)
     private val targetLines = Coverage(targets.map(::linesOf))
     private val tokens: List<YamlSyntaxToken> = tree.root.tokens.toList()
+    private val anchors = AnchorDefinitions(tree)
     private val quoted: String = DoubleQuoted.of(rules.replacement)
 
     fun all(walk: SyntaxWalk): List<TextEdit> {
         val replaced = covered.ranges.map { range -> TextEdit(range, quoted) }
         val scalars = walk.scalars.mapNotNull(::scalarEdit)
         val rewritten = Coverage(scalars.map(TextEdit::range))
-        val edits = replaced + tagEdits() + scalars + commentEdits(rewritten) + aliasEdits()
+        val edits = replaced + tagEdits() + scalars + commentEdits(rewritten) + aliasEdits() + anchoredKeyEdits(walk)
         return edits.sortedBy { edit -> edit.range.start }
     }
 
@@ -117,6 +118,24 @@ internal class RedactionEdits(
         val orphans = aliases.filter { alias -> alias.text.drop(1) in removed }
         return orphans.map { alias -> TextEdit(alias.range, EMPTY_MAPPING.takeIf { isMerged(alias) } ?: quoted) }
     }
+
+    private fun anchoredKeyEdits(walk: SyntaxWalk): List<TextEdit> {
+        if (!rules.hasValuePatterns) return emptyList()
+        val uncovered = walk.keyScalars.filter { key -> !covered.contains(ContentRanges.of(key.node)) }
+        val keys = uncovered.associateBy { key -> key.node.range }
+        val aliases = tokens.filter { it.kind == YamlSyntaxKind.ALIAS && !covered.contains(it.range) && !isKey(it) }
+        return aliases.mapNotNull { alias ->
+            val key = anchors.rangeOf(alias.text.drop(1), alias.range.start)?.let(keys::get)
+            key?.let { anchored -> anchoredKeyEdit(alias, anchored) }
+        }
+    }
+
+    private fun anchoredKeyEdit(alias: YamlSyntaxToken, key: YamlValueSyntax.Scalar): TextEdit? {
+        val redacted = rules.value(key.value) ?: throw YamlDocumentLimitException(PATTERN_INPUT)
+        return TextEdit(alias.range, DoubleQuoted.of(redacted)).takeIf { redacted != key.value }
+    }
+
+    private fun isKey(alias: YamlSyntaxToken): Boolean = alias.ancestors.take(2).any { it.kind == YamlSyntaxKind.KEY }
 
     private fun isMerged(alias: YamlSyntaxToken): Boolean {
         val chain = alias.ancestors.toList()
