@@ -18,6 +18,7 @@ package com.davils.kaml.document.merge
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.merge.trace.OriginIndex
+import com.davils.kaml.document.merge.trace.OriginMap
 import com.davils.kaml.document.pointer.JsonPointer
 
 /**
@@ -26,14 +27,14 @@ import com.davils.kaml.document.pointer.JsonPointer
  * @property node the root of the merged graph.
  * @since 1.0.0
  */
-public class YamlMerged internal constructor(public val node: YamlNode, origins: Map<JsonPointer, String>) {
+public class YamlMerged internal constructor(public val node: YamlNode, origins: OriginMap) {
     /**
      * The name of the layer that last set each merged location, by its pointer; it cannot be changed. A location
      * inside a value that one layer contributed as a whole is not listed; [originOf] finds it through its ancestors.
      *
      * @since 1.0.0
      */
-    public val origins: Map<JsonPointer, String> = buildMap { putAll(origins) }
+    public val origins: Map<JsonPointer, String> = origins
 
     private val index = OriginIndex(origins)
 

@@ -24,6 +24,8 @@ import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.fixture.collidingMapping
+import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kore.testing.HostileFragments
@@ -144,6 +146,16 @@ class YamlMergerLimitsTest : FunSpec({
     }
 
     context("origins") {
+        test("are recorded in near-linear time, also when the hash codes of the keys collide") {
+            val isLinear = growsNearLinearly { bits ->
+                val layers = listOf(YamlLayer("a", collidingMapping(bits)), YamlLayer("b", wide(1)))
+                val merged = YamlMerger().merge(layers)
+                merged.origins.size shouldBe (1 shl bits) + 2
+            }
+
+            isLinear shouldBe true
+        }
+
         test("are found in time that does not grow with the square of the length of a pointer") {
             val merged = YamlMerger().merge(listOf(YamlLayer("only", wide(1))))
             val shortTime = timed { merged.originOf(JsonPointer.of(List(SHORT_POINTER) { "x" })) }

@@ -26,14 +26,14 @@ import com.davils.kaml.document.pointer.JsonPointer
 
 internal class TracedNodes(private val count: NodeCount) {
     fun merged(traced: Traced): YamlMerged {
-        val origins = LinkedHashMap<JsonPointer, String>()
+        val origins = ArrayList<Pair<JsonPointer, String>>()
         val node = built(traced, JsonPointer.ROOT, origins)
-        return YamlMerged(node, origins)
+        return YamlMerged(node, OriginMap(origins))
     }
 
-    private fun built(traced: Traced, pointer: JsonPointer, origins: MutableMap<JsonPointer, String>): YamlNode {
+    private fun built(traced: Traced, pointer: JsonPointer, origins: MutableList<Pair<JsonPointer, String>>): YamlNode {
         count.checkDepth(pointer.tokens.size)
-        origins[pointer] = traced.origin
+        origins.add(pointer to traced.origin)
         return when (traced) {
             is Traced.Whole -> traced.node
 

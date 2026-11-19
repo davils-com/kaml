@@ -18,6 +18,7 @@ package com.davils.kaml.document.merge
 
 import com.davils.kaml.document.YamlDocumentViolationCodes
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.merge.trace.OriginMap
 import com.davils.kaml.document.pointer.toJsonPointer
 import com.davils.kore.core.validation.report.ValidationException
 import io.kotest.assertions.throwables.shouldThrow
@@ -189,7 +190,7 @@ class YamlMergerTest : FunSpec({
 
         test("a merge needs a layer") {
             shouldThrow<IllegalArgumentException> { YamlMerger().merge(emptyList()) }
-            val merged = YamlMerged(nodeOf("a"), emptyMap())
+            val merged = YamlMerged(nodeOf("a"), OriginMap(emptyList()))
 
             merged.originOf("/x".toJsonPointer()).shouldBeNull()
         }
