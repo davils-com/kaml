@@ -7,7 +7,6 @@
       <trusted-artifacts>
          <trust file=".*-javadoc[.]jar" regex="true" reason="Documentation jars are fetched by the IDE only and never enter a build."/>
          <trust file=".*-sources[.]jar" regex="true" reason="Source jars are fetched by the IDE only and never enter a build."/>
-         <trust group="com[.]davils" name="kore-(core|testing)(-jvm|-wasm-js)?" version="2[.]1[.]0-SNAPSHOT" regex="true" reason="kaml is developed against the unsigned snapshot of kore 2.1.0 until kore 2.1.0 is released; this rule is removed before kaml 1.0.0."/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true" reason="The sources of the Gradle distribution are fetched by the IDE only, to navigate the Gradle API, and never enter a build."/>
       </trusted-artifacts>
       <trusted-keys>

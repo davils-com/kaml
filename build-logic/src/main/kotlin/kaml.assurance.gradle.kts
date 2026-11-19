@@ -38,18 +38,6 @@ kreate {
         maxAdvisoryAge = Duration.ofDays(1)
         reuseVerdictFor = Duration.ofHours(1)
 
-        ignore("CHANGING_VERSION") {
-            reason = "kaml is developed against the snapshot of Kore 2.1.0 until Kore 2.1.0 is released."
-            module = "com.davils:kore-core"
-            expires = "2026-12-31"
-        }
-
-        ignore("CHANGING_VERSION") {
-            reason = "kaml is tested against the snapshot of Kore 2.1.0 until Kore 2.1.0 is released."
-            module = "com.davils:kore-testing"
-            expires = "2026-12-31"
-        }
-
         ignore("LOW_SCORECARD") {
             reason = "JetBrains' nullability annotations, which kotlinx-coroutines brings along, carry no runtime code."
             module = "org.jetbrains:annotations"
