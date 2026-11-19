@@ -32,13 +32,11 @@ internal class Properties(private val state: ParseState, private val trivia: Tri
     fun read(): Boolean {
         if (!isPropertyAt(state.position)) return false
         state.builder.startNode(YamlSyntaxKind.PROPERTIES)
-        val first = state.peek()
         property()
         val gap = trivia.whitespaceEnd(state.position)
         val hasSecond = gap > state.position && isPropertyAt(gap)
         if (hasSecond) {
             trivia.whitespace()
-            reportRepeated(first, state.peek())
             property()
         }
         state.builder.finishNode()
@@ -164,12 +162,6 @@ internal class Properties(private val state: ParseState, private val trivia: Tri
         }
         val isHidden = decoded.firstInvalidByte == null && !VisibleCodePoints.isVisibleText(decoded.text)
         if (isHidden) state.report(YamlDiagnosticCode.InvalidTag, range, HIDDEN_CHARACTERS)
-    }
-
-    private fun reportRepeated(first: Char, second: Char) {
-        if (first != second) return
-        val range = state.span(start = state.position, end = state.position + 1)
-        state.report(YamlDiagnosticCode.DuplicateProperty, range, "A node has at most one anchor and one tag")
     }
 
     private fun anchorNameEnd(from: Int): Int {

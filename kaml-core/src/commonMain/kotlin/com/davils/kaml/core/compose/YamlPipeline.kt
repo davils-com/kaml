@@ -91,7 +91,10 @@ internal class YamlPipeline(configuration: YamlConfiguration) {
             return YamlParseResult.Failed(tooLong().diagnostics, YamlStream(emptyList()))
         }
         val walk = walk(text, root)
-        val diagnostics = earlier.filterNot { it.code in walkerCodes } + walk.diagnostics
+        val kept = earlier.filterNot { it.code in walkerCodes || it == walk.exhaustion }
+        val keptCodes = kept.mapTo(HashSet(), YamlDiagnostic::code)
+        val added = walk.diagnostics.filterNot { it.code in limitCodes && it.code in keptCodes }
+        val diagnostics = kept + added
         val composed = walk.events.takeIf { walk.isComplete }?.let { events -> compose(events, diagnostics) }
         return composed ?: YamlParseResult.Failed(capped(diagnostics), YamlStream(emptyList()))
     }
@@ -106,7 +109,12 @@ internal class YamlPipeline(configuration: YamlConfiguration) {
         }
         walker.stream(Located(root, 0))
         val diagnostics = walker.diagnostics + listOfNotNull(budget.exhaustion)
-        return Walk(events = events, diagnostics = diagnostics, isComplete = !budget.isExhausted)
+        return Walk(
+            events = events,
+            diagnostics = diagnostics,
+            exhaustion = budget.exhaustion,
+            isComplete = !budget.isExhausted,
+        )
     }
 
     private fun capped(diagnostics: List<YamlDiagnostic>): List<YamlDiagnostic> {
@@ -131,7 +139,12 @@ internal class YamlPipeline(configuration: YamlConfiguration) {
         return Reading(root = empty, events = emptyList(), diagnostics = listOf(diagnostic), isComplete = false)
     }
 
-    private data class Walk(val events: List<YamlEvent>, val diagnostics: List<YamlDiagnostic>, val isComplete: Boolean)
+    private data class Walk(
+        val events: List<YamlEvent>,
+        val diagnostics: List<YamlDiagnostic>,
+        val exhaustion: YamlDiagnostic?,
+        val isComplete: Boolean,
+    )
 
     data class Reading(
         val root: GreenNode,
