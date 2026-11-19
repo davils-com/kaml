@@ -38,6 +38,11 @@ internal class OrderedGroups<K : Comparable<K>, V> {
 
     operator fun get(key: K): List<V>? = index.ordinalOf(key)?.let(groups::get)
 
+    fun firstOf(key: K?): V? {
+        val ordinal = key?.let(index::ordinalOf) ?: return null
+        return groups[ordinal].first()
+    }
+
     operator fun contains(key: K): Boolean = index.ordinalOf(key) != null
 
     fun all(predicate: (K, List<V>) -> Boolean): Boolean =

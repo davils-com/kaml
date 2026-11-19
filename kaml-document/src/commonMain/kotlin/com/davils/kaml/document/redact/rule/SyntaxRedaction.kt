@@ -44,7 +44,7 @@ internal class SyntaxRedaction(private val rules: RedactionRules) {
 
     private fun planned(tree: YamlSyntaxTree, stream: YamlStream): List<TextEdit>? {
         val budget = WorkBudget(rules.limits.maximumNodes, "maximumNodes")
-        val targets = SyntaxTargets(tree, rules, budget)
+        val targets = SyntaxTargets(rules, budget)
         val walk = SyntaxWalk(tree, budget, rules.limits.maximumDepth)
         val graphNodes = targets.graphNodes(stream, walk) ?: return null
         val dropped = DroppedEntries(tree = tree, stream = stream, walk = walk, budget = budget)

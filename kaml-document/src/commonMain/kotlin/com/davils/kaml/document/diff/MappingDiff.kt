@@ -42,8 +42,9 @@ internal object MappingDiff {
                 diff.between(source = values.first(), target = next, pointer = child, isHashTrusted = isHashTrusted)
             }
         }
-        val added = after.keys.filter { key -> key !in before }
-        added.forEach { key -> diff.add(JsonPatchOperation.Add(pointer.child(key), after[key].orEmpty().first())) }
+        after.forEach { key, values ->
+            if (key !in before) diff.add(JsonPatchOperation.Add(pointer.child(key), values.first()))
+        }
         return true
     }
 

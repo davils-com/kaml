@@ -19,7 +19,6 @@ package com.davils.kaml.document.redact.rule
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.YamlStream
 import com.davils.kaml.core.syntax.YamlSyntaxNode
-import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.internal.NodeSet
@@ -29,11 +28,7 @@ import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kaml.document.patch.syntax.ContentRanges
 import com.davils.kore.core.text.TextRange
 
-internal class SyntaxTargets(
-    private val tree: YamlSyntaxTree,
-    private val rules: RedactionRules,
-    private val budget: WorkBudget,
-) {
+internal class SyntaxTargets(private val rules: RedactionRules, private val budget: WorkBudget) {
     fun graphNodes(stream: YamlStream, walk: SyntaxWalk): List<YamlSyntaxNode>? {
         val ordinalOf = identityOrdinals()
         val targets = Targets(rules, budget, ordinalOf)
@@ -44,8 +39,8 @@ internal class SyntaxTargets(
         }
         val known = ranges.filterNotNull()
         val nonEmpty = known.filter { range -> !range.isEmpty }
-        val nodes = nonEmpty.map { range -> walk.nodes[range]?.first() ?: tree.root.coveringNode(range) }
-        return nodes.takeIf { known.size == ranges.size }
+        val nodes = nonEmpty.map(walk.nodes::firstOf).filterNotNull()
+        return nodes.takeIf { known.size == ranges.size && nodes.size == nonEmpty.size }
     }
 
     private fun definitionsOf(target: YamlNode, targets: Targets, seen: NodeSet): List<TextRange?> {

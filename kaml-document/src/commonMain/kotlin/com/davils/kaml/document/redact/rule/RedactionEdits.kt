@@ -129,8 +129,8 @@ internal class RedactionEdits(
         uncovered.forEach { key -> keys.add(key.node.range, key) }
         val aliases = tokens.filter { it.kind == YamlSyntaxKind.ALIAS && !covered.contains(it.range) && !isKey(it) }
         return aliases.mapNotNull { alias ->
-            val key = anchors.rangeOf(alias.text.drop(1), alias.range.start)?.let(keys::get)
-            key?.let { anchored -> anchoredKeyEdit(alias, anchored.first()) }
+            val key = keys.firstOf(anchors.rangeOf(alias.text.drop(1), alias.range.start))
+            key?.let { anchored -> anchoredKeyEdit(alias, anchored) }
         }
     }
 

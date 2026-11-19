@@ -34,6 +34,8 @@ internal class AnchorDefinitions(tree: YamlSyntaxTree) {
         }
     }
 
+    fun rangeOf(name: String, aliasOffset: Int, default: TextRange): TextRange = rangeOf(name, aliasOffset) ?: default
+
     fun rangeOf(name: String, aliasOffset: Int): TextRange? {
         val candidates = names.ordinalOf(name)?.let(definitions::get) ?: return null
         val index = candidates.binarySearch { definition -> definition.offset.compareTo(aliasOffset) }
