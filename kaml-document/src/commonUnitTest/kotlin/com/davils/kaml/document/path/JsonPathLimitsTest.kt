@@ -25,6 +25,8 @@ import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.fixture.collidingTexts
+import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
 import com.davils.kore.testing.HostileFragments
 import com.davils.kore.testing.unsafeCodePointsIn
@@ -95,6 +97,9 @@ private fun limits(configure: YamlLimitsBuilder.() -> Unit): YamlLimits = yamlLi
 
 private fun nested(depth: Int): YamlNode =
     (1..depth).fold<Int, YamlNode>(yamlScalar("x")) { node, _ -> yamlSequence(listOf(node)) }
+
+private fun member(name: String, value: String): YamlEntry =
+    YamlEntry(key = yamlScalar(name), value = yamlScalar(value))
 
 private fun conjunction(operands: Int): String = "$[?" + List(operands) { "@" }.joinToString("&&") + "]"
 
@@ -263,6 +268,18 @@ class JsonPathLimitsTest : FunSpec({
             val huge = timed { "$[?@ < 1e308]".selectedIn(integers) }
 
             (huge < small * GROWTH + slack) shouldBe true
+        }
+
+        test("compiles every pattern of the document once in near-linear time, also when their hash codes collide") {
+            val isLinear = growsNearLinearly { bits ->
+                val texts = collidingTexts(bits)
+                val items = texts.map { text ->
+                    yamlMapping(listOf(member(name = "p", value = text), member(name = "s", value = text)))
+                }
+                "$[?match(@.s, @.p)]".selectedIn(yamlSequence(items), YamlLimits.Relaxed) shouldHaveSize (1 shl bits)
+            }
+
+            isLinear shouldBe true
         }
 
         test("reads a pattern from the document") {

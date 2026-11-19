@@ -17,27 +17,25 @@
 package com.davils.kaml.document.path.function
 
 import com.davils.kaml.core.limit.YamlLimits
+import com.davils.kaml.document.internal.OrderedIndex
 import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.path.regexp.IRegexp
 
 internal class FunctionContext(private val limits: YamlLimits, val budget: WorkBudget) {
-    private val compiled = HashMap<String, IRegexp>()
-    private val refused = HashSet<String>()
+    private val patterns = OrderedIndex<String>()
+    private val compiled = ArrayList<IRegexp?>()
 
     fun regexpOf(pattern: String): IRegexp? {
-        if (pattern in refused) return null
-        return compiled[pattern] ?: compiledNew(pattern)
+        val known = patterns.ordinalOf(pattern) ?: return compiledNew(pattern)
+        return compiled[known]
     }
 
     private fun compiledNew(pattern: String): IRegexp? {
         budget.charge(pattern.length.toLong() + 1L)
         val regexp = IRegexp.compile(pattern, limits, budget)
-        if (regexp == null) {
-            refused.add(pattern)
-            return null
-        }
-        budget.charge(regexp.size.toLong())
-        compiled[pattern] = regexp
+        regexp?.let { found -> budget.charge(found.size.toLong()) }
+        patterns.ordinalFor(pattern)
+        compiled.add(regexp)
         return regexp
     }
 }
