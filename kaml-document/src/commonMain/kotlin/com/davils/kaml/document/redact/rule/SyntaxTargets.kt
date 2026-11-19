@@ -23,6 +23,7 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.internal.NodeSet
+import com.davils.kaml.document.internal.OrderedGroups
 import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kaml.document.patch.syntax.ContentRanges
@@ -33,7 +34,7 @@ internal class SyntaxTargets(
     private val rules: RedactionRules,
     private val budget: WorkBudget,
 ) {
-    fun graphNodes(stream: YamlStream): List<YamlSyntaxNode>? {
+    fun graphNodes(stream: YamlStream, walk: SyntaxWalk): List<YamlSyntaxNode>? {
         val ordinalOf = identityOrdinals()
         val targets = Targets(rules, budget, ordinalOf)
         val ranges = ArrayList<TextRange?>()
@@ -43,7 +44,8 @@ internal class SyntaxTargets(
         }
         val known = ranges.filterNotNull()
         val nonEmpty = known.filter { range -> !range.isEmpty }
-        return nonEmpty.map(tree.root::coveringNode).takeIf { known.size == ranges.size }
+        val nodes = nonEmpty.map { range -> walk.nodes[range]?.first() ?: tree.root.coveringNode(range) }
+        return nodes.takeIf { known.size == ranges.size }
     }
 
     private fun definitionsOf(target: YamlNode, targets: Targets, seen: NodeSet): List<TextRange?> {
@@ -65,10 +67,9 @@ internal class SyntaxTargets(
     }
 
     fun duplicateNodes(walk: SyntaxWalk, covered: Coverage): List<YamlSyntaxNode> = walk.mappings.flatMap { mapping ->
-        val groups = mapping.entries
-            .groupBy(::tokenOf)
-            .values
-            .filter { group -> group.size > 1 }
+        val tokens = OrderedGroups<String, YamlEntrySyntax>()
+        mapping.entries.forEach { entry -> tokens.add(tokenOf(entry), entry) }
+        val groups = tokens.values.filter { group -> group.size > 1 }
         groups.flatMap { group ->
             val nodes = group.mapNotNull(::valueNodeOf)
             nodes.takeIf { nodes.any { node -> covered.contains(ContentRanges.of(node)) } }.orEmpty()

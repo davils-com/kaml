@@ -22,6 +22,8 @@ import com.davils.kaml.core.syntax.YamlSyntaxToken
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.internal.OrderedGroups
+import com.davils.kaml.document.internal.OrderedIndex
 import com.davils.kaml.document.patch.syntax.ContentRanges
 import com.davils.kore.core.text.LineMap
 import com.davils.kore.core.text.TextEdit
@@ -59,8 +61,9 @@ internal class RedactionEdits(
 
     private fun tagEdits(): List<TextEdit> {
         val tags = targets.mapNotNull { node -> node.child(YamlSyntaxKind.PROPERTIES)?.token(YamlSyntaxKind.TAG) }
-        val distinct = tags.filter { tag -> !covered.contains(tag.range) }.distinctBy { tag -> tag.range.start }
-        return distinct.map { tag -> TextEdit(tag.range, "") }
+        val distinct = OrderedGroups<TextRange, YamlSyntaxToken>()
+        tags.filter { tag -> !covered.contains(tag.range) }.forEach { tag -> distinct.add(tag.range, tag) }
+        return distinct.keys.map { range -> TextEdit(range, "") }
     }
 
     private fun scalarEdit(scalar: YamlValueSyntax.Scalar): TextEdit? {
@@ -111,22 +114,23 @@ internal class RedactionEdits(
     }
 
     private fun aliasEdits(): List<TextEdit> {
-        val removed = tokens
-            .filter { it.kind == YamlSyntaxKind.ANCHOR && covered.contains(it.range) }
-            .mapTo(HashSet()) { anchor -> anchor.text.drop(1) }
+        val removed = OrderedIndex<String>()
+        val coveredAnchors = tokens.filter { it.kind == YamlSyntaxKind.ANCHOR && covered.contains(it.range) }
+        coveredAnchors.forEach { anchor -> removed.ordinalFor(anchor.text.drop(1)) }
         val aliases = tokens.filter { it.kind == YamlSyntaxKind.ALIAS && !covered.contains(it.range) }
-        val orphans = aliases.filter { alias -> alias.text.drop(1) in removed }
+        val orphans = aliases.filter { alias -> removed.ordinalOf(alias.text.drop(1)) != null }
         return orphans.map { alias -> TextEdit(alias.range, EMPTY_MAPPING.takeIf { isMerged(alias) } ?: quoted) }
     }
 
     private fun anchoredKeyEdits(walk: SyntaxWalk): List<TextEdit> {
         if (!rules.hasValuePatterns) return emptyList()
         val uncovered = walk.keyScalars.filter { key -> !covered.contains(ContentRanges.of(key.node)) }
-        val keys = uncovered.associateBy { key -> key.node.range }
+        val keys = OrderedGroups<TextRange, YamlValueSyntax.Scalar>()
+        uncovered.forEach { key -> keys.add(key.node.range, key) }
         val aliases = tokens.filter { it.kind == YamlSyntaxKind.ALIAS && !covered.contains(it.range) && !isKey(it) }
         return aliases.mapNotNull { alias ->
             val key = anchors.rangeOf(alias.text.drop(1), alias.range.start)?.let(keys::get)
-            key?.let { anchored -> anchoredKeyEdit(alias, anchored) }
+            key?.let { anchored -> anchoredKeyEdit(alias, anchored.first()) }
         }
     }
 

@@ -16,11 +16,14 @@
 
 package com.davils.kaml.document.redact.rule
 
+import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.internal.OrderedGroups
 import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kore.core.text.TextRange
 
 internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth: Int) {
     val scalars: List<YamlValueSyntax.Scalar>
@@ -28,6 +31,8 @@ internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth
     val mappings: List<YamlValueSyntax.Mapping>
 
     val keyScalars: List<YamlValueSyntax.Scalar>
+
+    val nodes: OrderedGroups<TextRange, YamlSyntaxNode> = OrderedGroups()
 
     init {
         val foundScalars = ArrayList<YamlValueSyntax.Scalar>()
@@ -39,6 +44,7 @@ internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth
             budget.charge()
             if (current.depth > maximumDepth) throw YamlDocumentLimitException("maximumDepth")
             val value = current.value
+            nodes.add(value.node.range, value.node)
             (value as? YamlValueSyntax.Scalar)?.let(foundScalars::add)
             (value as? YamlValueSyntax.Mapping)?.let(foundMappings::add)
             val childDepth = current.depth + 1
@@ -48,6 +54,7 @@ internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth
         mappings = foundMappings
         val entries = foundMappings.flatMap(YamlValueSyntax.Mapping::entries)
         keyScalars = entries.mapNotNull { entry -> entry.key as? YamlValueSyntax.Scalar }
+        keyScalars.forEach { key -> nodes.add(key.node.range, key.node) }
     }
 
     private fun childrenOf(value: YamlValueSyntax): List<YamlValueSyntax> = when (value) {

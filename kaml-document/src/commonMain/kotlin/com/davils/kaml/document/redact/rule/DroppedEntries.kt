@@ -24,11 +24,13 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.internal.NodeSet
+import com.davils.kaml.document.internal.OrderedGroups
 import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kore.core.text.TextRange
 
 private const val MERGE_KEY: String = "<<"
+private val NO_RANGE: TextRange = TextRange(start = -1, end = -1)
 
 internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: SyntaxWalk, budget: WorkBudget) {
     private val isLastKept = tree.yaml.configuration.duplicateKeys == YamlDuplicateKeys.KeepLast
@@ -46,7 +48,7 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         val missing = ArrayList<TextRange>()
         walk.mappings.forEach { mapping ->
             budget.charge(mapping.entries.size.toLong())
-            val counterpart = composed[mapping.node.range]
+            val counterpart = composed[mapping.node.range]?.first()
             counterpart?.let { match -> collect(mapping, match) } ?: missing.add(mapping.node.range)
         }
         val mergeSources = Coverage(merged)
@@ -54,8 +56,8 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         unmatched = missing.filter { range -> !mergeSources.contains(range) }
     }
 
-    private fun composedMappings(stream: YamlStream, budget: WorkBudget): Map<TextRange?, YamlNode.Mapping> {
-        val mappings = HashMap<TextRange?, YamlNode.Mapping>()
+    private fun composedMappings(stream: YamlStream, budget: WorkBudget): OrderedGroups<TextRange, YamlNode.Mapping> {
+        val mappings = OrderedGroups<TextRange, YamlNode.Mapping>()
         val seen = NodeSet(identityOrdinals())
         val pending = ArrayDeque<YamlNode>()
         stream.documents.forEach { document -> pending.addLast(document.root) }
@@ -70,9 +72,9 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         return mappings
     }
 
-    private fun indexed(node: YamlNode, mappings: MutableMap<TextRange?, YamlNode.Mapping>) {
+    private fun indexed(node: YamlNode, mappings: OrderedGroups<TextRange, YamlNode.Mapping>) {
         val mapping = node as? YamlNode.Mapping ?: return
-        mappings[mapping.range] = mapping
+        mappings.add(mapping.range ?: NO_RANGE, mapping)
     }
 
     private fun childrenOf(node: YamlNode): List<YamlNode> = when (node) {
@@ -82,15 +84,25 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
     }
 
     private fun collect(mapping: YamlValueSyntax.Mapping, counterpart: YamlNode.Mapping): Boolean {
-        val keyRanges = counterpart.entries.mapNotNullTo(HashSet()) { entry -> entry.key.range }
-        val candidates = mapping.entries.filter { entry -> resolvedRangeOf(entry) in keyRanges }
-        val groups = candidates.groupBy(::resolvedRangeOf).values
-        val kept = groups.mapTo(HashSet()) { group -> group.last().takeIf { isLastKept } ?: group.first() }
+        val keyRanges = OrderedGroups<TextRange, YamlNode>()
+        counterpart.entries.forEach { entry -> keyRanges.add(entry.key.range ?: NO_RANGE, entry.key) }
+        val groups = OrderedGroups<TextRange, YamlEntrySyntax>()
+        mapping.entries.forEach { entry -> addCandidate(groups, keyRanges, entry) }
+        val kept = groups.values.mapTo(HashSet()) { group -> group.last().takeIf { isLastKept } ?: group.first() }
         val unkept = mapping.entries.filter { entry -> entry !in kept }
         val isMergeKey = kept.none(::isMerge)
         val (merges, others) = unkept.partition { entry -> isMergeKey && isMerge(entry) }
         merges.mapTo(merged) { entry -> entry.node.range }
         return found.addAll(others.flatMap(::partsOf))
+    }
+
+    private fun addCandidate(
+        groups: OrderedGroups<TextRange, YamlEntrySyntax>,
+        keyRanges: OrderedGroups<TextRange, YamlNode>,
+        entry: YamlEntrySyntax,
+    ) {
+        val range = resolvedRangeOf(entry)
+        if (range in keyRanges) groups.add(range, entry)
     }
 
     private fun resolvedRangeOf(entry: YamlEntrySyntax): TextRange {

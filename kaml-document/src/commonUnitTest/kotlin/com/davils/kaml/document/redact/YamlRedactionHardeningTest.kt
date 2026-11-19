@@ -26,6 +26,8 @@ import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.core.schema.YamlSchema
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.yaml
+import com.davils.kaml.document.fixture.collidingTexts
+import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.lines
 import com.davils.kaml.document.fixture.nodeOf
 import com.davils.kaml.document.fixture.treeOf
@@ -47,6 +49,8 @@ private const val ANY_PASSWORD: String = "$..password"
 private const val CONFIG: String = "config:"
 private const val OTHER_PATH: String = "$.other"
 private const val SHORT_INPUT: Int = 5
+private const val FEW_ANCHOR_BITS: Int = 9
+private const val MANY_ANCHOR_BITS: Int = 12
 private const val QUOTED: String = "\"***\""
 private const val ALIAS_VALUE: String = "y: *k"
 private const val REDACTED_VALUE: String = ": \"***\""
@@ -309,6 +313,21 @@ class YamlRedactionHardeningTest : FunSpec({
 
             redacted.shouldBeInstanceOf<YamlRedactionResult.Redacted>().tree.text shouldBe
                 lines("? {password: \"***\"}", ": x")
+        }
+    }
+
+    context("documents whose keys and anchors have colliding hash codes") {
+        test("are redacted in near-linear time") {
+            val redaction = yamlRedaction { path("$.*") }
+            val isLinear = growsNearLinearly(fewBits = FEW_ANCHOR_BITS, manyBits = MANY_ANCHOR_BITS) { bits ->
+                val texts = collidingTexts(bits)
+                val anchored = texts.map { text -> "$text: {secret: &$text s}" }
+                val aliases = texts.map { text -> "${text}y: *$text" }
+                val redacted = redaction.redact(treeOf((anchored + aliases).joinToString("\n")))
+                redacted.shouldBeInstanceOf<YamlRedactionResult.Redacted>()
+            }
+
+            isLinear shouldBe true
         }
     }
 

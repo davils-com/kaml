@@ -21,8 +21,6 @@ import com.davils.kore.core.text.TextRange
 internal class Coverage(targets: List<TextRange>) {
     val ranges: List<TextRange> = merged(targets.filter { range -> !range.isEmpty }.sortedBy(TextRange::start))
 
-    private val ends: Set<Int> = ranges.mapTo(HashSet(), TextRange::end)
-
     fun contains(range: TextRange): Boolean {
         val index = ranges.binarySearch { candidate -> candidate.start.compareTo(range.start) }
         val position = index.takeIf { it >= 0 } ?: -index - 2
@@ -30,7 +28,7 @@ internal class Coverage(targets: List<TextRange>) {
         return candidate != null && candidate.start <= range.start && range.end <= candidate.end
     }
 
-    fun endsAt(offset: Int): Boolean = offset in ends
+    fun endsAt(offset: Int): Boolean = ranges.binarySearch { candidate -> candidate.end.compareTo(offset) } >= 0
 
     private fun merged(sorted: List<TextRange>): List<TextRange> {
         val result = ArrayList<TextRange>()

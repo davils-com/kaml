@@ -20,6 +20,7 @@ import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
 import com.davils.kaml.document.internal.NodeSet
+import com.davils.kaml.document.internal.OrderedGroups
 import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerTokens
@@ -29,6 +30,8 @@ internal class Targets(
     private val budget: WorkBudget,
     private val ordinalOf: (YamlNode) -> Int,
 ) {
+    private val memberIndexes = HashMap<Int, OrderedGroups<String, YamlNode>>()
+
     fun of(root: YamlNode): NodeSet {
         val targets = NodeSet(ordinalOf)
         val roots = queryRoots(root)
@@ -94,10 +97,17 @@ internal class Targets(
         }
 
         is YamlNode.Mapping -> {
-            budget.charge(node.entries.size.toLong())
-            node.entries.filter { entry -> Members.tokenOf(entry.key) == token }.map { entry -> entry.value }
+            membersOf(node)[token].orEmpty()
         }
     }
+
+    private fun membersOf(mapping: YamlNode.Mapping): OrderedGroups<String, YamlNode> =
+        memberIndexes.getOrPut(ordinalOf(mapping)) {
+            budget.charge(mapping.entries.size.toLong())
+            val members = OrderedGroups<String, YamlNode>()
+            mapping.entries.forEach { entry -> members.add(Members.tokenOf(entry.key), entry.value) }
+            members
+        }
 
     private fun childrenOf(node: YamlNode): List<YamlNode> = when (node) {
         is YamlNode.Scalar -> emptyList()
