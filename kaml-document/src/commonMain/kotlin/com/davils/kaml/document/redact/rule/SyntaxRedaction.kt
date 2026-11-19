@@ -56,9 +56,15 @@ internal class SyntaxRedaction(private val rules: RedactionRules) {
     }
 
     private fun verified(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlRedactionResult {
-        val redacted = tree.edit(edits)
-        val isComposed = redacted.compose() is YamlParseResult.Parsed
+        val redacted = editedOrNull(tree, edits)
+        val isComposed = redacted?.compose() is YamlParseResult.Parsed
         val refused = YamlRedactionResult.Refused(YamlRedactionRefusal.Undecidable)
-        return YamlRedactionResult.Redacted(edits, redacted).takeIf { isComposed } ?: refused
+        return redacted?.takeIf { isComposed }?.let { edited -> YamlRedactionResult.Redacted(edits, edited) } ?: refused
+    }
+
+    private fun editedOrNull(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlSyntaxTree? = try {
+        tree.edit(edits)
+    } catch (expected: IllegalArgumentException) {
+        null
     }
 }

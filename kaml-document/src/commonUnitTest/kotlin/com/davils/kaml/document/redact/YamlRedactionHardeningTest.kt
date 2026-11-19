@@ -148,6 +148,19 @@ class YamlRedactionHardeningTest : FunSpec({
         }
     }
 
+    context("a value pattern and a comment pattern on one block scalar") {
+        test("redact both without overlapping edits") {
+            val both = yamlRedaction {
+                value(Regex("TOKEN-[0-9]+"))
+                comment(Regex("pin=[0-9]+"))
+            }
+            val text = redactedText(both, treeOf(lines("a: | # pin=1234", "  TOKEN-123456")))
+
+            text shouldNotContainText "1234"
+            text shouldNotContainText "TOKEN"
+        }
+    }
+
     context("keys that are collections") {
         val inKey = lines("? {password: $SECRET}", ": x")
 

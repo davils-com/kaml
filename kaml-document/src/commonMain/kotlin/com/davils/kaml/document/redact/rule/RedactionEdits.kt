@@ -46,7 +46,8 @@ internal class RedactionEdits(
     fun all(walk: SyntaxWalk): List<TextEdit> {
         val replaced = covered.ranges.map { range -> TextEdit(range, quoted) }
         val scalars = walk.scalars.mapNotNull(::scalarEdit)
-        val edits = replaced + tagEdits() + scalars + commentEdits() + aliasEdits()
+        val rewritten = Coverage(scalars.map(TextEdit::range))
+        val edits = replaced + tagEdits() + scalars + commentEdits(rewritten) + aliasEdits()
         return edits.sortedBy { edit -> edit.range.start }
     }
 
@@ -64,11 +65,12 @@ internal class RedactionEdits(
         return redacted?.takeIf { it != value }?.let { text -> TextEdit(range, DoubleQuoted.of(text)) }
     }
 
-    private fun commentEdits(): List<TextEdit> {
+    private fun commentEdits(rewritten: Coverage): List<TextEdit> {
         val edits = ArrayList<TextEdit>()
         var lastEnd = -1
         tokens.forEach { token ->
-            if (token.kind == YamlSyntaxKind.COMMENT) commentEdit(token, lastEnd)?.let(edits::add)
+            val isComment = token.kind == YamlSyntaxKind.COMMENT && !rewritten.contains(token.range)
+            if (isComment) commentEdit(token, lastEnd)?.let(edits::add)
             if (token.kind == YamlSyntaxKind.LINE_BREAK) lastEnd = -1
             if (!token.kind.isTrivia) lastEnd = token.range.end
         }
