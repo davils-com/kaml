@@ -48,7 +48,7 @@ internal object EscapeDecoder {
         '/' to '/',
         '\\' to '\\',
         'N' to '\u0085',
-        '_' to ' ',
+        '_' to '\u00A0',
         'L' to '\u2028',
         'P' to '\u2029',
     )

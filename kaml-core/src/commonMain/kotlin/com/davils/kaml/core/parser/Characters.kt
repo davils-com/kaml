@@ -30,10 +30,10 @@ private const val WORD_EXTRAS: String = "-"
 private const val URI_EXTRAS: String = "#;/?:@&=+$,_.!~*'()[]%"
 private const val LAST_ASCII_PRINTABLE: Char = '~'
 private const val NEXT_LINE: Char = '\u0085'
-private const val FIRST_LATIN_PRINTABLE: Char = ' '
+private const val FIRST_LATIN_PRINTABLE: Char = '\u00A0'
 private const val LAST_BEFORE_SURROGATES: Char = '\uD7FF'
 private const val FIRST_PRIVATE_USE: Char = '\uE000'
-private const val LAST_PRINTABLE: Char = '�'
+private const val LAST_PRINTABLE: Char = '\uFFFD'
 private const val SURROGATE_PAIR: Int = 2
 
 internal fun Char.isBreak(): Boolean = this == LINE_FEED || this == CARRIAGE_RETURN

@@ -26,7 +26,7 @@ import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeInstanceOf
 
-private const val REPLACEMENT: String = "�"
+private const val REPLACEMENT: String = "\uFFFD"
 private const val LETTER_A: Int = 0x61
 private const val LETTER_B: Int = 0x62
 private const val LETTER_C: Int = 0x63

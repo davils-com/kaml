@@ -89,7 +89,7 @@ class UnicodeInputTest : FunSpec({
         }
 
         test("leave the printable characters alone") {
-            val value = "\t\u0085 \uD7FF\uE000�$SUPPLEMENTARY"
+            val value = "\t\u0085\u00A0\uD7FF\uE000\uFFFD$SUPPLEMENTARY"
 
             yaml.root("\"$value\"").string() shouldBe value
         }
