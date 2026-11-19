@@ -16,11 +16,15 @@
 
 package com.davils.kaml.document.redact
 
+import com.davils.kaml.core.YamlDuplicateKeys
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
+import com.davils.kaml.core.schema.YamlSchema
+import com.davils.kaml.core.syntax.YamlSyntaxTree
+import com.davils.kaml.core.yaml
 import com.davils.kaml.document.fixture.lines
 import com.davils.kaml.document.fixture.nodeOf
 import com.davils.kaml.document.fixture.treeOf
@@ -32,10 +36,12 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
+import io.kotest.matchers.string.shouldNotContain as shouldNotContainText
 
 private const val SECRET: String = "hunter2"
 private const val PASSWORD_PATH: String = "$.password"
 private const val ANY_PASSWORD: String = "$..password"
+private const val CONFIG: String = "config:"
 private const val FEW_MAPPINGS: Int = 5_000
 private const val MANY_MAPPINGS: Int = 40_000
 private const val GROWTH: Int = 16
@@ -48,6 +54,11 @@ private fun timed(work: () -> Unit): Duration {
     val mark = TimeSource.Monotonic.markNow()
     work()
     return mark.elapsedNow()
+}
+
+private fun redactedText(redaction: YamlRedaction, tree: YamlSyntaxTree): String {
+    val result = redaction.redact(tree)
+    return result.shouldBeInstanceOf<YamlRedactionResult.Redacted>().tree.text
 }
 
 private fun scalarsOf(node: YamlNode): List<String> {
@@ -94,6 +105,46 @@ class YamlRedactionHardeningTest : FunSpec({
             val colliding = nodeOf("{password: &p $SECRET, *p : x, '***': y}")
 
             shouldThrow<IllegalStateException> { yamlRedaction { path(PASSWORD_PATH) }.redact(colliding) }
+        }
+    }
+
+    context("duplicates the composer dropped") {
+        val keepFirst = yaml { duplicateKeys = YamlDuplicateKeys.KeepFirst }
+        val keepLast = yaml { duplicateKeys = YamlDuplicateKeys.KeepLast }
+
+        test("are redacted whole, also below a key that a path never reaches") {
+            val first = YamlSyntaxTree.parse(lines(CONFIG, "  name: safe", CONFIG, "  password: $SECRET"), keepFirst)
+            val last = YamlSyntaxTree.parse(lines(CONFIG, "  password: $SECRET", CONFIG, "  name: safe"), keepLast)
+
+            redactedText(yamlRedaction { path(ANY_PASSWORD) }, first) shouldNotContainText SECRET
+            redactedText(yamlRedaction { path("$.config.password") }, last) shouldNotContainText SECRET
+        }
+
+        test("are redacted when they are written as an alias of the key") {
+            val first = YamlSyntaxTree.parse(lines("name: &n password", "password: safe", "*n : $SECRET"), keepFirst)
+            val last = YamlSyntaxTree.parse(lines("name: &n password", "password: $SECRET", "*n : safe"), keepLast)
+
+            redactedText(yamlRedaction { path(PASSWORD_PATH) }, first) shouldNotContainText SECRET
+            redactedText(yamlRedaction { key { it == "password" } }, first) shouldNotContainText SECRET
+            redactedText(yamlRedaction { path(PASSWORD_PATH) }, last) shouldNotContainText SECRET
+        }
+
+        test("are redacted when they are spelled differently but equal once resolved") {
+            val tree = YamlSyntaxTree.parse(lines("1: safe", "0x1: $SECRET"), keepFirst)
+
+            redactedText(yamlRedaction { path("$['1']") }, tree) shouldNotContainText SECRET
+        }
+
+        test("leave merge keys and their sources alone") {
+            val merging = yaml {
+                duplicateKeys = YamlDuplicateKeys.KeepFirst
+                schema = YamlSchema.Yaml11
+            }
+            val text = lines("base: &b {x: 1}", "m:", "  <<: [*b, {z: 3}]", "  y: 2")
+            val tree = YamlSyntaxTree.parse(text, merging)
+
+            redactedText(yamlRedaction { path("$.m.y") }, tree) shouldBe
+                lines("base: &b {x: 1}", "m:", "  <<: [*b, {z: 3}]", "  y: \"***\"")
         }
     }
 

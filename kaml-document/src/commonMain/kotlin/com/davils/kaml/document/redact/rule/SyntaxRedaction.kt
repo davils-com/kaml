@@ -45,10 +45,14 @@ internal class SyntaxRedaction(private val rules: RedactionRules) {
         val targets = SyntaxTargets(tree, rules, budget)
         val graphNodes = targets.graphNodes(stream) ?: return null
         val walk = SyntaxWalk(tree, budget, rules.limits.maximumDepth)
-        val firstNodes = graphNodes + targets.keyedNodes(walk)
+        val dropped = DroppedEntries(tree = tree, stream = stream, walk = walk, budget = budget)
+        val firstNodes = graphNodes + targets.keyedNodes(walk) + dropped.nodes
         val first = Coverage(firstNodes.map(ContentRanges::of))
         val nodes = firstNodes + targets.duplicateNodes(walk, first)
-        return RedactionEdits(tree, rules, nodes).all(walk)
+        val covered = Coverage(nodes.map(ContentRanges::of))
+        val isDecided = dropped.unmatched.all(covered::contains)
+        val edits = RedactionEdits(tree, rules, nodes)
+        return edits.all(walk).takeIf { isDecided }
     }
 
     private fun verified(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlRedactionResult {

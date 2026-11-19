@@ -115,6 +115,11 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
      *
      * A redacted value is replaced by the [replacement] in double quotes; its anchor and tag stay, so aliases keep
      * resolving, now to the replacement. An alias whose anchor was removed with a redacted value is replaced as well.
+     * An entry that the composer drops as a duplicate, which [com.davils.kaml.core.YamlDuplicateKeys.KeepFirst] and
+     * [com.davils.kaml.core.YamlDuplicateKeys.KeepLast] allow, is invisible to every path and may be the one another
+     * reader keeps, so its value and a key that is a collection are redacted whole, and so is every other entry whose
+     * key has the same text. A mapping of the text that the redaction cannot match with the composed graph makes it
+     * refuse with [YamlRedactionRefusal.Undecidable].
      *
      * @param tree the syntax tree, which stays unchanged.
      * @return the redacted tree with its text edits, or why it was refused.

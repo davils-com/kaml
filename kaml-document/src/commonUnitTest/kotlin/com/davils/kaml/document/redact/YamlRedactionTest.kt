@@ -484,11 +484,14 @@ class YamlRedactionTest : FunSpec({
             ) shouldBe lines("k: &k secret", "*k : $QUOTED")
         }
 
-        test("leaves empty values and unique duplicates alone") {
+        test("leaves empty values alone and redacts every occurrence of a key the graph dropped") {
             val keepFirst = yaml { duplicateKeys = YamlDuplicateKeys.KeepFirst }
-            val tree = YamlSyntaxTree.parse(lines("a: 1", "a: 2", "password:"), keepFirst)
+            val emptyPassword = "$PASSWORD:"
+            val redactedA = "a: $QUOTED"
+            val tree = YamlSyntaxTree.parse(lines("a: 1", "a: 2", emptyPassword), keepFirst)
 
-            redactedText(yamlRedaction { key { it == PASSWORD } }, tree) shouldBe lines("a: 1", "a: 2", "password:")
+            redactedText(yamlRedaction { key { it == PASSWORD } }, tree) shouldBe
+                lines(redactedA, redactedA, emptyPassword)
         }
 
         test("replaces orphaned aliases in sequences and keys and skips comments inside a target") {
