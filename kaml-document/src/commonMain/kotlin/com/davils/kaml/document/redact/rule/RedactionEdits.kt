@@ -23,7 +23,9 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.patch.syntax.ContentRanges
+import com.davils.kore.core.text.LineMap
 import com.davils.kore.core.text.TextEdit
+import com.davils.kore.core.text.TextRange
 
 private const val COMMENT_MARK: String = "#"
 private const val MERGE_KEY: String = "<<"
@@ -33,6 +35,7 @@ private val entryKinds: Set<YamlSyntaxKind> = setOf(
     YamlSyntaxKind.FLOW_MAPPING_ENTRY,
     YamlSyntaxKind.FLOW_PAIR,
 )
+private val itemKinds: Set<YamlSyntaxKind> = entryKinds + YamlSyntaxKind.BLOCK_SEQUENCE_ENTRY
 
 internal class RedactionEdits(
     tree: YamlSyntaxTree,
@@ -40,6 +43,8 @@ internal class RedactionEdits(
     private val targets: List<YamlSyntaxNode>,
 ) {
     private val covered = Coverage(targets.map(ContentRanges::of))
+    private val lines = LineMap.of(tree.text)
+    private val targetLines = Coverage(targets.map(::linesOf))
     private val tokens: List<YamlSyntaxToken> = tree.root.tokens.toList()
     private val quoted: String = DoubleQuoted.of(rules.replacement)
 
@@ -79,11 +84,24 @@ internal class RedactionEdits(
 
     private fun commentEdit(comment: YamlSyntaxToken, lastEnd: Int): TextEdit? {
         if (covered.contains(comment.range)) return null
-        val isTrailing = rules.isTrailingCommentRedacted && covered.endsAt(lastEnd)
+        val isOnTargetLine = covered.endsAt(lastEnd) || targetLines.contains(lineOf(comment.range.start))
+        val isTrailing = rules.isTrailingCommentRedacted && isOnTargetLine
         val body = comment.text.removePrefix(COMMENT_MARK)
         val replaced = " " + rules.replacement
         val redacted = replaced.takeIf { isTrailing } ?: patterned(body)
         return redacted.takeIf { it != body }?.let { text -> TextEdit(comment.range, COMMENT_MARK + text) }
+    }
+
+    private fun linesOf(node: YamlSyntaxNode): TextRange {
+        val item = node.ancestors.firstOrNull { ancestor -> ancestor.kind in itemKinds } ?: node
+        val first = lines.lineOf(item.range.start)
+        val last = lines.lineOf(ContentRanges.of(node).end)
+        return TextRange(start = first, end = last + 1)
+    }
+
+    private fun lineOf(offset: Int): TextRange {
+        val line = lines.lineOf(offset)
+        return TextRange(start = line, end = line + 1)
     }
 
     private fun patterned(body: String): String {

@@ -39,8 +39,9 @@ import com.davils.kore.core.validation.validateOrThrow
  * mapping or a sequence, which a query of JSON never enters, so a secret inside such a key is found as well. A secret
  * node is replaced as a whole, and so is every other reference to it: an alias, a merge key `<<` and the anchored
  * node itself, and in a syntax tree also whatever an anchor or alias inside it stands for. Value patterns replace the
- * parts of scalar values they match, comment patterns those of comments, and the comment on the line of a redacted
- * value goes with it unless [isTrailingCommentRedacted] is off. Every replacement is literal.
+ * parts of scalar values they match, comment patterns those of comments, and the comments on the lines of a redacted
+ * entry, from its key to the end of its value, go with it unless [isTrailingCommentRedacted] is off. Every
+ * replacement is literal.
  *
  * A syntax tree that does not compose without errors is refused as a whole, never redacted in part, and so is one the
  * redaction cannot decide how to redact or whose redacted text would not compose again. No secret ever appears in a
@@ -66,7 +67,8 @@ public class YamlRedaction internal constructor(builder: YamlRedactionBuilder) :
     public val limits: YamlLimits = builder.limits
 
     /**
-     * Whether the comment on the line of a redacted value is redacted as well.
+     * Whether the comments on the lines of a redacted entry, from its key to the end of its value, are redacted as
+     * well.
      *
      * @since 1.0.0
      */

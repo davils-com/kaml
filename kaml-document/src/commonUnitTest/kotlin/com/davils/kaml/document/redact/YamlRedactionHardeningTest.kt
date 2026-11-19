@@ -148,6 +148,30 @@ class YamlRedactionHardeningTest : FunSpec({
         }
     }
 
+    context("comments on the lines of a redacted entry") {
+        test("go with the value, also after the end of a flow collection") {
+            val text = "creds: {user: u, password: $SECRET} # $SECRET"
+
+            redactedText(yamlRedaction { path("$.creds.password") }, treeOf(text)) shouldNotContainText SECRET
+        }
+
+        test("go with the value, also on the line of the key before a block value") {
+            val text = lines("password: # was $SECRET", "  $SECRET", "other: 1 # kept")
+
+            redactedText(yamlRedaction { path(PASSWORD_PATH) }, treeOf(text)) shouldBe
+                lines("password: # ***", "  \"***\"", "other: 1 # kept")
+        }
+
+        test("stay when trailing comments are kept") {
+            val keeping = yamlRedaction {
+                path(PASSWORD_PATH)
+                isTrailingCommentRedacted = false
+            }
+
+            redactedText(keeping, treeOf("password: x # note")) shouldBe "password: \"***\" # note"
+        }
+    }
+
     context("a value pattern and a comment pattern on one block scalar") {
         test("redact both without overlapping edits") {
             val both = yamlRedaction {

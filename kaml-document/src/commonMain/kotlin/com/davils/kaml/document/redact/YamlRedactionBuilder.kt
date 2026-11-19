@@ -49,8 +49,8 @@ public class YamlRedactionBuilder internal constructor() : ValidatingBuilder<Yam
     public var limits: YamlLimits = YamlLimits.Untrusted
 
     /**
-     * Whether the comment on the same line after a redacted value is redacted as well, since it often describes the
-     * secret; `true` by default.
+     * Whether the comments on the lines of a redacted entry, from its key to the end of its value, are redacted as
+     * well, since they often describe the secret; `true` by default.
      *
      * @since 1.0.0
      */
