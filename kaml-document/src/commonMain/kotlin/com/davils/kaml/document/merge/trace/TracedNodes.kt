@@ -55,19 +55,6 @@ internal class TracedNodes(private val count: NodeCount) {
     }
 
     companion object {
-        fun members(traced: Traced): Traced.Members? = when (traced) {
-            is Traced.Members -> traced
-
-            is Traced.Items -> null
-
-            is Traced.Whole -> (traced.node as? YamlNode.Mapping)?.let { mapping ->
-                val entries = mapping.entries.map { entry ->
-                    TracedEntry(entry.key, Traced.Whole(entry.value, traced.origin))
-                }
-                Traced.Members(mapping, entries, traced.origin)
-            }
-        }
-
         fun items(traced: Traced): Traced.Items? = when (traced) {
             is Traced.Items -> traced
 

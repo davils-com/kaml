@@ -17,6 +17,7 @@
 package com.davils.kaml.document.merge.trace
 
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.internal.KeyedSlots
 
 internal sealed interface Traced {
     val origin: String
@@ -25,9 +26,11 @@ internal sealed interface Traced {
 
     data class Members(
         val template: YamlNode.Mapping,
-        val entries: List<TracedEntry>,
+        val slots: KeyedSlots<TracedEntry>,
         override val origin: String,
-    ) : Traced
+    ) : Traced {
+        val entries: List<TracedEntry> get() = slots.items
+    }
 
     data class Items(
         val template: YamlNode.Sequence,

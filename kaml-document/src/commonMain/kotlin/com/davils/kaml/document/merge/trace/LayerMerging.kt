@@ -59,15 +59,26 @@ internal class LayerMerging(private val options: YamlMergeOptions, limits: YamlL
     fun whole(node: YamlNode, layer: String, depth: Int): Traced = Traced.Whole(markers.stripped(node, depth), layer)
 
     private fun mergedMapping(base: Traced, mapping: YamlNode.Mapping, overlay: Overlay): Traced {
-        val members = TracedNodes.members(base) ?: return whole(mapping, overlay.layer, overlay.pattern.tokens.size)
+        val members = membersOf(base) ?: return whole(mapping, overlay.layer, overlay.pattern.tokens.size)
+        mapping.entries.forEach { entry -> withEntry(members.slots, entry, overlay) }
+        return Traced.Members(members.template, members.slots, overlay.layer)
+    }
+
+    private fun membersOf(traced: Traced): Traced.Members? = when (traced) {
+        is Traced.Members -> traced
+        is Traced.Items -> null
+        is Traced.Whole -> (traced.node as? YamlNode.Mapping)?.let { mapping -> indexed(mapping, traced.origin) }
+    }
+
+    private fun indexed(mapping: YamlNode.Mapping, origin: String): Traced.Members {
+        val entries = mapping.entries.map { entry -> TracedEntry(entry.key, Traced.Whole(entry.value, origin)) }
         val slots = KeyedSlots(
-            items = members.entries,
+            items = entries,
             budget = budget,
             keyOf = { entry -> Members.tokenOf(entry.key) },
             nodeOf = TracedEntry::key,
         )
-        mapping.entries.forEach { entry -> withEntry(slots, entry, overlay) }
-        return Traced.Members(members.template, slots.items, overlay.layer)
+        return Traced.Members(mapping, slots, origin)
     }
 
     private fun mergedSequence(base: Traced, sequence: YamlNode.Sequence, overlay: Overlay): Traced {

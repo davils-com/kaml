@@ -45,13 +45,19 @@ internal class KeyedItems(
 
     private fun whole(overlay: Overlay): Traced = layers.whole(overlay.node, overlay.layer, overlay.pattern.tokens.size)
 
-    private fun keyOf(item: Traced, key: String): String? {
-        val members = TracedNodes.members(item) ?: return null
-        return memberText(members, key)
+    private fun keyOf(item: Traced, key: String): String? = when (item) {
+        is Traced.Whole -> wholeText(item, key)
+        is Traced.Members -> memberText(item, key)
+        is Traced.Items -> null
+    }
+
+    private fun wholeText(item: Traced.Whole, key: String): String? {
+        val mapping = item.node as? YamlNode.Mapping ?: return null
+        return Members.first(mapping, key)?.value.string()
     }
 
     private fun memberText(item: Traced.Members, key: String): String? {
-        val entry = item.entries.firstOrNull { candidate -> Members.tokenOf(candidate.key) == key }
+        val entry = item.slots.positionOf(key)?.let(item.slots::at)
         val whole = entry?.value as? Traced.Whole
         return whole?.node.string()
     }

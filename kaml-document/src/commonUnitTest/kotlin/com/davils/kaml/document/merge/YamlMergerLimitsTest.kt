@@ -25,6 +25,7 @@ import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kore.testing.HostileFragments
 import com.davils.kore.testing.unsafeCodePointsIn
 import io.kotest.assertions.throwables.shouldThrow
@@ -39,6 +40,11 @@ import kotlin.time.TimeSource
 private const val ITEMS: Int = 20_000
 
 private const val NAME: String = "name"
+private const val WIDTH: Int = 20_000
+private const val FEW_LAYERS: Int = 2
+private const val MANY_LAYERS: Int = 100
+private const val LAYER_GROWTH: Int = 3
+private const val THREE: Int = 3
 private const val COLLIDING_BITS: Int = 3
 private const val FEW_BITS: Int = 11
 private const val MANY_BITS: Int = 13
@@ -56,6 +62,9 @@ private fun mergedByName(names: List<String>): YamlMerged {
     val byName = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey(NAME) }
     return YamlMerger(byName).merge(listOf(YamlLayer("a", named(names)), YamlLayer("b", named(names))))
 }
+
+private fun wide(size: Int): YamlNode =
+    yamlMapping(List(size) { index -> YamlEntry(key = yamlScalar("k$index"), value = yamlScalar("v")) })
 
 private fun timed(work: () -> Unit): Duration {
     val mark = TimeSource.Monotonic.markNow()
@@ -107,6 +116,27 @@ class YamlMergerLimitsTest : FunSpec({
             val names = colliding(COLLIDING_BITS)
 
             (mergedByName(names).node as YamlNode.Sequence).items.size shouldBe names.size
+        }
+    }
+
+    context("layers over a wide mapping") {
+        test("cost what they change, not the width of the mapping") {
+            val base = YamlLayer("base", wide(WIDTH))
+            val empty = yamlMapping(emptyList())
+            val fewTime = timed { YamlMerger().merge(listOf(base) + List(FEW_LAYERS) { YamlLayer("l$it", empty) }) }
+            val manyTime = timed { YamlMerger().merge(listOf(base) + List(MANY_LAYERS) { YamlLayer("l$it", empty) }) }
+
+            (manyTime < fewTime * LAYER_GROWTH + slack) shouldBe true
+        }
+
+        test("keep the result and its origins") {
+            val changed = YamlLayer("c", nodeOf("{k1: changed, k2: null}"))
+            val layers = listOf(YamlLayer("base", wide(THREE)), YamlLayer("e", yamlMapping(emptyList())), changed)
+            val merged = YamlMerger(yamlMergeOptions { deletion = YamlDeletion.Null }).merge(layers)
+
+            merged.node shouldBe nodeOf("{k0: v, k1: changed}")
+            merged.originOf(JsonPointer.of("k0")) shouldBe "base"
+            merged.originOf(JsonPointer.of("k1")) shouldBe "c"
         }
     }
 
