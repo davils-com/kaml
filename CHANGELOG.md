@@ -65,8 +65,8 @@ way.
   formatter, `kaml-document`, `kaml-serialization` and the build found 60 problems before the first release; every
   one is fixed, mitigated within a limit or named under Known Limitations in `SECURITY.md`, and every fix ships with
   a test that reproduces the problem.
-- **No input decides the complexity.** Long lines, comment runs, mapping keys and merge keys with colliding hash
-  codes, nested repeats of an I-Regexp, filters, huge numbers, wide patches, merges and diffs are linear or
+- **No input decides the complexity.** Long lines, comment runs, mapping keys, merge keys, anchor names and tag
+  handles with colliding hash codes, nested repeats of an I-Regexp, filters, huge numbers, wide patches, merges and diffs are linear or
   O(n log n), and every step of a query, a patch and a redaction is charged to a budget.
 - **Redaction fails closed** also for duplicates the composer drops, secrets reused as keys through anchors, keys
   that are collections, comments on the lines of a redacted entry and aliases to anchored keys.

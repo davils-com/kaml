@@ -16,6 +16,7 @@
 
 package com.davils.kaml.core.syntax.edit
 
+import com.davils.kaml.core.internal.NameSet
 import com.davils.kaml.core.syntax.YamlSyntaxKind
 import com.davils.kaml.core.syntax.YamlSyntaxNode
 import com.davils.kaml.core.syntax.YamlSyntaxToken
@@ -24,13 +25,13 @@ import com.davils.kore.core.text.TextEdit
 internal class AnchorGuard(document: YamlSyntaxNode) {
     private val properties: List<YamlSyntaxToken> = document.tokens.filter { it.kind in nameKinds }.toList()
 
-    val names: Set<String> = properties.mapTo(HashSet(), ::nameOf)
+    val names: Set<String> = NameSet(properties.map(::nameOf))
 
     fun keepsAliases(edits: List<TextEdit>): Boolean = edits.all(::keepsAliases)
 
     private fun keepsAliases(edit: TextEdit): Boolean {
         val removed = edit.range
-        val pending = properties.filter { token -> isRemovedAnchor(token, edit) }.mapTo(HashSet(), ::nameOf)
+        val pending = NameSet(properties.filter { token -> isRemovedAnchor(token, edit) }.map(::nameOf))
         val later = properties.filter { token -> token.range.start >= removed.end }
         var isKept = true
         later.forEach { token ->

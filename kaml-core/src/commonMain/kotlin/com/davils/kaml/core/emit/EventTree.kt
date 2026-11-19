@@ -18,6 +18,8 @@ package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.event.YamlEvent
+import com.davils.kaml.core.internal.NameMap
+import com.davils.kaml.core.internal.NameSet
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
@@ -27,15 +29,15 @@ internal class EventTree(private val configuration: YamlConfiguration) {
     private val limits = configuration.limits
     private val documents = ArrayList<EmitDocument>()
     private val stack = ArrayDeque<Open>()
-    private val defined = HashMap<String, String>()
+    private val defined = NameMap<String>()
     private var anchors = AnchorNames()
     private var start: YamlEvent.DocumentStart? = null
     private var root: EmitNode? = null
     private var isStreamEnded = false
 
     fun build(events: List<YamlEvent>): List<EmitDocument> {
-        val reserved = events.mapNotNullTo(HashSet()) { event -> anchorOf(event)?.name }
-        anchors = AnchorNames(reserved.filterTo(HashSet(), AnchorNames::isValid))
+        val reserved = events.mapNotNull { event -> anchorOf(event)?.name }
+        anchors = AnchorNames(NameSet(reserved.filter(AnchorNames::isValid)))
         events.forEachIndexed { index, event -> accept(event, isFirst = index == 0) }
         require(start == null) { UNFINISHED }
         return documents.toList()

@@ -89,10 +89,10 @@ The following are **not** vulnerabilities in kaml:
 - Whether `SafeText` shows a code point as it is or as an escape follows the Unicode tables of the platform: the JDK
   on the JVM and the JavaScript engine on Wasm, which may know newer code points. kaml's own decisions, such as which
   anchors and plain scalars it writes, use fixed ranges of code points and are the same on both targets.
-- Wasm has no tree bins in its hash maps. kaml's own indexes of mapping keys, merges, diffs and redaction are ordered
-  and stay O(n log n) under colliding hash codes on both targets, but a `Map` that kotlinx.serialization builds while
-  decoding, and the tables of anchor names and tag handles, are hash maps. On Wasm, keys with colliding hash codes make
-  them quadratic within `maximumCollectionSize` and `maximumAnchors`; lower those limits for hostile input on Wasm.
+- Wasm has no tree bins in its hash maps. kaml's own indexes of mapping keys, anchor names, tag handles, merges, diffs
+  and redaction are ordered and stay O(n log n) under colliding hash codes on both targets, but a `Map` that
+  kotlinx.serialization builds while decoding is a hash map. On Wasm, keys with colliding hash codes make it quadratic
+  within `maximumCollectionSize`; lower that limit for hostile input on Wasm.
 - Binary, octal and hexadecimal integers are converted in time quadratic in their length, bounded by
   `maximumNumberLength` (at most 1,024 characters).
 - The incremental reparse of a syntax tree charges the node budget for the documents it parses again; composing the

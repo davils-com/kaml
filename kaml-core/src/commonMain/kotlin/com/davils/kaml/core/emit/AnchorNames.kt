@@ -16,17 +16,19 @@
 
 package com.davils.kaml.core.emit
 
+import com.davils.kaml.core.internal.NameSet
+
 internal class AnchorNames(
     private val reserved: Set<String> = emptySet(),
     private val taken: Set<String> = emptySet(),
 ) {
-    private val used = HashSet<String>()
+    private val used = NameSet()
     private var counter = 0
 
     fun preferred(name: String?): String {
         val kept = name?.takeIf { isValid(it) && it !in used && it !in taken }
         val chosen = kept ?: generated()
-        used += chosen
+        used.add(chosen)
         return chosen
     }
 

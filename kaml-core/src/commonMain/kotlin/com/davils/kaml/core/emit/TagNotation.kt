@@ -16,6 +16,7 @@
 
 package com.davils.kaml.core.emit
 
+import com.davils.kaml.core.internal.NameSet
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.model.YamlTagDirective
 
@@ -37,7 +38,7 @@ internal class TagNotation(directives: List<YamlTagDirective>) {
     }
 
     private fun handlesOf(directives: List<YamlTagDirective>): Set<String> {
-        val seen = HashSet<String>()
+        val seen = NameSet()
         directives.forEach { directive ->
             require(isHandle(directive.handle)) { INVALID_HANDLE }
             require(directive.prefix.isNotEmpty()) { MISSING_PREFIX }

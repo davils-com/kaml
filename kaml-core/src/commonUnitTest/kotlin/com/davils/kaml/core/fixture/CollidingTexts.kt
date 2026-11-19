@@ -22,6 +22,8 @@ private const val LAST_SHIFT: Int = 280
 private const val HASH_FACTOR: Int = 31
 private const val DISTINCT_BASE: Int = 0x5000
 private const val DISTINCT_WIDTH: Int = 1_000
+private const val ZERO_BIT_PAIR: String = "Aa"
+private const val ONE_BIT_PAIR: String = "BB"
 
 private val blocks: List<String> = (FIRST_SHIFT..LAST_SHIFT).map { shift ->
     "${(MIDDLE + shift).toChar()}${(MIDDLE - HASH_FACTOR * shift).toChar()}"
@@ -31,3 +33,7 @@ internal fun collidingText(index: Int): String = blocks[index / blocks.size] + b
 
 internal fun distinctText(index: Int): String =
     "${(DISTINCT_BASE + index / DISTINCT_WIDTH).toChar()}${(DISTINCT_BASE + index % DISTINCT_WIDTH).toChar()}"
+
+internal fun collidingWord(bits: Int, index: Int): String = (0 until bits).joinToString("") { bit ->
+    ZERO_BIT_PAIR.takeIf { index shr bit and 1 == 0 } ?: ONE_BIT_PAIR
+}
