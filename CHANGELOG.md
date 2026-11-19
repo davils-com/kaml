@@ -49,7 +49,7 @@ way.
   programs and steps.
 - **JSONPath** (RFC 9535) with nesting, step and result budgets; a query beyond a budget fails instead of
   answering in part.
-- **JSON Patch** (RFC 6902), **JSON Merge Patch** (RFC 7386) and diffs on the node graph and in place on the
+- **JSON Patch** (RFC 6902), **JSON Merge Patch** (RFC 7396) and diffs on the node graph and in place on the
   syntax tree, within an operation limit and the node budget.
 - **Layered merges** with the origin of every value, merging sequences by key through an ordered index that
   colliding hash codes cannot slow down.

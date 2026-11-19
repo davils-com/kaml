@@ -37,7 +37,7 @@ private const val PORT: String = "  port: 8080 # default"
 private fun merged(target: String, patch: String) = JsonMergePatch(nodeOf(patch)).apply(nodeOf(target))
 
 class JsonMergePatchTest : FunSpec({
-    context("the examples of RFC 7386") {
+    context("the examples of RFC 7396") {
         test("merge every pair of the appendix") {
             listOf(
                 Triple(first = A_B, second = A_C, third = A_C),

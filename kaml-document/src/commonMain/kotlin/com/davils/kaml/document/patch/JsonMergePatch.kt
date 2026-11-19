@@ -24,7 +24,7 @@ import com.davils.kaml.document.patch.merge.MergePatchEditing
 import com.davils.kaml.document.patch.merge.MergePatching
 
 /**
- * A JSON Merge Patch as RFC 7386 defines it: a mapping whose members replace, merge into or, when `null`, remove the
+ * A JSON Merge Patch as RFC 7396 defines it: a mapping whose members replace, merge into or, when `null`, remove the
  * members of the target, applied to a node graph or in place to a lossless syntax tree.
  *
  * Members are matched by the text of their keys; a duplicate key of the target resolves to its first occurrence.
