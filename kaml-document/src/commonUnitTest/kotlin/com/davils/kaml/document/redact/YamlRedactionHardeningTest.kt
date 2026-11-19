@@ -30,6 +30,7 @@ import com.davils.kaml.document.fixture.collidingTexts
 import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.lines
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.fixture.timed
 import com.davils.kaml.document.fixture.treeOf
 import com.davils.kaml.document.pointer.at
 import com.davils.kaml.document.pointer.toJsonPointer
@@ -40,7 +41,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 import io.kotest.matchers.string.shouldNotContain as shouldNotContainText
 
 private const val SECRET: String = "hunter2"
@@ -63,12 +63,6 @@ private val slack: Duration = 300.milliseconds
 
 private fun equalMappings(count: Int): YamlNode =
     yamlSequence(List(count) { yamlMapping(listOf(YamlEntry(key = yamlScalar("a"), value = yamlScalar("b")))) })
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 private fun redactedText(redaction: YamlRedaction, tree: YamlSyntaxTree): String {
     val result = redaction.redact(tree)

@@ -19,6 +19,7 @@ package com.davils.kaml.document.path.regexp
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.limit.yamlLimits
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kaml.document.fixture.timed
 import com.davils.kaml.document.internal.WorkBudget
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -30,7 +31,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val PLENTY: Long = 1_000_000_000L
 private const val LONG_INPUT: Int = 20_000
@@ -102,12 +102,6 @@ private infix fun String.searchesIn(subject: String): Boolean? {
 }
 
 private fun plenty(): WorkBudget = WorkBudget(PLENTY, STEPS)
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 private infix fun String.stepsFor(subject: String): Long {
     val budget = WorkBudget(PLENTY, STEPS)

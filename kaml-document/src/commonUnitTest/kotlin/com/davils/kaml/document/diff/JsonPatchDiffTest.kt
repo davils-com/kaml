@@ -27,6 +27,7 @@ import com.davils.kaml.core.node.yamlSequence
 import com.davils.kaml.document.fixture.collidingMapping
 import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.fixture.timed
 import com.davils.kaml.document.patch.JsonPatch
 import com.davils.kaml.document.patch.JsonPatchOperation
 import com.davils.kaml.document.patch.JsonPatchResult
@@ -45,7 +46,6 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val MAXIMUM_DEPTH: Int = 3
 private const val MAXIMUM_SIZE: Int = 4
@@ -90,12 +90,6 @@ private fun swappedLeaf(isSwapped: Boolean): YamlNode {
 
 private fun wrapped(node: YamlNode, depth: Int): YamlNode =
     (1..depth).fold(node) { inner, _ -> yamlMapping(listOf(YamlEntry(key = yamlScalar("x"), value = inner))) }
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 class JsonPatchDiffTest : FunSpec({
     context("diff") {

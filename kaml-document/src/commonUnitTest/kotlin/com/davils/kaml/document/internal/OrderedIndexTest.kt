@@ -16,6 +16,7 @@
 
 package com.davils.kaml.document.internal
 
+import com.davils.kaml.document.fixture.timed
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -25,7 +26,6 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val FEW: Int = 1 shl 13
 private const val MANY: Int = 1 shl 15
@@ -33,12 +33,6 @@ private const val GROWTH: Int = 8
 private const val MOST_KEYS: Int = 200
 private const val KEY_RANGE: Int = 50
 private val slack: Duration = 200.milliseconds
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 private fun ascending(count: Int): OrderedIndex<Int> {
     val index = OrderedIndex<Int>()

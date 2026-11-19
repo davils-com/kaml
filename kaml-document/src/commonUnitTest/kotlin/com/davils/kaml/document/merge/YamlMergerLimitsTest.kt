@@ -27,6 +27,7 @@ import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.fixture.collidingMapping
 import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.fixture.timed
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kore.testing.HostileFragments
 import com.davils.kore.testing.unsafeCodePointsIn
@@ -37,7 +38,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val ITEMS: Int = 20_000
 
@@ -70,12 +70,6 @@ private fun mergedByName(names: List<String>): YamlMerged {
 
 private fun wide(size: Int): YamlNode =
     yamlMapping(List(size) { index -> YamlEntry(key = yamlScalar("k$index"), value = yamlScalar("v")) })
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 private fun item(name: Int, member: String): YamlNode = yamlMapping(
     listOf(

@@ -31,6 +31,7 @@ import com.davils.kaml.core.yaml
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.fixture.lines
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.fixture.timed
 import com.davils.kaml.document.fixture.treeOf
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.toJsonPointer
@@ -48,7 +49,6 @@ import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val TWO: Int = 2
 private const val THREE: Int = 3
@@ -113,12 +113,6 @@ private fun members(count: Int): String = List(count) { index -> "k$index: v" }.
 private fun absentNulls(count: Int): YamlNode = yamlMapping(List(count) { index -> member("absent$index", yamlNull()) })
 
 private fun absentNullsOn(count: Int): JsonPatchEdit = JsonMergePatch(absentNulls(count)).apply(treeOf(members(count)))
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 private infix fun JsonPatch.on(text: String): JsonPatchResult = apply(nodeOf(text))
 

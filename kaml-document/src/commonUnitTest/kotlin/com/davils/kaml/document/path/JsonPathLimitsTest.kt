@@ -28,6 +28,7 @@ import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.fixture.collidingTexts
 import com.davils.kaml.document.fixture.growsNearLinearly
 import com.davils.kaml.document.fixture.nodeOf
+import com.davils.kaml.document.fixture.timed
 import com.davils.kore.testing.HostileFragments
 import com.davils.kore.testing.unsafeCodePointsIn
 import io.kotest.assertions.throwables.shouldThrow
@@ -44,7 +45,6 @@ import io.kotest.property.arbitrary.map
 import io.kotest.property.checkAll
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val DEEP: Int = 100_000
 private const val NESTING: Int = 4
@@ -102,12 +102,6 @@ private fun member(name: String, value: String): YamlEntry =
     YamlEntry(key = yamlScalar(name), value = yamlScalar(value))
 
 private fun conjunction(operands: Int): String = "$[?" + List(operands) { "@" }.joinToString("&&") + "]"
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
-}
 
 private fun minimalSteps(expression: String, node: YamlNode): Long {
     var low = 1L

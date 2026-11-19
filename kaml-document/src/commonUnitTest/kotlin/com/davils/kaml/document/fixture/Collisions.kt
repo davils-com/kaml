@@ -22,7 +22,6 @@ import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.core.node.yamlScalar
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 private const val FEW_COLLIDING_BITS: Int = 10
 private const val MANY_COLLIDING_BITS: Int = 13
@@ -36,12 +35,6 @@ internal fun collidingTexts(bits: Int): List<String> = (0 until (1 shl bits)).ma
 internal fun collidingMapping(bits: Int, value: (Int) -> YamlNode = { index -> yamlScalar(index) }): YamlNode.Mapping {
     val keys = collidingTexts(bits)
     return yamlMapping(keys.mapIndexed { index, key -> YamlEntry(key = yamlScalar(key), value = value(index)) })
-}
-
-private fun timed(work: () -> Unit): Duration {
-    val mark = TimeSource.Monotonic.markNow()
-    work()
-    return mark.elapsedNow()
 }
 
 internal fun growsNearLinearly(
