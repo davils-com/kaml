@@ -165,6 +165,31 @@ class YamlMergerLimitsTest : FunSpec({
         }
     }
 
+    context("keyed items over several layers") {
+        test("merge into items an earlier layer merged, and ignore deletions of missing items and members") {
+            val options = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey(NAME) }
+            val layers = listOf(
+                YamlLayer("a", nodeOf("[{name: a, v: 1}, {name: {x: 1}}, {other: 1}, [1], {name: 2}]")),
+                YamlLayer("b", nodeOf("[{name: a, w: 2}, {name: {x: 1}, y: 1}, !delete {name: gone}]")),
+                YamlLayer("c", nodeOf("[{name: a, z: 3}, {name: 2, u: 1}]")),
+                YamlLayer("d", nodeOf("{gone: !delete x}")),
+            )
+            val sequences = YamlMerger(options).merge(layers.dropLast(1))
+            val mapping = YamlMerger(options).merge(listOf(YamlLayer("a", nodeOf("{k: 1}")), layers.last()))
+            val readded = YamlMerger(options).merge(
+                listOf(
+                    YamlLayer("a", nodeOf("{k: 1, 1: one}")),
+                    YamlLayer("b", nodeOf("{k: !delete x, 1: !delete x}")),
+                    YamlLayer("c", nodeOf("{k: 2, 0x1: uno}")),
+                ),
+            )
+
+            (sequences.node as YamlNode.Sequence).items.first() shouldBe nodeOf("{name: a, v: 1, w: 2, z: 3}")
+            mapping.node shouldBe nodeOf("{k: 1}")
+            readded.node shouldBe nodeOf("{k: 2, 0x1: uno}")
+        }
+    }
+
     context("keyed items") {
         test("without a text identity are appended and deletions without one are dropped") {
             val options = yamlMergeOptions { sequences = YamlSequenceMerge.ByKey("name") }
@@ -230,6 +255,7 @@ class YamlMergerLimitsTest : FunSpec({
             YamlLayer("a", nodeOf("[1]")) shouldBe YamlLayer("a", nodeOf("[1]"))
             YamlLayer("a", nodeOf("[1]")).hashCode() shouldBe YamlLayer("a", nodeOf("[1]")).hashCode()
             YamlLayer("a", nodeOf("[1]")) shouldNotBe YamlLayer("b", nodeOf("[1]"))
+            YamlLayer("a", nodeOf("[1]")).equals(nodeOf("[1]")) shouldBe false
             YamlSequenceMerge.ByKey("k") shouldBe YamlSequenceMerge.ByKey("k")
             YamlSequenceMerge.ByKey("k").hashCode() shouldBe "k".hashCode()
             YamlSequenceMerge.Append.toString() shouldBe "Append"

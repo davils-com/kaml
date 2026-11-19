@@ -46,6 +46,7 @@ import kotlin.time.TimeSource
 
 private const val MAXIMUM_DEPTH: Int = 3
 private const val MAXIMUM_SIZE: Int = 4
+private const val PAIR: String = "{a: [1, 2]}"
 private const val LEAF_SIZE: Int = 10_000
 private const val LEVELS: Int = 100
 private const val GROWTH: Int = 5
@@ -102,7 +103,7 @@ class JsonPatchDiffTest : FunSpec({
         }
 
         test("is empty for equal documents") {
-            JsonPatch.diff(source = nodeOf("{a: [1, 2]}"), target = nodeOf("{a: [1, 2]}")).operations.shouldBeEmpty()
+            JsonPatch.diff(source = nodeOf(PAIR), target = nodeOf(PAIR)).operations.shouldBeEmpty()
         }
 
         test("describes the changes with the fewest operations it finds") {
@@ -155,6 +156,22 @@ class JsonPatchDiffTest : FunSpec({
 
             source.hashCode() shouldBe target.hashCode()
             patch.apply(source) shouldBe JsonPatchResult.Applied(target)
+        }
+
+        test("replaces a sequence that becomes a mapping under the same tag") {
+            val source = yamlSequence(listOf(yamlScalar(1)), tag = YamlTag.MAPPING)
+            val target = yamlMapping(listOf(YamlEntry(key = yamlScalar("a"), value = yamlScalar(1))))
+
+            JsonPatch.diff(source = source, target = target).operations shouldBe
+                listOf(JsonPatchOperation.Replace(JsonPointer.ROOT, target))
+        }
+
+        test("skips a subtree both sides share") {
+            val shared = nodeOf(PAIR)
+            val source = yamlSequence(listOf(shared, yamlScalar(1)))
+            val patch = JsonPatch.diff(source = source, target = yamlSequence(listOf(shared, yamlScalar(2))))
+
+            patch.operations shouldBe listOf(JsonPatchOperation.Replace("/1".toJsonPointer(), yamlScalar(2)))
         }
 
         test("adds the items a sequence gains") {

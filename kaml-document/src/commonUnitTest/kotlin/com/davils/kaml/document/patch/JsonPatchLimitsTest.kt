@@ -207,6 +207,14 @@ class JsonPatchLimitsTest : FunSpec({
                 JsonPatchRefusal.LimitExceeded
         }
 
+        test("charges the items of a sequence a test looks into") {
+            val test = JsonPatch(listOf(JsonPatchOperation.Test("/0/a".toJsonPointer(), yamlScalar(1))))
+
+            (test on "[{a: 1}]").shouldBeInstanceOf<JsonPatchResult.Applied>()
+            JsonPatch(listOf(JsonPatchOperation.Test("/b/c/d".toJsonPointer(), yamlScalar(1)))) on "[{a: 1}]" shouldBe
+                JsonPatchResult.Failed(0, JsonPatchRefusal.MissingTarget)
+        }
+
         test("a result deeper than the depth limit is refused") {
             val shallow = limits { maximumDepth = THREE }
             val add = { value: YamlNode ->
@@ -352,6 +360,14 @@ class JsonPatchLimitsTest : FunSpec({
 
             (many < few * GROWTH + slack) shouldBe true
             absentNullsOn(FEW_MEMBERS).shouldBeInstanceOf<JsonPatchEdit.Edited>()
+        }
+
+        test("merge into the first of the members whose keys have the same text in a syntax tree") {
+            val patch = JsonMergePatch(nodeOf("{'1': {b: 2}}"))
+            val text = lines("1: {a: 1}", "'1': x")
+            val merged = patch.apply(treeOf(text)).shouldBeInstanceOf<JsonPatchEdit.Edited>()
+
+            nodeOf(merged.tree.text) shouldBe patch.apply(nodeOf(text))
         }
 
         test("charge the members of every mapping of a syntax tree they look into") {

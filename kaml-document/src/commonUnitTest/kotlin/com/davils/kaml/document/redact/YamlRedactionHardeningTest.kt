@@ -17,6 +17,7 @@
 package com.davils.kaml.document.redact
 
 import com.davils.kaml.core.YamlDuplicateKeys
+import com.davils.kaml.core.limit.yamlLimits
 import com.davils.kaml.core.node.YamlEntry
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlMapping
@@ -44,6 +45,12 @@ private const val SECRET: String = "hunter2"
 private const val PASSWORD_PATH: String = "$.password"
 private const val ANY_PASSWORD: String = "$..password"
 private const val CONFIG: String = "config:"
+private const val OTHER_PATH: String = "$.other"
+private const val SHORT_INPUT: Int = 5
+private const val QUOTED: String = "\"***\""
+private const val ALIAS_VALUE: String = "y: *k"
+private const val REDACTED_VALUE: String = ": \"***\""
+private val tokenPattern: Regex = Regex("TOKEN-[0-9]+")
 private const val ANCHORED_TOKEN: String = "&k TOKEN-123456 : x"
 private const val FEW_MAPPINGS: Int = 5_000
 private const val MANY_MAPPINGS: Int = 40_000
@@ -138,6 +145,21 @@ class YamlRedactionHardeningTest : FunSpec({
             redactedText(yamlRedaction { path("$['1']") }, tree) shouldNotContainText SECRET
         }
 
+        test("are redacted with their keys when those are collections, and when their value is empty") {
+            val sequenceKey = "? [k]"
+            val sequences = YamlSyntaxTree.parse(lines(sequenceKey, ": 1", sequenceKey, ": $SECRET"), keepFirst)
+            val mappings = YamlSyntaxTree.parse(lines("? {m: 1}", ": a", "? {m: 1}", ": $SECRET"), keepFirst)
+            val empty = YamlSyntaxTree.parse(lines("a: 1", "a:"), keepFirst)
+
+            redactedText(yamlRedaction { path(OTHER_PATH) }, sequences) shouldBe
+                lines(sequenceKey, ": $QUOTED", "? $QUOTED", ": $QUOTED")
+            redactedText(yamlRedaction { path(OTHER_PATH) }, mappings) shouldNotContainText SECRET
+            redactedText(yamlRedaction { path(OTHER_PATH) }, empty) shouldBe lines("a: 1", "a:")
+            val keys = lines("? a", "? a")
+
+            redactedText(yamlRedaction { path(OTHER_PATH) }, YamlSyntaxTree.parse(keys, keepFirst)) shouldBe keys
+        }
+
         test("leave merge keys and their sources alone") {
             val merging = yaml {
                 duplicateKeys = YamlDuplicateKeys.KeepFirst
@@ -188,12 +210,71 @@ class YamlRedactionHardeningTest : FunSpec({
         }
     }
 
+    context("members whose keys have the same text or kind") {
+        test("are redacted together when one of them is a target") {
+            val sequences = lines("? [a]", ": s1", "? [b]", ": s2")
+            val mappings = lines("? {a: 1}", ": s1", "? {b: 1}", ": s2")
+
+            redactedText(yamlRedaction { path("$.Sequence") }, treeOf(sequences)) shouldBe
+                lines("? [a]", REDACTED_VALUE, "? [b]", REDACTED_VALUE)
+            redactedText(yamlRedaction { path("$.Mapping") }, treeOf(mappings)) shouldBe
+                lines("? {a: 1}", REDACTED_VALUE, "? {b: 1}", REDACTED_VALUE)
+        }
+
+        test("stay when none of them is a target") {
+            val text = lines("1: a", "'1': b", "k: &k v", "*k : w", ": e", "? [x]", ": y", "? [z]")
+
+            redactedText(yamlRedaction { path(OTHER_PATH) }, treeOf(text)) shouldBe text
+        }
+    }
+
+    context("comments on the line of a redacted document") {
+        test("go with a root that is redacted whole") {
+            redactedText(yamlRedaction { path("$") }, treeOf("$SECRET # $SECRET")) shouldBe "\"***\" # ***"
+        }
+    }
+
     context("a value pattern and an alias of an anchored key") {
-        val tokens = yamlRedaction { value(Regex("TOKEN-[0-9]+")) }
-        val text = lines(ANCHORED_TOKEN, "y: *k", "m: {*k : z}")
+        val tokens = yamlRedaction { value(tokenPattern) }
+
+        test("leaves an alias of an anchored value or of a key the pattern does not change to the anchor") {
+            val text = lines("a: &v TOKEN-1", "b: *v", "&k plain : x", "c: *k")
+
+            redactedText(tokens, treeOf(text)) shouldBe lines("a: &v \"***\"", "b: *v", "&k plain : x", "c: *k")
+        }
+
+        test("leaves an alias inside a redacted value to the redaction of that value") {
+            val text = lines("&k TOKEN-1 : x", "a: [*k]")
+
+            redactedText(tokens, treeOf(text)) shouldBe lines("&k TOKEN-1 : x", "a: [\"***\"]")
+            val withPath = yamlRedaction {
+                value(tokenPattern)
+                path("$.a")
+            }
+
+            redactedText(withPath, treeOf(text)) shouldBe lines("&k \"***\" : x", "a: \"***\"")
+        }
+
+        test("follows a redefined anchor to its latest definition") {
+            val text = lines("a: &k TOKEN-1", "&k TOKEN-2 : x", ALIAS_VALUE)
+
+            redactedText(tokens, treeOf(text)) shouldBe lines("a: &k \"***\"", "&k TOKEN-2 : x", "y: \"***\"")
+        }
+
+        test("refuses a key longer than the pattern may read") {
+            val short = yamlRedaction {
+                value(tokenPattern)
+                limits = yamlLimits { maximumPatternInputLength = SHORT_INPUT }
+            }
+            val result = short.redact(treeOf(lines("&k TOKEN-123456 : x", ALIAS_VALUE)))
+
+            result shouldBe YamlRedactionResult.Refused(YamlRedactionRefusal.LimitExceeded)
+        }
+
+        val text = lines(ANCHORED_TOKEN, ALIAS_VALUE, "m: {*k : z}")
 
         test("redacts the value the alias stands for in the text as in the graph") {
-            val graph = tokens.redact(nodeOf(lines(ANCHORED_TOKEN, "y: *k")))
+            val graph = tokens.redact(nodeOf(lines(ANCHORED_TOKEN, ALIAS_VALUE)))
             val redacted = redactedText(tokens, treeOf(text))
 
             graph.at("/y".toJsonPointer()) shouldBe yamlScalar("***")

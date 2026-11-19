@@ -115,6 +115,7 @@ class JsonValuesTest : FunSpec({
             number("1999").compareTo(real(HUGE), oneStep) shouldBe -1
             number("-1999").compareTo(real(-HUGE), oneStep) shouldBe 1
             number("-1999").compareTo(real(HUGE), oneStep) shouldBe -1
+            number("1999").compareTo(real(-HUGE), oneStep) shouldBe 1
             number("1" + "0".repeat(MANY_ZEROS)).compareTo(real(HUGE), oneStep) shouldBe 1
             oneStep.spent shouldBe 0L
         }
@@ -210,6 +211,10 @@ class JsonValuesTest : FunSpec({
             equality().isEqual(left = sameText, right = yamlMapping(listOf(first, second))) shouldBe true
             equality().isEqual(left = sameText, right = nodeOf("{'1': 1}")) shouldBe false
             equality().isEqual(left = sameText, right = other) shouldBe false
+            equality().isEqual(left = sameText, right = nodeOf("{a: 1, b: 2}")) shouldBe false
+            equality().isEqual(left = nodeOf("{a: 1, b: 2}"), right = nodeOf("{a: 1, c: 2}")) shouldBe false
+            equality().isEqual(left = nodeOf("{1: x, '1': y, b: z}"), right = nodeOf("{1: x, b: z, !t b: w}")) shouldBe
+                false
             equality().isEqual(left = yamlNull(), right = yamlNull()) shouldBe true
         }
 

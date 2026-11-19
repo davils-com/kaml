@@ -218,6 +218,7 @@ class IRegexpTest : FunSpec({
             val limits = yamlLimits { maximumRegexpSize = SMALL_PROGRAM }
 
             compiled("((){4}){3}", limits).shouldNotBeNull()
+            compiled("a{10}bc", limits).shouldBeNull()
             compiled("((){4}){4}", limits).shouldBeNull()
             compiled("((){1000}){1000}").shouldBeNull()
             compiled("(((){1000}){1000}){1000}").shouldBeNull()
@@ -248,6 +249,16 @@ class IRegexpTest : FunSpec({
             regexp.matches(subject, WorkBudget(TINY_BUDGET, STEPS)).shouldBeNull()
             regexp.containsMatchIn(subject, WorkBudget(TINY_BUDGET, STEPS)).shouldBeNull()
             regexp.matches(subject, WorkBudget(TINIER_BUDGET, STEPS)).shouldBeNull()
+        }
+    }
+
+    context("ranges") {
+        test("match only the code points between their bounds") {
+            val range = "[b-c]"
+
+            range matchesWhole "a" shouldBe false
+            range matchesWhole "c" shouldBe true
+            range matchesWhole "d" shouldBe false
         }
     }
 
