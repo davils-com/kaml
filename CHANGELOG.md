@@ -44,7 +44,7 @@ way.
 - **Conversion between `YamlNode` and `JsonElement`** of kotlinx.serialization.json, within `YamlLimits`, refusing
   keys that are not strings or are given twice.
 - **JSON Pointer** (RFC 6901) on the node graph and on the syntax tree, where a duplicate key resolves to
-  its first occurrence.
+  its first occurrence, with a length limit, `YamlLimits.maximumPointerLength`.
 - **A linear-time I-Regexp engine** (RFC 9485) for `match` and `search` of JSONPath, with bounded patterns,
   programs and steps.
 - **JSONPath** (RFC 9535) with nesting, step and result budgets; a query beyond a budget fails instead of

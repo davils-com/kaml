@@ -249,6 +249,17 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
      */
     public val maximumPatternInputLength: Int = builder.maximumPatternInputLength
 
+    /**
+     * The most characters of the text of a JSON Pointer that kaml-document parses, such as the `path` and `from` of an
+     * operation of a JSON Patch read from a document. A longer text is refused before it is split into tokens, so a
+     * pointer from an attacker never decides how much work and memory its tokens take.
+     *
+     * It lies between 1 and [HARD_POINTER_LENGTH].
+     *
+     * @since 1.0.0
+     */
+    public val maximumPointerLength: Int = builder.maximumPointerLength
+
     init {
         validateOrThrow(SUBJECT)
     }
@@ -326,6 +337,11 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
                 value = maximumPatternInputLength.toLong(),
                 ceiling = HARD_PATTERN_INPUT_LENGTH.toLong(),
             ),
+            Bound(
+                property = ::maximumPointerLength,
+                value = maximumPointerLength.toLong(),
+                ceiling = HARD_POINTER_LENGTH.toLong(),
+            ),
         )
 
     private val values: List<Long> get() = bounds.map(Bound::value)
@@ -369,7 +385,8 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
             "diagnostics=$maximumDiagnostics, output=$maximumOutputLength, queryLength=$maximumQueryLength, " +
             "queryNesting=$maximumQueryNesting, querySteps=$maximumQuerySteps, queryResults=$maximumQueryResults, " +
             "regexpLength=$maximumRegexpLength, regexpSize=$maximumRegexpSize, " +
-            "patchOperations=$maximumPatchOperations, patternInput=$maximumPatternInputLength)"
+            "patchOperations=$maximumPatchOperations, patternInput=$maximumPatternInputLength, " +
+            "pointerLength=$maximumPointerLength)"
 
     private fun ValidationScope.bounded(bound: Bound) {
         val value = bound.value
@@ -511,6 +528,13 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
          */
         public const val HARD_PATTERN_INPUT_LENGTH: Int = 16 * 1024 * 1024
 
+        /**
+         * The hard ceiling of [maximumPointerLength], which no preset and no builder can exceed.
+         *
+         * @since 1.0.0
+         */
+        public const val HARD_POINTER_LENGTH: Int = 16 * 1024 * 1024
+
         private const val SUBJECT: String = "yaml limits"
         private const val RELAXED_NODES: Long = 50_000_000L
         private const val RELAXED_ALIAS_EXPANSION: Long = 10_000_000L
@@ -540,7 +564,8 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
          * 50,000,000 entries of a collection, 1,000,000 documents, [HARD_NUMBER_LENGTH] characters of a number and
          * 10,000 diagnostics; for kaml-document [HARD_QUERY_LENGTH] characters and [HARD_QUERY_NESTING] levels of a
          * query, 1,000,000,000 steps and 50,000,000 results of a query, 65,536 characters and 100,000 instructions of
-         * an I-Regexp, 1,000,000 operations of a patch and 1 Mi characters of input for a pattern of a redaction.
+         * an I-Regexp, 1,000,000 operations of a patch, 1 Mi characters of input for a pattern of a redaction and
+         * [HARD_POINTER_LENGTH] characters of a JSON Pointer.
          *
          * Every limit stays finite and at most its hard ceiling, so even a trusted source cannot exhaust the memory
          * without bound.
@@ -570,6 +595,7 @@ public class YamlLimits internal constructor(builder: YamlLimitsBuilder) : Valid
             builder.maximumRegexpSize = RELAXED_REGEXP_SIZE
             builder.maximumPatchOperations = RELAXED_PATCH_OPERATIONS
             builder.maximumPatternInputLength = RELAXED_PATTERN_INPUT_LENGTH
+            builder.maximumPointerLength = HARD_POINTER_LENGTH
             return builder.build()
         }
     }

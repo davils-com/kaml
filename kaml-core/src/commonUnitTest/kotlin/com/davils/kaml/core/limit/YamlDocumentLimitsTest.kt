@@ -38,6 +38,7 @@ class YamlDocumentLimitsTest : FunSpec({
             limits.maximumRegexpSize shouldBe YamlLimitsBuilder.DEFAULT_REGEXP_SIZE
             limits.maximumPatchOperations shouldBe YamlLimitsBuilder.DEFAULT_PATCH_OPERATIONS
             limits.maximumPatternInputLength shouldBe YamlLimitsBuilder.DEFAULT_PATTERN_INPUT_LENGTH
+            limits.maximumPointerLength shouldBe YamlLimitsBuilder.DEFAULT_POINTER_LENGTH
         }
 
         test("accept their hard ceilings") {
@@ -50,9 +51,11 @@ class YamlDocumentLimitsTest : FunSpec({
                 maximumRegexpSize = YamlLimits.HARD_REGEXP_SIZE
                 maximumPatchOperations = YamlLimits.HARD_PATCH_OPERATIONS
                 maximumPatternInputLength = YamlLimits.HARD_PATTERN_INPUT_LENGTH
+                maximumPointerLength = YamlLimits.HARD_POINTER_LENGTH
             }
 
             ceilings.maximumQuerySteps shouldBe YamlLimits.HARD_QUERY_STEPS
+            ceilings.maximumPointerLength shouldBe YamlLimits.HARD_POINTER_LENGTH
             ceilings shouldNotBe YamlLimits.Untrusted
         }
 
@@ -69,11 +72,15 @@ class YamlDocumentLimitsTest : FunSpec({
             shouldThrow<ValidationException> {
                 yamlLimits { maximumPatternInputLength = YamlLimits.HARD_PATTERN_INPUT_LENGTH + 1 }
             }
+            shouldThrow<ValidationException> {
+                yamlLimits { maximumPointerLength = YamlLimits.HARD_POINTER_LENGTH + 1 }
+            }
         }
 
         test("refuse values that are not positive") {
             shouldThrow<ValidationException> { yamlLimits { maximumQuerySteps = 0 } }
             shouldThrow<ValidationException> { yamlLimits { maximumRegexpSize = 0 } }
+            shouldThrow<ValidationException> { yamlLimits { maximumPointerLength = 0 } }
         }
 
         test("are relaxed within their ceilings and carried over from a base") {
@@ -83,6 +90,7 @@ class YamlDocumentLimitsTest : FunSpec({
             relaxed.maximumQueryNesting shouldBe YamlLimits.HARD_QUERY_NESTING
             derived.maximumQuerySteps shouldBe relaxed.maximumQuerySteps
             derived.maximumPatternInputLength shouldBe relaxed.maximumPatternInputLength
+            derived.maximumPointerLength shouldBe YamlLimits.HARD_POINTER_LENGTH
             derived.toString() shouldContain "querySteps=${relaxed.maximumQuerySteps}"
             derived.hashCode() shouldBe yamlLimits(relaxed) { maximumDepth = DERIVED_DEPTH }.hashCode()
         }

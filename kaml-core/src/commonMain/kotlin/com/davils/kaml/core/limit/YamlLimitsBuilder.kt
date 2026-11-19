@@ -244,6 +244,16 @@ public class YamlLimitsBuilder internal constructor() : ValidatingBuilder<YamlLi
      */
     public var maximumPatternInputLength: Int = DEFAULT_PATTERN_INPUT_LENGTH
 
+    /**
+     * The most characters of the text of a JSON Pointer that kaml-document parses, such as the `path` and `from` of an
+     * operation of a JSON Patch read from a document.
+     *
+     * It must lie between 1 and [YamlLimits.HARD_POINTER_LENGTH]; [DEFAULT_POINTER_LENGTH] by default.
+     *
+     * @since 1.0.0
+     */
+    public var maximumPointerLength: Int = DEFAULT_POINTER_LENGTH
+
     internal fun from(limits: YamlLimits) {
         maximumInputLength = limits.maximumInputLength
         maximumDepth = limits.maximumDepth
@@ -264,6 +274,7 @@ public class YamlLimitsBuilder internal constructor() : ValidatingBuilder<YamlLi
         maximumRegexpSize = limits.maximumRegexpSize
         maximumPatchOperations = limits.maximumPatchOperations
         maximumPatternInputLength = limits.maximumPatternInputLength
+        maximumPointerLength = limits.maximumPointerLength
     }
 
     override fun assemble(): YamlLimits = YamlLimits(this)
@@ -406,5 +417,12 @@ public class YamlLimitsBuilder internal constructor() : ValidatingBuilder<YamlLi
          * @since 1.0.0
          */
         public const val DEFAULT_PATTERN_INPUT_LENGTH: Int = 64 * 1024
+
+        /**
+         * The default of [maximumPointerLength].
+         *
+         * @since 1.0.0
+         */
+        public const val DEFAULT_POINTER_LENGTH: Int = 64 * 1024
     }
 }

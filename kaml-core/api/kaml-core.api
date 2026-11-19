@@ -373,6 +373,7 @@ public final class com/davils/kaml/core/limit/YamlLimits : com/davils/kore/core/
 	public static final field HARD_NUMBER_LENGTH I
 	public static final field HARD_PATCH_OPERATIONS I
 	public static final field HARD_PATTERN_INPUT_LENGTH I
+	public static final field HARD_POINTER_LENGTH I
 	public static final field HARD_QUERY_LENGTH I
 	public static final field HARD_QUERY_NESTING I
 	public static final field HARD_QUERY_RESULTS I
@@ -392,6 +393,7 @@ public final class com/davils/kaml/core/limit/YamlLimits : com/davils/kore/core/
 	public final fun getMaximumOutputLength ()I
 	public final fun getMaximumPatchOperations ()I
 	public final fun getMaximumPatternInputLength ()I
+	public final fun getMaximumPointerLength ()I
 	public final fun getMaximumQueryLength ()I
 	public final fun getMaximumQueryNesting ()I
 	public final fun getMaximumQueryResults ()I
@@ -423,6 +425,7 @@ public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kor
 	public static final field DEFAULT_OUTPUT_LENGTH I
 	public static final field DEFAULT_PATCH_OPERATIONS I
 	public static final field DEFAULT_PATTERN_INPUT_LENGTH I
+	public static final field DEFAULT_POINTER_LENGTH I
 	public static final field DEFAULT_QUERY_LENGTH I
 	public static final field DEFAULT_QUERY_NESTING I
 	public static final field DEFAULT_QUERY_RESULTS I
@@ -443,6 +446,7 @@ public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kor
 	public final fun getMaximumOutputLength ()I
 	public final fun getMaximumPatchOperations ()I
 	public final fun getMaximumPatternInputLength ()I
+	public final fun getMaximumPointerLength ()I
 	public final fun getMaximumQueryLength ()I
 	public final fun getMaximumQueryNesting ()I
 	public final fun getMaximumQueryResults ()I
@@ -462,6 +466,7 @@ public final class com/davils/kaml/core/limit/YamlLimitsBuilder : com/davils/kor
 	public final fun setMaximumOutputLength (I)V
 	public final fun setMaximumPatchOperations (I)V
 	public final fun setMaximumPatternInputLength (I)V
+	public final fun setMaximumPointerLength (I)V
 	public final fun setMaximumQueryLength (I)V
 	public final fun setMaximumQueryNesting (I)V
 	public final fun setMaximumQueryResults (I)V
