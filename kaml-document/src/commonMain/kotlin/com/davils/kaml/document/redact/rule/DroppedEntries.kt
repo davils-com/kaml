@@ -54,8 +54,8 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         unmatched = missing.filter { range -> !mergeSources.contains(range) }
     }
 
-    private fun composedMappings(stream: YamlStream, budget: WorkBudget): Map<TextRange, YamlNode.Mapping> {
-        val mappings = HashMap<TextRange, YamlNode.Mapping>()
+    private fun composedMappings(stream: YamlStream, budget: WorkBudget): Map<TextRange?, YamlNode.Mapping> {
+        val mappings = HashMap<TextRange?, YamlNode.Mapping>()
         val seen = NodeSet(identityOrdinals())
         val pending = ArrayDeque<YamlNode>()
         stream.documents.forEach { document -> pending.addLast(document.root) }
@@ -70,9 +70,9 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         return mappings
     }
 
-    private fun indexed(node: YamlNode, mappings: MutableMap<TextRange, YamlNode.Mapping>) {
+    private fun indexed(node: YamlNode, mappings: MutableMap<TextRange?, YamlNode.Mapping>) {
         val mapping = node as? YamlNode.Mapping ?: return
-        mapping.range?.let { range -> mappings[range] = mapping }
+        mappings[mapping.range] = mapping
     }
 
     private fun childrenOf(node: YamlNode): List<YamlNode> = when (node) {
@@ -87,8 +87,8 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         val groups = candidates.groupBy(::resolvedRangeOf).values
         val kept = groups.mapTo(HashSet()) { group -> group.last().takeIf { isLastKept } ?: group.first() }
         val unkept = mapping.entries.filter { entry -> entry !in kept }
-        val (merges, others) = unkept.partition { entry -> isMerge(entry, keyRanges) }
-        merges.mapNotNullTo(merged, ::valueRangeOf)
+        val (merges, others) = unkept.partition(::isMerge)
+        merges.mapTo(merged) { entry -> entry.node.range }
         return found.addAll(others.flatMap(::partsOf))
     }
 
@@ -98,15 +98,9 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         return anchors.rangeOf(alias.name, alias.node.range.start) ?: alias.node.range
     }
 
-    private fun valueRangeOf(entry: YamlEntrySyntax): TextRange? {
-        val value = entry.value ?: return null
-        return value.node.range
-    }
-
-    private fun isMerge(entry: YamlEntrySyntax, keyRanges: Set<TextRange>): Boolean {
+    private fun isMerge(entry: YamlEntrySyntax): Boolean {
         val keyText = entry.key.node.text
-        val isMergeText = entry.key is YamlValueSyntax.Scalar && keyText.trim() == MERGE_KEY
-        return isMergeText && resolvedRangeOf(entry) !in keyRanges
+        return entry.key is YamlValueSyntax.Scalar && keyText.trim() == MERGE_KEY
     }
 
     private fun partsOf(entry: YamlEntrySyntax): List<YamlSyntaxNode> {

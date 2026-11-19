@@ -27,6 +27,8 @@ import com.davils.kaml.document.redact.YamlRedactionResult
 import com.davils.kore.core.text.TextEdit
 
 internal class SyntaxRedaction(private val rules: RedactionRules) {
+    private val undecidable = YamlRedactionResult.Refused(YamlRedactionRefusal.Undecidable)
+
     fun redacted(tree: YamlSyntaxTree): YamlRedactionResult {
         val stream = (tree.compose() as? YamlParseResult.Parsed)?.stream
             ?: return YamlRedactionResult.Refused(YamlRedactionRefusal.InvalidDocument)
@@ -35,7 +37,7 @@ internal class SyntaxRedaction(private val rules: RedactionRules) {
 
     private fun bounded(tree: YamlSyntaxTree, stream: YamlStream): YamlRedactionResult = try {
         planned(tree, stream)?.let { edits -> verified(tree, edits) }
-            ?: YamlRedactionResult.Refused(YamlRedactionRefusal.Undecidable)
+            ?: undecidable
     } catch (expected: YamlDocumentLimitException) {
         YamlRedactionResult.Refused(YamlRedactionRefusal.LimitExceeded)
     }
@@ -55,16 +57,11 @@ internal class SyntaxRedaction(private val rules: RedactionRules) {
         return edits.all(walk).takeIf { isDecided }
     }
 
-    private fun verified(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlRedactionResult {
-        val redacted = editedOrNull(tree, edits)
-        val isComposed = redacted?.compose() is YamlParseResult.Parsed
-        val refused = YamlRedactionResult.Refused(YamlRedactionRefusal.Undecidable)
-        return redacted?.takeIf { isComposed }?.let { edited -> YamlRedactionResult.Redacted(edits, edited) } ?: refused
-    }
-
-    private fun editedOrNull(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlSyntaxTree? = try {
-        tree.edit(edits)
+    private fun verified(tree: YamlSyntaxTree, edits: List<TextEdit>): YamlRedactionResult = try {
+        val redacted = tree.edit(edits)
+        val isComposed = redacted.compose() is YamlParseResult.Parsed
+        YamlRedactionResult.Redacted(edits, redacted).takeIf { isComposed } ?: undecidable
     } catch (expected: IllegalArgumentException) {
-        null
+        undecidable
     }
 }

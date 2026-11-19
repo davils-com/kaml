@@ -38,8 +38,7 @@ internal class KeyedItems(
         val identity = overlay.node[key].string()
         val position = identity?.let(slots::positionOf)
         if (markers.isDeletion(overlay.node)) return slots.remove(position)
-        val existing = position?.let(slots::at)
-        if (position == null || existing == null) return slots.append(whole(overlay))
+        val existing = position?.let(slots::at) ?: return slots.append(whole(overlay))
         slots.replace(position, layers.merged(existing, overlay))
     }
 

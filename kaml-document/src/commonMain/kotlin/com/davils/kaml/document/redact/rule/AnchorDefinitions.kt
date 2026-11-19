@@ -27,10 +27,10 @@ internal class AnchorDefinitions(tree: YamlSyntaxTree) {
 
     init {
         tree.root.tokens.filter { token -> token.kind == YamlSyntaxKind.ANCHOR }.forEach { anchor ->
-            val node = anchor.ancestors.elementAtOrNull(1)
+            val owner = anchor.ancestors.elementAt(1)
             val ordinal = names.ordinalFor(anchor.text.drop(1))
             if (ordinal == definitions.size) definitions.add(ArrayList())
-            node?.let { owner -> definitions[ordinal].add(Definition(anchor.range.start, owner.range)) }
+            definitions[ordinal].add(Definition(anchor.range.start, owner.range))
         }
     }
 
