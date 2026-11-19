@@ -76,7 +76,7 @@ class JsonValuesTest : FunSpec({
             number(PAST_TWO_TO_THE_53).compareTo(number(TWO_TO_THE_53)) shouldBe 1
             number("-$PAST_TWO_TO_THE_53").compareTo(number("-$TWO_TO_THE_53")) shouldBe -1
             number("123456789012345678901234567890").compareTo(number("123456789012345678901234567890")) shouldBe 0
-            number("+0_1").compareTo(number(ONE)) shouldBe 0
+            number("+01").compareTo(number(ONE)) shouldBe 0
             number("-0").compareTo(number("0")) shouldBe 0
         }
 

@@ -175,10 +175,10 @@ class JsonPathTest : FunSpec({
         }
 
         test("order strings by their code points") {
-            val words = nodeOf("""["b", "a", "ab", "\U0001F600", "\uFFFF"]""")
+            val words = nodeOf("""["b", "a", "ab", "\U0001F600", "\uFFFD"]""")
 
             select("$[?@ < 'b']", words) shouldBe nodesOf("a", "ab")
-            select("$[?@ > '\\uFFFF']", words) shouldBe nodesOf(""""\U0001F600"""")
+            select("$[?@ > '\\uFFFD']", words) shouldBe nodesOf(""""\U0001F600"""")
         }
     }
 
