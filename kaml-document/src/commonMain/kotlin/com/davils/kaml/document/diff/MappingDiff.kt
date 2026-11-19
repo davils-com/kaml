@@ -22,14 +22,23 @@ import com.davils.kaml.document.patch.JsonPatchOperation
 import com.davils.kaml.document.pointer.JsonPointer
 
 internal object MappingDiff {
-    fun between(diff: GraphDiff, source: YamlNode, target: YamlNode, pointer: JsonPointer): Boolean {
+    fun between(
+        diff: GraphDiff,
+        source: YamlNode,
+        target: YamlNode,
+        pointer: JsonPointer,
+        isHashTrusted: Boolean,
+    ): Boolean {
         val before = membersOf(source)
         val after = membersOf(target)
         if (before == null || after == null) return false
         val removed = before.keys.filter { key -> key !in after }
         removed.forEach { key -> diff.add(JsonPatchOperation.Remove(pointer.child(key))) }
         before.forEach { (key, value) ->
-            after[key]?.let { changed -> diff.between(source = value, target = changed, pointer = pointer.child(key)) }
+            after[key]?.let { changed ->
+                val child = pointer.child(key)
+                diff.between(source = value, target = changed, pointer = child, isHashTrusted = isHashTrusted)
+            }
         }
         val added = after.filter { (key, _) -> key !in before }
         added.forEach { (key, value) -> diff.add(JsonPatchOperation.Add(pointer.child(key), value)) }

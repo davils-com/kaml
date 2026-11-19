@@ -40,9 +40,16 @@ import io.kotest.property.arbitrary.element
 import io.kotest.property.arbitrary.int
 import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 private const val MAXIMUM_DEPTH: Int = 3
 private const val MAXIMUM_SIZE: Int = 4
+private const val LEAF_SIZE: Int = 10_000
+private const val LEVELS: Int = 100
+private const val GROWTH: Int = 5
+private val slack: Duration = 100.milliseconds
 
 private val names = Arb.element("a", "b", "c", "d")
 
@@ -62,6 +69,28 @@ private fun nodes(depth: Int): Arb<YamlNode> {
         yamlMapping(keys.map { key -> YamlEntry(key = yamlScalar(key), value = children.bind()) })
     }
     return Arb.choice(scalars, sequences, mappings)
+}
+
+private fun swappedLeaf(isSwapped: Boolean): YamlNode {
+    val values = List(LEAF_SIZE) { index -> "v$index" }
+    val last = values.lastIndex
+    val swapped = values.mapIndexed { index, value ->
+        values[last - 1].takeIf { isSwapped && index == last } ?: values[last].takeIf { isSwapped && index == last - 1 }
+            ?: value
+    }
+    val entries = swapped.mapIndexed { index, value ->
+        YamlEntry(key = yamlScalar("k$index"), value = yamlScalar(value))
+    }
+    return yamlMapping(entries)
+}
+
+private fun wrapped(node: YamlNode, depth: Int): YamlNode =
+    (1..depth).fold(node) { inner, _ -> yamlMapping(listOf(YamlEntry(key = yamlScalar("x"), value = inner))) }
+
+private fun timed(work: () -> Unit): Duration {
+    val mark = TimeSource.Monotonic.markNow()
+    work()
+    return mark.elapsedNow()
 }
 
 class JsonPatchDiffTest : FunSpec({
@@ -105,6 +134,27 @@ class JsonPatchDiffTest : FunSpec({
             val patch = JsonPatch.diff(source = source, target = target)
 
             patch.operations shouldBe listOf(JsonPatchOperation.Replace(JsonPointer.ROOT, target))
+        }
+
+        test("compares every subtree once, also when a change keeps the hash codes") {
+            val source = swappedLeaf(isSwapped = false)
+            val target = swappedLeaf(isSwapped = true)
+            val shallow = timed { JsonPatch.diff(source = wrapped(source, 1), target = wrapped(target, 1)) }
+            val deep = timed { JsonPatch.diff(source = wrapped(source, LEVELS), target = wrapped(target, LEVELS)) }
+            val changes = JsonPatch.diff(source = wrapped(source, LEVELS), target = wrapped(target, LEVELS))
+
+            (deep < shallow * GROWTH + slack) shouldBe true
+            changes.operations.size shouldBe 2
+            changes.apply(wrapped(source, LEVELS)) shouldBe JsonPatchResult.Applied(wrapped(target, LEVELS))
+        }
+
+        test("finds the changes below subtrees whose hash codes collide") {
+            val source = nodeOf("{a: {x: 1, y: 2}, b: [{x: 1, y: 2}]}")
+            val target = nodeOf("{a: {x: 2, y: 1}, b: [{x: 2, y: 1}]}")
+            val patch = JsonPatch.diff(source = source, target = target)
+
+            source.hashCode() shouldBe target.hashCode()
+            patch.apply(source) shouldBe JsonPatchResult.Applied(target)
         }
 
         test("adds the items a sequence gains") {

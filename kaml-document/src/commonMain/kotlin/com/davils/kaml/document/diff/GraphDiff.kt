@@ -28,26 +28,46 @@ internal class GraphDiff(private val limits: YamlLimits) {
     private val found = ArrayList<JsonPatchOperation>()
 
     fun operations(source: YamlNode, target: YamlNode): List<JsonPatchOperation> {
-        between(source, target, JsonPointer.ROOT)
+        between(source = source, target = target, pointer = JsonPointer.ROOT, isHashTrusted = true)
         return found
     }
 
-    fun between(source: YamlNode, target: YamlNode, pointer: JsonPointer) {
+    fun between(source: YamlNode, target: YamlNode, pointer: JsonPointer, isHashTrusted: Boolean) {
         budget.charge()
         if (pointer.tokens.size > limits.maximumDepth) throw YamlDocumentLimitException("maximumDepth")
-        if (source == target) return
+        val isHashEqual = isHashTrusted && source.hashCode() == target.hashCode()
+        val isProvenEqual = isHashEqual && source == target
+        val isEqual = source === target || isProvenEqual
+        if (isEqual) return
         val isSameTag = source.tag == target.tag
-        val isNested = isSameTag && isNestedBetween(source, target, pointer)
-        if (!isNested) add(JsonPatchOperation.Replace(pointer, target))
+        val below = Step(pointer = pointer, isHashTrusted = isHashTrusted && !isHashEqual)
+        val isNested = isSameTag && isNestedBetween(source, target, below)
+        val isReplaced = !isNested && (isHashTrusted || source != target)
+        if (isReplaced) add(JsonPatchOperation.Replace(pointer, target))
     }
 
-    private fun isNestedBetween(source: YamlNode, target: YamlNode, pointer: JsonPointer): Boolean {
-        val isMapping = MappingDiff.between(diff = this, source = source, target = target, pointer = pointer)
-        return isMapping || SequenceDiff.between(diff = this, source = source, target = target, pointer = pointer)
+    private fun isNestedBetween(source: YamlNode, target: YamlNode, step: Step): Boolean {
+        val isMapping = MappingDiff.between(
+            diff = this,
+            source = source,
+            target = target,
+            pointer = step.pointer,
+            isHashTrusted = step.isHashTrusted,
+        )
+        if (isMapping) return true
+        return SequenceDiff.between(
+            diff = this,
+            source = source,
+            target = target,
+            pointer = step.pointer,
+            isHashTrusted = step.isHashTrusted,
+        )
     }
 
     fun add(operation: JsonPatchOperation) {
         if (found.size >= limits.maximumPatchOperations) throw YamlDocumentLimitException("maximumPatchOperations")
         found.add(operation)
     }
+
+    private data class Step(val pointer: JsonPointer, val isHashTrusted: Boolean)
 }
