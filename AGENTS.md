@@ -194,6 +194,7 @@ a caller fails closed.
   | `kaml.git-hooks` | The Git hooks |
   | `kaml.trivy` | Every Trivy scan |
   | `kaml.assurance` | The assurance gate and its `ignore` rules |
+  | `kaml.standards` | The standards kaml implements, reviewed in `standards.lock` |
   | `kaml.platform` | The JDK, the Kotlin compiler, the targets and the Java module name |
   | `kaml.web-tools` | Node.js and Yarn for the Wasm target, from the repositories of the settings |
   | `kaml.testing` | Kotest and the test suites |
@@ -234,6 +235,15 @@ a caller fails closed.
 - A finding of the assurance gate that is a known, harmless property of a dependency gets an `ignore` rule in
   `build-logic/src/main/kotlin/kaml.assurance.gradle.kts`, with a reason, the exact module and an expiry date no more
   than six months ahead. CRITICAL and HIGH findings can never be ignored.
+- Every standard kaml implements is declared in `build-logic/src/main/kotlin/kaml.standards.gradle.kts`, with a note
+  on what implements it. A change that implements a standard, or names one in a source or a Markdown file, declares
+  it. A finding of the standards audit, such as a new version, new errata or a replacement, is read against the code:
+  what it breaks is fixed with a test first, and the review records in its note what the finding means for kaml:
+
+  ```bash
+  ./gradlew kreateStandardsReview --standard=rfc:9535 --note="What the review found."
+  ```
+
 
 ## Public API
 

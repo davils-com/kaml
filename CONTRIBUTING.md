@@ -62,6 +62,18 @@ Every dependency, the classpath of `build-logic` included, is locked and verifie
 A new dependency other than a library of JetBrains or of Kore needs the approval of a maintainer. Kore and Kreate
 are used in released versions only, never as snapshots.
 
+## Following a Standard
+
+kaml implements YAML 1.2.2, JSON Pointer, JSON Patch, JSON Merge Patch, JSONPath and I-Regexp, among others. Every
+standard it follows is declared in `build-logic/src/main/kotlin/kaml.standards.gradle.kts`, and `standards.lock`
+records what its body published when a maintainer last reviewed it. The assurance gate fails when a declared standard
+was never reviewed, when its body publishes a new version, errata or a replacement, and when a file names a standard
+that is not declared. Read what changed against kaml, fix and test what it breaks, and record the review:
+
+```bash
+./gradlew kreateStandardsReview --standard=rfc:9535 --note="Erratum 8343 does not change how kaml parses."
+```
+
 ## Snapshots and Releases
 
 `gradle.properties` holds the version in development. Every push to `develop` publishes it as a `-SNAPSHOT` to
