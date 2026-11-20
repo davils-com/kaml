@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class JsonEquality(private val budget: WorkBudget, private val maximumDepth: Int) {
     fun isEqual(left: YamlNode, right: YamlNode): Boolean {
@@ -26,7 +30,7 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
         var isEqual = true
         while (isEqual && pending.isNotEmpty()) {
             val pair = pending.removeLast()
-            budget.charge()
+            budget.chargeOrFail()
             if (pair.depth > maximumDepth) throw YamlDocumentLimitException(DEPTH)
             isEqual = pair.left === pair.right || isShallowEqual(pair, pending)
         }
@@ -44,7 +48,7 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
     }
 
     private fun isScalarLess(left: YamlNode.Scalar, right: YamlNode.Scalar): Boolean {
-        budget.charge(minOf(a = left.value.length, b = right.value.length).toLong())
+        budget.chargeOrFail(minOf(a = left.value.length, b = right.value.length).toLong())
         val leftValue = JsonScalar.of(left)
         val rightValue = JsonScalar.of(right)
         val numbers = numberOrder(left = leftValue, right = rightValue)
@@ -77,7 +81,7 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
     }
 
     private fun isScalarEqual(left: YamlNode.Scalar, right: YamlNode.Scalar): Boolean {
-        budget.charge(minOf(a = left.value.length, b = right.value.length).toLong())
+        budget.chargeOrFail(minOf(a = left.value.length, b = right.value.length).toLong())
         return JsonScalar.of(left).isEqualTo(JsonScalar.of(right), budget)
     }
 
@@ -100,7 +104,7 @@ internal class JsonEquality(private val budget: WorkBudget, private val maximumD
         depth: Int,
         pending: ArrayDeque<Pending>,
     ): Boolean {
-        budget.charge((left.entries.size + right.entries.size).toLong())
+        budget.chargeOrFail((left.entries.size + right.entries.size).toLong())
         val isSameSize = left.entries.size == right.entries.size
         val leftMembers = Members.allByToken(left)
         val rightMembers = Members.allByToken(right)

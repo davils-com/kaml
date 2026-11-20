@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.regexp
 
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class RegexpCompiler(private val maximumSize: Int, private val budget: WorkBudget) {
     private val program = ArrayList<Instruction>()
@@ -32,7 +36,7 @@ internal class RegexpCompiler(private val maximumSize: Int, private val budget: 
 
     private fun emit(node: RegexpNode) {
         if (isTooLarge) return
-        budget.charge()
+        budget.chargeOrFail()
         emissions++
         if (emissions > maximumEmissions) isTooLarge = true
         when (node) {

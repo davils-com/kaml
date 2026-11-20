@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.patch.syntax
 
 import com.davils.kaml.core.node.YamlNode
@@ -21,11 +23,12 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.edit.YamlEditResult
 import com.davils.kaml.core.syntax.edit.YamlEditor
 import com.davils.kaml.core.syntax.edit.YamlPath
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerSteps
 import com.davils.kaml.document.pointer.PointerTokens
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import com.davils.kore.core.text.TextEdit
 
 internal class SyntaxEdits(

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.node.YamlNode
@@ -23,9 +25,10 @@ import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.internal.NodeSet
 import com.davils.kaml.document.internal.OrderedGroups
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kaml.document.patch.syntax.ContentRanges
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import com.davils.kore.core.text.TextRange
 
 internal class SyntaxTargets(private val rules: RedactionRules, private val budget: WorkBudget) {

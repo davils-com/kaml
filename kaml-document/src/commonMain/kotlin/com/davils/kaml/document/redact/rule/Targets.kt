@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.node.YamlEntry
@@ -21,9 +23,11 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
 import com.davils.kaml.document.internal.NodeSet
 import com.davils.kaml.document.internal.OrderedGroups
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerTokens
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class Targets(
     private val rules: RedactionRules,
@@ -62,7 +66,7 @@ internal class Targets(
         while (pending.isNotEmpty()) {
             val current = pending.removeLast()
             if (seen.add(current)) {
-                budget.charge()
+                budget.chargeOrFail()
                 visit(current)
                 childrenOf(current).forEach(pending::addLast)
             }
@@ -82,7 +86,7 @@ internal class Targets(
         var current = listOf(root)
         pointer.tokens.forEach { token ->
             current = current.flatMap { node -> childrenNamed(node, token) }
-            budget.charge(current.size.toLong() + 1L)
+            budget.chargeOrFail(current.size.toLong() + 1L)
         }
         return current
     }
@@ -103,7 +107,7 @@ internal class Targets(
 
     private fun membersOf(mapping: YamlNode.Mapping): OrderedGroups<String, YamlNode> =
         memberIndexes.getOrPut(ordinalOf(mapping)) {
-            budget.charge(mapping.entries.size.toLong())
+            budget.chargeOrFail(mapping.entries.size.toLong())
             val members = OrderedGroups<String, YamlNode>()
             mapping.entries.forEach { entry -> members.add(Members.tokenOf(entry.key), entry.value) }
             members

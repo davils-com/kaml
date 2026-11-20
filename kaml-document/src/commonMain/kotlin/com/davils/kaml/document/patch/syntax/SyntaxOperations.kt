@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.patch.syntax
 
 import com.davils.kaml.core.node.YamlNode
@@ -23,6 +25,7 @@ import com.davils.kaml.document.patch.graph.GraphOperations
 import com.davils.kaml.document.patch.graph.GraphStep
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerSteps
+import com.davils.kore.core.annotation.DavilsInternal
 
 internal class SyntaxOperations(
     private val state: SyntaxState,

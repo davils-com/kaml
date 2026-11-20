@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.evaluate
 
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.JsonEquality
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.path.function.FunctionContext
 import com.davils.kaml.document.path.query.PathQuery
 import com.davils.kaml.document.path.query.PathSegment
 import com.davils.kaml.document.path.query.PathSelector
 import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class PathEvaluator(private val root: YamlNode, private val limits: YamlLimits) {
     private val budget = WorkBudget(limits.maximumQuerySteps, "maximumQuerySteps")
@@ -37,14 +41,14 @@ internal class PathEvaluator(private val root: YamlNode, private val limits: Yam
     )
 
     fun evaluate(query: PathQuery, current: YamlNode): List<PathMatch> {
-        budget.charge()
+        budget.chargeOrFail()
         var matches = listOf(PathMatch(null, current.takeIf { query.isRelative } ?: root))
         query.segments.forEach { segment -> matches = applied(segment, matches) }
         return matches
     }
 
     fun pointerOf(match: PathMatch): JsonPointer {
-        budget.charge(match.depth.toLong())
+        budget.chargeOrFail(match.depth.toLong())
         return match.pointer
     }
 
@@ -56,7 +60,7 @@ internal class PathEvaluator(private val root: YamlNode, private val limits: Yam
 
     private fun targets(segment: PathSegment, input: PathMatch, visit: (PathMatch) -> Unit) {
         if (segment.isDescendant) return descendants.visit(input, visit)
-        budget.charge()
+        budget.chargeOrFail()
         visit(input)
     }
 

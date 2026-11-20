@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.function
 
 import com.davils.kaml.core.limit.YamlLimits
-import com.davils.kaml.document.internal.OrderedIndex
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.path.regexp.IRegexp
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
+import com.davils.kore.core.collection.OrderedIndex
 
 internal class FunctionContext(private val limits: YamlLimits, val budget: WorkBudget) {
     private val patterns = OrderedIndex<String>()
@@ -31,9 +35,9 @@ internal class FunctionContext(private val limits: YamlLimits, val budget: WorkB
     }
 
     private fun compiledNew(pattern: String): IRegexp? {
-        budget.charge(pattern.length.toLong() + 1L)
+        budget.chargeOrFail(pattern.length.toLong() + 1L)
         val regexp = IRegexp.compile(pattern, limits, budget)
-        regexp?.let { found -> budget.charge(found.size.toLong()) }
+        regexp?.let { found -> budget.chargeOrFail(found.size.toLong()) }
         patterns.ordinalFor(pattern)
         compiled.add(regexp)
         return regexp

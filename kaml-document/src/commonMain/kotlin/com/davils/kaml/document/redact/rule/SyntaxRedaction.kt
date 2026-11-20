@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.YamlParseResult
 import com.davils.kaml.core.node.YamlStream
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.document.YamlDocumentLimitException
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.syntax.ContentRanges
 import com.davils.kaml.document.redact.YamlRedactionRefusal
 import com.davils.kaml.document.redact.YamlRedactionResult
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import com.davils.kore.core.text.TextEdit
 
 internal class SyntaxRedaction(private val rules: RedactionRules) {

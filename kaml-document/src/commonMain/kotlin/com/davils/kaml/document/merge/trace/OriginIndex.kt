@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.merge.trace
 
-import com.davils.kaml.document.internal.OrderedIndex
 import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedIndex
 
 internal class OriginIndex(origins: Map<JsonPointer, String>) {
     private val edges = OrderedIndex<String>()

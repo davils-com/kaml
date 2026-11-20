@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.syntax.YamlSyntaxNode
@@ -22,7 +24,9 @@ import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.OrderedGroups
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import com.davils.kore.core.text.TextRange
 
 internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth: Int) {
@@ -41,7 +45,7 @@ internal class SyntaxWalk(tree: YamlSyntaxTree, budget: WorkBudget, maximumDepth
         tree.documents.forEach { document -> pending.addLast(Pending(value = document.root, depth = 0)) }
         while (pending.isNotEmpty()) {
             val current = pending.removeLast()
-            budget.charge()
+            budget.chargeOrFail()
             if (current.depth > maximumDepth) throw YamlDocumentLimitException("maximumDepth")
             val value = current.value
             nodes.add(value.node.range, value.node)

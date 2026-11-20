@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.regexp
 
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.document.internal.CodePoints
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class IRegexp private constructor(program: List<Instruction>) {
     val size: Int = program.size
@@ -30,7 +33,7 @@ internal class IRegexp private constructor(program: List<Instruction>) {
     fun containsMatchIn(subject: String, budget: WorkBudget): Boolean? = run(subject, isWhole = false, budget = budget)
 
     private fun run(subject: String, isWhole: Boolean, budget: WorkBudget): Boolean? {
-        if (!budget.spend(subject.length.toLong())) return null
+        if (!budget.tryCharge(subject.length.toLong())) return null
         return machine.run(CodePoints.of(subject), isWhole, budget)
     }
 

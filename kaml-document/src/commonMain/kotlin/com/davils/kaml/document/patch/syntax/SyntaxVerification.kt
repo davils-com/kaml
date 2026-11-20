@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.patch.syntax
 
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.JsonEquality
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchEdit
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.patch.graph.GraphStep
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class SyntaxVerification(private val original: YamlSyntaxTree, private val document: Int) {
     fun finished(state: SyntaxState, index: Int, limits: YamlLimits): JsonPatchEdit {

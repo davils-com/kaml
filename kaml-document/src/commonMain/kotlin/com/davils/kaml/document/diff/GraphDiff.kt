@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.diff
 
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.YamlDocumentLimitException
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.patch.JsonPatchOperation
 import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class GraphDiff(private val limits: YamlLimits) {
     private val budget = WorkBudget(limits.maximumNodes, "maximumNodes")
@@ -33,7 +37,7 @@ internal class GraphDiff(private val limits: YamlLimits) {
     }
 
     fun between(source: YamlNode, target: YamlNode, pointer: JsonPointer, isHashTrusted: Boolean) {
-        budget.charge()
+        budget.chargeOrFail()
         if (pointer.tokens.size > limits.maximumDepth) throw YamlDocumentLimitException("maximumDepth")
         val isHashEqual = isHashTrusted && source.hashCode() == target.hashCode()
         val isProvenEqual = isHashEqual && source == target

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.regexp
 
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class RegexpMachine(private val program: List<Instruction>) {
     private val size = program.size
@@ -35,12 +38,12 @@ internal class RegexpMachine(private val program: List<Instruction>) {
         currentCount = closure(0, current, 0)
         var position = 0
         var isMatched = !isWhole && hasMatch()
-        var isWithinBudget = budget.spend(takeSteps())
+        var isWithinBudget = budget.tryCharge(takeSteps())
         while (isWithinBudget && !isMatched && isRunning(position, subject.size, isWhole)) {
             advance(subject[position], isWhole)
             position++
             isMatched = !isWhole && hasMatch()
-            isWithinBudget = budget.spend(takeSteps())
+            isWithinBudget = budget.tryCharge(takeSteps())
         }
         val isAtEnd = position == subject.size
         val isWholeMatch = isWhole && isAtEnd && hasMatch()

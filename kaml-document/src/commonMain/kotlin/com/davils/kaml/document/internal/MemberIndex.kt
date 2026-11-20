@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
+import com.davils.kore.core.collection.OrderedIndex
 
 internal class MemberIndex(mapping: YamlNode.Mapping, budget: WorkBudget) {
     private val tokens = OrderedIndex<String>()
     private val values = ArrayList<YamlNode>()
 
     init {
-        budget.charge(mapping.entries.size.toLong())
+        budget.chargeOrFail(mapping.entries.size.toLong())
         mapping.entries.forEach { entry ->
             val ordinal = tokens.ordinalFor(Members.tokenOf(entry.key))
             if (ordinal == values.size) values.add(entry.value)

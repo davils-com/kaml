@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.regexp
 
 import com.davils.kaml.core.limit.YamlLimits
 import com.davils.kaml.core.limit.yamlLimits
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.fixture.timed
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty

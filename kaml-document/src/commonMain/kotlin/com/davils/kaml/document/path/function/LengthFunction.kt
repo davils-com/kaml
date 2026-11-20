@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.function
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.document.internal.CodePoints
+import com.davils.kaml.document.internal.chargeOrFail
+import com.davils.kore.core.annotation.DavilsInternal
 
 internal object LengthFunction : PathFunction {
     override val name: String = "length"
@@ -41,7 +45,7 @@ internal object LengthFunction : PathFunction {
     }
 
     private fun counted(text: String, context: FunctionContext): Int {
-        context.budget.charge(text.length.toLong())
+        context.budget.chargeOrFail(text.length.toLong())
         return CodePoints.count(text)
     }
 }

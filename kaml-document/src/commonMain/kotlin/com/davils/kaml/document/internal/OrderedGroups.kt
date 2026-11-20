@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
+
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedIndex
 
 internal class OrderedGroups<K : Comparable<K>, V> {
     private val index = OrderedIndex<K>()

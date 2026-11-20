@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.patch.graph
 
 import com.davils.kaml.core.limit.YamlLimits
@@ -21,11 +23,12 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.JsonEquality
 import com.davils.kaml.document.internal.NodeCount
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.JsonPatchOperation
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.pointer.JsonPointer
 import com.davils.kaml.document.pointer.PointerSteps
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class GraphOperations(limits: YamlLimits) {
     private val budget = WorkBudget(limits.maximumNodes, "maximumNodes")

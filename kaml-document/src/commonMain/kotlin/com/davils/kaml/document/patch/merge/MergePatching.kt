@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.patch.merge
 
 import com.davils.kaml.core.limit.YamlLimits
@@ -24,8 +26,9 @@ import com.davils.kaml.core.node.yamlMapping
 import com.davils.kaml.document.internal.KeyedSlots
 import com.davils.kaml.document.internal.Members
 import com.davils.kaml.document.internal.NodeCount
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.patch.graph.GraphNodes
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class MergePatching(limits: YamlLimits) {
     private val budget = WorkBudget(limits.maximumNodes, "maximumNodes")

@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.pointer
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal object PointerSteps {
     fun child(node: YamlNode, token: String): YamlNode? = when (node) {
@@ -28,7 +32,7 @@ internal object PointerSteps {
     }
 
     fun child(node: YamlNode, token: String, budget: WorkBudget): YamlNode? {
-        budget.charge(lookupCost(node))
+        budget.chargeOrFail(lookupCost(node))
         return child(node, token)
     }
 

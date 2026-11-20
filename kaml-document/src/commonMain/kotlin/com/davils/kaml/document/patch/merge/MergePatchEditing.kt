@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.patch.merge
 
 import com.davils.kaml.core.limit.YamlLimits
@@ -24,7 +26,7 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.MemberIndex
 import com.davils.kaml.document.internal.NodeCount
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.patch.JsonPatchEdit
 import com.davils.kaml.document.patch.JsonPatchRefusal
 import com.davils.kaml.document.patch.graph.GraphStep
@@ -34,6 +36,8 @@ import com.davils.kaml.document.patch.syntax.SyntaxState
 import com.davils.kaml.document.patch.syntax.SyntaxStep
 import com.davils.kaml.document.patch.syntax.SyntaxVerification
 import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class MergePatchEditing(
     private val tree: YamlSyntaxTree,
@@ -103,12 +107,12 @@ internal class MergePatchEditing(
 
         private fun removed(current: YamlSyntaxTree, place: Place): SyntaxStep {
             if (place.node == null) return SyntaxStep.Done(current)
-            changes.charge()
+            changes.chargeOrFail()
             return editsOf(current).removed(place.pointer)
         }
 
         private fun replaced(current: YamlSyntaxTree, place: Place, patch: YamlNode): SyntaxStep {
-            changes.charge()
+            changes.chargeOrFail()
             val value = values.merged(place.node, patch)
             return editsOf(current).added(place.pointer, value)
         }

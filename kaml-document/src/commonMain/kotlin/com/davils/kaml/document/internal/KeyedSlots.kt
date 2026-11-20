@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
+import com.davils.kore.core.collection.OrderedIndex
 
 internal class KeyedSlots<T : Any>(
     items: List<T>,
@@ -72,7 +77,7 @@ internal class KeyedSlots<T : Any>(
     }
 
     private fun isEqualAt(position: Int, node: YamlNode): Boolean {
-        budget.charge()
+        budget.chargeOrFail()
         val item = slots[position]
         return nodeOf(item ?: return false) == node
     }

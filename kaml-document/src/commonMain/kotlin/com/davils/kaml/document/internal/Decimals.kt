@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.log10
@@ -59,7 +63,7 @@ internal object Decimals {
     fun compareIntegral(decimal: String, whole: Double, budget: WorkBudget): Int {
         val byMagnitude = magnitudeOrder(decimal, whole)
         if (byMagnitude != null) return byMagnitude
-        budget.charge(expansionCost(whole))
+        budget.chargeOrFail(expansionCost(whole))
         return compare(left = decimal, right = ofIntegral(whole))
     }
 

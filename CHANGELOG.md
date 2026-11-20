@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+- **kaml builds on Kore 2.2.0.** The structures keyed by input, the work budget of `kaml-document` and the shortest
+  text of a float now come from Kore: `OrderedIndex`, `OrderedMap` and `OrderedSet` find keys by comparison and never
+  by hash code, `WorkBudget` counts the steps of a query, a merge, a diff, a patch or a redaction, and
+  `ShortestDecimal` gives the digits of a float alike on the JVM and on Wasm. kaml drops its own copies of them; what
+  it reads, writes and refuses is unchanged, and an excess still ends with a `YamlDocumentLimitException` that names
+  the limit.
+
 ## 1.0.0 - 2026-11-20
 
 The first version of kaml: the YAML library of Davils as an open source library under the Apache License 2.0, for

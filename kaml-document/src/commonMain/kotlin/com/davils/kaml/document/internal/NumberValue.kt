@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.double
 import com.davils.kaml.core.node.long
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import kotlin.math.floor
 
 internal class NumberValue private constructor(private val integer: String?, private val real: Double) {

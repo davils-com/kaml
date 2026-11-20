@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.syntax.YamlSyntaxKind
@@ -23,8 +25,9 @@ import com.davils.kaml.core.syntax.YamlSyntaxTree
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.OrderedGroups
-import com.davils.kaml.document.internal.OrderedIndex
 import com.davils.kaml.document.patch.syntax.ContentRanges
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedIndex
 import com.davils.kore.core.text.LineMap
 import com.davils.kore.core.text.TextEdit
 import com.davils.kore.core.text.TextRange

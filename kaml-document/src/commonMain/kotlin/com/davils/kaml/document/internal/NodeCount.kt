@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class NodeCount(private val budget: WorkBudget, private val maximumDepth: Int) {
     fun charge(node: YamlNode, depth: Int) {
@@ -25,7 +29,7 @@ internal class NodeCount(private val budget: WorkBudget, private val maximumDept
         pending.addLast(Pending(node = node, depth = depth))
         while (pending.isNotEmpty()) {
             val current = pending.removeLast()
-            budget.charge()
+            budget.chargeOrFail()
             if (current.depth > maximumDepth) throw YamlDocumentLimitException(DEPTH)
             val childDepth = current.depth + 1
             childrenOf(current.node).forEach { child -> pending.addLast(Pending(node = child, depth = childDepth)) }

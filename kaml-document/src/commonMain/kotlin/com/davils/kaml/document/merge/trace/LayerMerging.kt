@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.merge.trace
 
 import com.davils.kaml.core.limit.YamlLimits
@@ -22,12 +24,13 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.KeyedSlots
 import com.davils.kaml.document.internal.Members
 import com.davils.kaml.document.internal.NodeCount
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.merge.YamlLayer
 import com.davils.kaml.document.merge.YamlMergeOptions
 import com.davils.kaml.document.merge.YamlMerged
 import com.davils.kaml.document.merge.YamlSequenceMerge
 import com.davils.kaml.document.pointer.JsonPointer
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 private const val ANY: String = "*"
 

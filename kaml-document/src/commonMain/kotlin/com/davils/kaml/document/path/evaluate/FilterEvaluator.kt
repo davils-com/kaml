@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.evaluate
 
 import com.davils.kaml.core.node.YamlNode
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.path.filter.FilterExpression
 import com.davils.kaml.document.path.filter.FilterOperand
 import com.davils.kaml.document.path.filter.FunctionArgument
 import com.davils.kaml.document.path.filter.FunctionCall
 import com.davils.kaml.document.path.function.ArgumentValue
 import com.davils.kaml.document.path.function.FunctionContext
+import com.davils.kore.core.annotation.DavilsInternal
 
 internal class FilterEvaluator(
     private val paths: PathEvaluator,
@@ -30,7 +34,7 @@ internal class FilterEvaluator(
     private val comparison: JsonComparison,
 ) {
     fun test(expression: FilterExpression, current: YamlNode): Boolean {
-        functions.budget.charge()
+        functions.budget.chargeOrFail()
         return tested(expression, current)
     }
 
@@ -53,7 +57,7 @@ internal class FilterEvaluator(
     }
 
     private fun value(operand: FilterOperand, current: YamlNode): YamlNode? {
-        functions.budget.charge()
+        functions.budget.chargeOrFail()
         return valueOf(operand, current)
     }
 

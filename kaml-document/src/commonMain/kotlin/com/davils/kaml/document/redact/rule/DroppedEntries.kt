@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.YamlDuplicateKeys
@@ -25,8 +27,10 @@ import com.davils.kaml.core.syntax.ast.YamlEntrySyntax
 import com.davils.kaml.core.syntax.ast.YamlValueSyntax
 import com.davils.kaml.document.internal.NodeSet
 import com.davils.kaml.document.internal.OrderedGroups
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.internal.identityOrdinals
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 import com.davils.kore.core.text.TextRange
 
 private const val MERGE_KEY: String = "<<"
@@ -46,7 +50,7 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         val composed = composedMappings(stream, budget)
         val missing = ArrayList<TextRange>()
         walk.mappings.forEach { mapping ->
-            budget.charge(mapping.entries.size.toLong())
+            budget.chargeOrFail(mapping.entries.size.toLong())
             val counterpart = composed.firstOf(mapping.node.range)
             counterpart?.let { match -> collect(mapping, match) } ?: missing.add(mapping.node.range)
         }
@@ -63,7 +67,7 @@ internal class DroppedEntries(tree: YamlSyntaxTree, stream: YamlStream, walk: Sy
         while (pending.isNotEmpty()) {
             val node = pending.removeLast()
             if (seen.add(node)) {
-                budget.charge()
+                budget.chargeOrFail()
                 indexed(node, mappings)
                 childrenOf(node).forEach(pending::addLast)
             }

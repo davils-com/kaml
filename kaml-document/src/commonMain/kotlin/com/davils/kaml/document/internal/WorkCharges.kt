@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.internal
 
 import com.davils.kaml.document.YamlDocumentLimitException
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
-internal class WorkBudget(private val maximum: Long, private val limit: String) {
-    var spent: Long = 0L
-        private set
-
-    fun charge(steps: Long = 1L) {
-        if (!spend(steps)) throw YamlDocumentLimitException(limit)
-    }
-
-    fun spend(steps: Long): Boolean {
-        spent += steps
-        return spent <= maximum
-    }
+internal fun WorkBudget.chargeOrFail(steps: Long = 1L) {
+    if (!tryCharge(steps)) throw YamlDocumentLimitException(limit)
 }

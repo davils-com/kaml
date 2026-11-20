@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.redact.rule
 
 import com.davils.kaml.core.node.YamlEntry
@@ -21,9 +23,11 @@ import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.core.node.yamlScalar
 import com.davils.kaml.document.YamlDocumentLimitException
 import com.davils.kaml.document.internal.NodeSet
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.internal.identityOrdinals
 import com.davils.kaml.document.patch.graph.GraphNodes
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class GraphRedaction(private val rules: RedactionRules) {
     private val budget = WorkBudget(rules.limits.maximumNodes, "maximumNodes")
@@ -41,7 +45,7 @@ internal class GraphRedaction(private val rules: RedactionRules) {
     }
 
     private fun changed(node: YamlNode, targets: NodeSet, depth: Int): YamlNode {
-        budget.charge()
+        budget.chargeOrFail()
         if (depth > rules.limits.maximumDepth) throw YamlDocumentLimitException("maximumDepth")
         return when (node) {
             is YamlNode.Scalar -> scalar(node)

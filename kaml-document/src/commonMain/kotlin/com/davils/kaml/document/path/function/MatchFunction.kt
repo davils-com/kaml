@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.function
 
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.YamlDocumentLimitException
-import com.davils.kaml.document.internal.WorkBudget
 import com.davils.kaml.document.path.regexp.IRegexp
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal sealed class MatchFunction(override val name: String) : PathFunction {
     override val parameters: List<ParameterType> = listOf(ParameterType.Value, ParameterType.Value)

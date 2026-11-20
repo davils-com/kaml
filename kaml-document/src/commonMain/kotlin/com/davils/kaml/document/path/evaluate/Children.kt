@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.document.path.evaluate
 
 import com.davils.kaml.core.node.YamlNode
 import com.davils.kaml.document.internal.Members
-import com.davils.kaml.document.internal.WorkBudget
+import com.davils.kaml.document.internal.chargeOrFail
 import com.davils.kaml.document.path.query.PathSelector
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.budget.WorkBudget
 
 internal class Children(private val budget: WorkBudget) {
     fun of(match: PathMatch): List<PathMatch> = when (val node = match.node) {
@@ -28,12 +32,12 @@ internal class Children(private val budget: WorkBudget) {
         }
 
         is YamlNode.Sequence -> {
-            budget.charge(node.items.size.toLong())
+            budget.chargeOrFail(node.items.size.toLong())
             node.items.mapIndexed { index, item -> match.child(index.toString(), item) }
         }
 
         is YamlNode.Mapping -> {
-            budget.charge(node.entries.size.toLong())
+            budget.chargeOrFail(node.entries.size.toLong())
             node.entries.map { entry -> match.child(Members.tokenOf(entry.key), entry.value) }
         }
     }
@@ -45,13 +49,13 @@ internal class Children(private val budget: WorkBudget) {
             scanned++
             Members.tokenOf(candidate.key) == name
         }
-        budget.charge(scanned + 1L)
+        budget.chargeOrFail(scanned + 1L)
         return entry?.let { found -> match.child(name, found.value) }
     }
 
     fun indexed(match: PathMatch, index: Long): PathMatch? {
         val sequence = match.node as? YamlNode.Sequence ?: return null
-        budget.charge()
+        budget.chargeOrFail()
         val size = sequence.items.size.toLong()
         val normalized = (index + size).takeIf { index < 0 } ?: index
         val item = normalized.takeIf { it in 0 until size }?.toInt()
@@ -60,9 +64,9 @@ internal class Children(private val budget: WorkBudget) {
 
     fun sliced(match: PathMatch, slice: PathSelector.Slice, visit: (PathMatch) -> Unit) {
         val sequence = match.node as? YamlNode.Sequence ?: return
-        budget.charge()
+        budget.chargeOrFail()
         SliceIndices.each(slice, sequence.items.size) { index ->
-            budget.charge()
+            budget.chargeOrFail()
             visit(match.child(index.toString(), sequence.items[index]))
         }
     }
