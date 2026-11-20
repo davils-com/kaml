@@ -20,8 +20,8 @@ package com.davils.kaml.core.compose
 
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
 import com.davils.kaml.core.event.YamlEvent
-import com.davils.kaml.core.internal.NameMap
 import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedMap
 import com.davils.kore.core.text.SafeText
 import com.davils.kore.core.text.TextRange
 
@@ -29,8 +29,8 @@ internal class AnchorTable(
     private val budget: ComposeBudget,
     private val report: (YamlDiagnosticCode, TextRange?, String) -> Unit,
 ) {
-    private val declared = NameMap<Anchored>()
-    private val opened = NameMap<ArrayDeque<Int>>()
+    private val declared = OrderedMap<String, Anchored>()
+    private val opened = OrderedMap<String, ArrayDeque<Int>>()
     private var counter = 0
 
     fun reset() {

@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.core.emit
 
 import com.davils.kaml.core.YamlConfiguration
 import com.davils.kaml.core.event.YamlEvent
-import com.davils.kaml.core.internal.NameMap
-import com.davils.kaml.core.internal.NameSet
 import com.davils.kaml.core.model.YamlAnchor
 import com.davils.kaml.core.model.YamlCollectionStyle
 import com.davils.kaml.core.model.YamlScalarStyle
 import com.davils.kaml.core.model.YamlTag
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedMap
+import com.davils.kore.core.collection.OrderedSet
 
 internal class EventTree(private val configuration: YamlConfiguration) {
     private val limits = configuration.limits
     private val documents = ArrayList<EmitDocument>()
     private val stack = ArrayDeque<Open>()
-    private val defined = NameMap<String>()
+    private val defined = OrderedMap<String, String>()
     private var anchors = AnchorNames()
     private var start: YamlEvent.DocumentStart? = null
     private var root: EmitNode? = null
@@ -37,7 +40,7 @@ internal class EventTree(private val configuration: YamlConfiguration) {
 
     fun build(events: List<YamlEvent>): List<EmitDocument> {
         val reserved = events.mapNotNull { event -> anchorOf(event)?.name }
-        anchors = AnchorNames(NameSet(reserved.filter(AnchorNames::isValid)))
+        anchors = AnchorNames(OrderedSet(reserved.filter(AnchorNames::isValid)))
         events.forEachIndexed { index, event -> accept(event, isFirst = index == 0) }
         require(start == null) { UNFINISHED }
         return documents.toList()

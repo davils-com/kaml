@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.core.emit
 
-import com.davils.kaml.core.internal.NameSet
 import com.davils.kaml.core.model.YamlTag
 import com.davils.kaml.core.model.YamlTagDirective
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedSet
 
 internal class TagNotation(directives: List<YamlTagDirective>) {
     private val handles: Set<String> = handlesOf(directives)
@@ -38,7 +41,7 @@ internal class TagNotation(directives: List<YamlTagDirective>) {
     }
 
     private fun handlesOf(directives: List<YamlTagDirective>): Set<String> {
-        val seen = NameSet()
+        val seen = OrderedSet<String>()
         directives.forEach { directive ->
             require(isHandle(directive.handle)) { INVALID_HANDLE }
             require(directive.prefix.isNotEmpty()) { MISSING_PREFIX }

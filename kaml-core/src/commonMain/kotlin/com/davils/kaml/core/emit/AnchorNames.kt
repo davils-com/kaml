@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
+@file:OptIn(DavilsInternal::class)
+
 package com.davils.kaml.core.emit
 
-import com.davils.kaml.core.internal.NameSet
+import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedSet
 
 internal class AnchorNames(
     private val reserved: Set<String> = emptySet(),
     private val taken: Set<String> = emptySet(),
 ) {
-    private val used = NameSet()
+    private val used = OrderedSet<String>()
     private var counter = 0
 
     fun preferred(name: String?): String {

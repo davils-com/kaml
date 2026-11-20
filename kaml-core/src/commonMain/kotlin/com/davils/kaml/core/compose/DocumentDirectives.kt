@@ -18,17 +18,17 @@
 package com.davils.kaml.core.compose
 
 import com.davils.kaml.core.diagnostic.YamlDiagnosticCode
-import com.davils.kaml.core.internal.NameMap
 import com.davils.kaml.core.model.VisibleCodePoints
 import com.davils.kaml.core.model.YamlTagDirective
 import com.davils.kaml.core.model.YamlVersion
 import com.davils.kaml.core.parser.isWordCharacter
 import com.davils.kore.core.annotation.DavilsInternal
+import com.davils.kore.core.collection.OrderedMap
 import com.davils.kore.core.text.SafeText
 import com.davils.kore.core.text.TextRange
 
 internal class DocumentDirectives(private val reports: Reports) {
-    private val handles = NameMap<String>()
+    private val handles = OrderedMap<String, String>()
 
     var version: YamlVersion? = null
         private set
