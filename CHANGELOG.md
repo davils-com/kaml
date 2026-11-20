@@ -5,16 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.0.0
+## 1.0.0 - 2026-11-20
 
 The first version of kaml: the YAML library of Davils as an open source library under the Apache License 2.0, for
-Kotlin on the JVM and on `wasmJs`, built with Kreate 5.2.0 on Kore 2.1.1 and published to `https://repo.davils.com`.
+Kotlin on the JVM and on `wasmJs`, built with Kreate 5.3.0 on Kore 2.1.1 and published to `https://repo.davils.com`.
 The code comes from the YAML stack of an internal Davils project and is hardened for use with untrusted input on the
 way.
 
 ### Added
 
-- **The build** of kaml with Kreate 5.2.0: one convention plugin per concern, strict dependency locking and
+- **The build** of kaml with Kreate 5.3.0: one convention plugin per concern, strict dependency locking and
   verification, Detekt with every rule, Kover at 97 %, the API and semver check, Trivy and the assurance gate.
 - **The YAML model.** Tags, anchors that refuse names YAML does not allow, versions, tag directives and the styles
   of scalars and collections.
@@ -55,10 +55,10 @@ way.
   colliding hash codes cannot slow down.
 - **Redaction that fails closed**: broken documents are refused, targets behind aliases, merge keys and
   duplicates are redacted, the replacement is literal and no secret reaches a message.
-
 - **Limits and diagnostics.** `YamlLimits` bounds the input, the depth, the nodes, the alias expansion, the anchors,
   scalars, collections, documents, numbers, diagnostics and the output, each with a hard ceiling; `YamlDiagnostic`
   carries a code, a range, a severity and an escaped message.
+
 ### Security
 
 - **An independent security audit** of the parser and composer, the emitter, the syntax tree, the editor and the
@@ -66,8 +66,8 @@ way.
   one is fixed, mitigated within a limit or named under Known Limitations in `SECURITY.md`, and every fix ships with
   a test that reproduces the problem.
 - **No input decides the complexity.** Long lines, comment runs, mapping keys, merge keys, anchor names and tag
-  handles with colliding hash codes, nested repeats of an I-Regexp, filters, huge numbers, wide patches, merges and diffs are linear or
-  O(n log n), and every step of a query, a patch and a redaction is charged to a budget.
+  handles with colliding hash codes, nested repeats of an I-Regexp, filters, huge numbers, wide patches, merges and
+  diffs are linear or O(n log n), and every step of a query, a patch and a redaction is charged to a budget.
 - **Redaction fails closed** also for duplicates the composer drops, secrets reused as keys through anchors, keys
   that are collections, comments on the lines of a redacted entry and aliases to anchored keys.
 - **Emitted and edited YAML cannot be injected**, also not through a flow scalar that starts with `?` or `:`, a
