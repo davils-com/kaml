@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **kaml builds on Kore 2.2.0.** The structures keyed by input, the work budget of `kaml-document` and the shortest
+- **kaml builds on Kore 2.3.1.** The structures keyed by input, the work budget of `kaml-document` and the shortest
   text of a float now come from Kore: `OrderedIndex`, `OrderedMap` and `OrderedSet` find keys by comparison and never
   by hash code, `WorkBudget` counts the steps of a query, a merge, a diff, a patch or a redaction, and
   `ShortestDecimal` gives the digits of a float alike on the JVM and on Wasm. kaml drops its own copies of them; what
