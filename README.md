@@ -36,9 +36,9 @@ dependencyResolutionManagement {
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.davils:kaml-core:1.0.0")
-    implementation("com.davils:kaml-document:1.0.0")
-    implementation("com.davils:kaml-serialization:1.0.0")
+    implementation("com.davils:kaml-core:1.0.1")
+    implementation("com.davils:kaml-document:1.0.1")
+    implementation("com.davils:kaml-serialization:1.0.1")
 }
 ```
 

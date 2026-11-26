@@ -110,7 +110,7 @@ Releases are published to `https://repo.davils.com/releases` and signed with the
 Actions run that built it:
 
 ```bash
-gh attestation verify kaml-core-jvm-1.0.0.jar --repo davils-com/kaml --signer-repo davils-com/kotlin-workflow
+gh attestation verify kaml-core-jvm-1.0.1.jar --repo davils-com/kaml --signer-repo davils-com/kotlin-workflow
 ```
 
 Snapshots in `https://repo.davils.com/snapshots` are neither signed nor attested and are not meant for production.
